@@ -1,0 +1,21 @@
+workflowVersion: 1.0.0
+speakeasyVersion: latest
+sources:
+    market-api:
+        inputs:
+            - location: ../../../../../users/dtao/downloads/openapi specification.json
+        overlays:
+            - location: .speakeasy/speakeasy-modifications-overlay.yaml
+        output: .speakeasy/out.openapi.yaml
+        registry:
+            location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api
+targets:
+    sfc:
+        target: typescript
+        source: market-api
+        codeSamples:
+            registry:
+                location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api-typescript-code-samples
+            labelOverride:
+                fixedValue: Typescript (SDK)
+            blocking: false

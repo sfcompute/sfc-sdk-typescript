@@ -1,0 +1,39 @@
+speakeasyVersion: 1.723.0
+sources:
+    market-api:
+        sourceNamespace: market-api
+        sourceRevisionDigest: sha256:7e5141d1f8255b85cd6be8f672db8648b980c32b8c454820675f855e63c32401
+        sourceBlobDigest: sha256:ae2e2945219ec8445b7eeb208d73638e1f5daa988cae42588a4dff52907abebd
+        tags:
+            - latest
+            - 0.1.0
+targets:
+    sfc:
+        source: market-api
+        sourceNamespace: market-api
+        sourceRevisionDigest: sha256:7e5141d1f8255b85cd6be8f672db8648b980c32b8c454820675f855e63c32401
+        sourceBlobDigest: sha256:ae2e2945219ec8445b7eeb208d73638e1f5daa988cae42588a4dff52907abebd
+        codeSamplesNamespace: market-api-typescript-code-samples
+        codeSamplesRevisionDigest: sha256:1c8d5c8c170b62dc5332179d389d5ccdba9628408a45e54800f0845e7868870c
+workflow:
+    workflowVersion: 1.0.0
+    speakeasyVersion: latest
+    sources:
+        market-api:
+            inputs:
+                - location: ../../../../../users/dtao/downloads/openapi specification.json
+            overlays:
+                - location: .speakeasy/speakeasy-modifications-overlay.yaml
+            output: .speakeasy/out.openapi.yaml
+            registry:
+                location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api
+    targets:
+        sfc:
+            target: typescript
+            source: market-api
+            codeSamples:
+                registry:
+                    location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api-typescript-code-samples
+                labelOverride:
+                    fixedValue: Typescript (SDK)
+                blocking: false

@@ -1,0 +1,22 @@
+# VmorchListNodesResponse
+
+## Example Usage
+
+```typescript
+import { VmorchListNodesResponse } from "@sfcompute/sdk/models";
+
+let value: VmorchListNodesResponse = {
+  cursor: "nodec_gqXR7s0Kj5mHvE2wNpLc4Q",
+  hasMore: true,
+  data: [],
+};
+```
+
+## Fields
+
+| Field                                                            | Type                                                             | Required                                                         | Description                                                      | Example                                                          |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `object`                                                         | *"list"*                                                         | :heavy_minus_sign:                                               | N/A                                                              |                                                                  |
+| `cursor`                                                         | *string*                                                         | :heavy_minus_sign:                                               | N/A                                                              | nodec_gqXR7s0Kj5mHvE2wNpLc4Q                                     |
+| `hasMore`                                                        | *boolean*                                                        | :heavy_check_mark:                                               | N/A                                                              |                                                                  |
+| `data`                                                           | [models.VmorchNodeResponse](../models/vmorch-node-response.md)[] | :heavy_check_mark:                                               | N/A                                                              |                                                                  |

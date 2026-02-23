@@ -1,0 +1,206 @@
+overlay: 1.0.0
+x-speakeasy-jsonpath: rfc9535
+info:
+  title: Speakeasy Modifications
+  version: 0.0.1
+  x-speakeasy-metadata:
+    type: speakeasy-modifications
+    before: ""
+    after: ""
+actions:
+  - target: $["paths"]["/v2/orders"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.orders.list()
+      before: sdk.Orders.list_orders()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/images/{id}/complete"]["post"]
+    update:
+      x-speakeasy-name-override: completeUpload
+    x-speakeasy-metadata:
+      after: sdk.images.completeUpload()
+      before: sdk.Images.complete_upload()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/orders/{id}"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.orders.get()
+      before: sdk.Orders.get_order()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/images/{id}/download"]["get"]
+    update:
+      x-speakeasy-name-override: download
+    x-speakeasy-metadata:
+      after: sdk.images.download()
+      before: sdk.Images.download_image_v2()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/orders/{id}"]["delete"]
+    update:
+      x-speakeasy-name-override: cancel
+    x-speakeasy-metadata:
+      after: sdk.orders.cancel()
+      before: sdk.Orders.cancel_order()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/nodes/{id}/replace"]["post"]
+    update:
+      x-speakeasy-name-override: replace
+    x-speakeasy-metadata:
+      after: sdk.nodes.replace()
+      before: sdk.Nodes.replace_node()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/capacities/{id}"]["delete"]
+    update:
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.capacities.delete()
+      before: sdk.Capacities.delete_capacity_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/nodes/{id}"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.nodes.get()
+      before: sdk.Nodes.get_node()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/node_templates/{id}"]["delete"]
+    update:
+      x-speakeasy-group: nodeTemplates
+      x-speakeasy-name-override: delete
+    x-speakeasy-metadata:
+      after: sdk.nodeTemplates.delete()
+      before: sdk.Node Templates.delete_node_template_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/capacities/{id}"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.capacities.get()
+      before: sdk.Capacities.get_capacity_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/capacities"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.capacities.list()
+      before: sdk.Capacities.list_capacities_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/capacities/{id}"]["patch"]
+    update:
+      x-speakeasy-name-override: update
+    x-speakeasy-metadata:
+      after: sdk.capacities.update()
+      before: sdk.Capacities.patch_capacity_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/node_templates/{id}"]["get"]
+    update:
+      x-speakeasy-group: nodeTemplates
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.nodeTemplates.get()
+      before: sdk.Node Templates.get_node_template_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/orders"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.orders.create()
+      before: sdk.Orders.post_order()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/nodes"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.nodes.list()
+      before: sdk.Nodes.list_nodes()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/node_templates"]["post"]
+    update:
+      x-speakeasy-group: nodeTemplates
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.nodeTemplates.create()
+      before: sdk.Node Templates.create_node_template_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/images/{id}/parts"]["post"]
+    update:
+      x-speakeasy-name-override: uploadPart
+    x-speakeasy-metadata:
+      after: sdk.images.uploadPart()
+      before: sdk.Images.upload_part()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/images"]["post"]
+    update:
+      x-speakeasy-name-override: startUpload
+    x-speakeasy-metadata:
+      after: sdk.images.startUpload()
+      before: sdk.Images.start_upload()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/node_templates"]["get"]
+    update:
+      x-speakeasy-group: nodeTemplates
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.nodeTemplates.list()
+      before: sdk.Node Templates.list_node_templates_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/images/{id}"]["get"]
+    update:
+      x-speakeasy-name-override: get
+    x-speakeasy-metadata:
+      after: sdk.images.get()
+      before: sdk.Images.get_image()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/capacities"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.capacities.create()
+      before: sdk.Capacities.create_capacity_handler()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/nodes/{id}/ssh"]["get"]
+    update:
+      x-speakeasy-name-override: getSsh
+    x-speakeasy-metadata:
+      after: sdk.nodes.getSsh()
+      before: sdk.Nodes.get_node_ssh()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/nodes/{id}/logs"]["get"]
+    update:
+      x-speakeasy-name-override: getLogs
+    x-speakeasy-metadata:
+      after: sdk.nodes.getLogs()
+      before: sdk.Nodes.get_node_logs()
+      created_at: 1771638373512
+      type: method-name
+  - target: $["paths"]["/v2/images"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.images.list()
+      before: sdk.Images.list_images_v2()
+      created_at: 1771638373512
+      type: method-name

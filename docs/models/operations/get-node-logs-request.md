@@ -1,0 +1,25 @@
+# GetNodeLogsRequest
+
+## Example Usage
+
+```typescript
+import { GetNodeLogsRequest } from "@sfcompute/sdk/models/operations";
+
+let value: GetNodeLogsRequest = {
+  id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
+  realtimeTimestampBefore: 1738972800,
+  realtimeTimestampAfter: 1738972800,
+};
+```
+
+## Fields
+
+| Field                                                                                                   | Type                                                                                                    | Required                                                                                                | Description                                                                                             | Example                                                                                                 |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `id`                                                                                                    | *string*                                                                                                | :heavy_check_mark:                                                                                      | N/A                                                                                                     | node_k3R-nX9vLm7Qp2Yw5Jd8F                                                                              |
+| `seqnumBefore`                                                                                          | *number*                                                                                                | :heavy_minus_sign:                                                                                      | Return logs with `seqnum` less than or equal to this value.                                             |                                                                                                         |
+| `seqnumAfter`                                                                                           | *number*                                                                                                | :heavy_minus_sign:                                                                                      | Return logs with `seqnum` greater than or equal to this value.                                          |                                                                                                         |
+| `realtimeTimestampBefore`                                                                               | *number*                                                                                                | :heavy_minus_sign:                                                                                      | Due to clock synchronization, some earlier log messages may have a realtime timestamp after this value. | 1738972800                                                                                              |
+| `realtimeTimestampAfter`                                                                                | *number*                                                                                                | :heavy_minus_sign:                                                                                      | Due to clock synchronization, some later log messages may have a realtime timestamp before this value.  | 1738972800                                                                                              |
+| `sortBy`                                                                                                | [operations.GetNodeLogsSortBy](../../models/operations/get-node-logs-sort-by.md)                        | :heavy_minus_sign:                                                                                      | N/A                                                                                                     |                                                                                                         |
+| `limit`                                                                                                 | *number*                                                                                                | :heavy_minus_sign:                                                                                      | N/A                                                                                                     |                                                                                                         |
