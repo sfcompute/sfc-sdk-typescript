@@ -11,15 +11,12 @@ import {
 } from "./scheduler-details-input-union.js";
 
 export type CreateCapacityRequest = {
-  name?: string | undefined;
+  name?: string | null | undefined;
   /**
    * Datacenter locations orders into this capacity can acquire compute from.
    */
   zones: Array<string>;
-  /**
-   * An ID _or_ name identifying this resource.
-   */
-  nodeTemplate?: string | undefined;
+  nodeTemplate?: string | null | undefined;
   /**
    * Automatically start nodes when compute is available. Requires `node_template`.
    */
@@ -32,9 +29,9 @@ export type CreateCapacityRequest = {
 
 /** @internal */
 export type CreateCapacityRequest$Outbound = {
-  name?: string | undefined;
+  name?: string | null | undefined;
   zones: Array<string>;
-  node_template?: string | undefined;
+  node_template?: string | null | undefined;
   start_nodes_automatically: boolean;
   scheduler?: SchedulerDetailsInputUnion$Outbound | undefined;
 };
@@ -45,9 +42,9 @@ export const CreateCapacityRequest$outboundSchema: z.ZodMiniType<
   CreateCapacityRequest
 > = z.pipe(
   z.object({
-    name: z.optional(z.string()),
+    name: z.optional(z.nullable(z.string())),
     zones: z.array(z.string()),
-    nodeTemplate: z.optional(z.string()),
+    nodeTemplate: z.optional(z.nullable(z.string())),
     startNodesAutomatically: z.boolean(),
     scheduler: z.optional(SchedulerDetailsInputUnion$outboundSchema),
   }),

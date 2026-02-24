@@ -8,7 +8,7 @@ Place orders targeting a capacity to increase your reserved compute balance duri
 
 * [list](#list) - List orders
 * [create](#create) - Create order
-* [get](#get) - Get order
+* [fetch](#fetch) - Get order
 * [cancel](#cancel) - Cancel order
 
 ## list
@@ -196,13 +196,13 @@ run();
 | errors.InternalServerError      | 500                             | application/json                |
 | errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
-## get
+## fetch
 
 Retrieve an order by ID.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_order" method="get" path="/v2/orders/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_order" method="get" path="/v2/orders/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
@@ -212,7 +212,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.orders.get({
+  const result = await sfc.orders.fetch({
     id: "ordr_xyz789",
   });
 
@@ -228,7 +228,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { ordersGet } from "@sfcompute/sdk/funcs/orders-get.js";
+import { ordersFetch } from "@sfcompute/sdk/funcs/orders-fetch.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -238,14 +238,14 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await ordersGet(sfc, {
+  const res = await ordersFetch(sfc, {
     id: "ordr_xyz789",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("ordersGet failed:", res.error);
+    console.log("ordersFetch failed:", res.error);
   }
 }
 
@@ -256,7 +256,7 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetOrderRequest](../../models/operations/get-order-request.md)                                                                                                     | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.FetchOrderRequest](../../models/operations/fetch-order-request.md)                                                                                                 | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |

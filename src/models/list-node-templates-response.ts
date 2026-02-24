@@ -15,7 +15,7 @@ import {
 
 export type ListNodeTemplatesResponse = {
   object: "list";
-  cursor?: string | undefined;
+  cursor?: string | null | undefined;
   hasMore: boolean;
   data: Array<NodeTemplateResponse>;
 };
@@ -27,7 +27,7 @@ export const ListNodeTemplatesResponse$inboundSchema: z.ZodMiniType<
 > = z.pipe(
   z.object({
     object: z._default(types.literal("list"), "list"),
-    cursor: types.optional(types.string()),
+    cursor: z.optional(z.nullable(types.string())),
     has_more: types.boolean(),
     data: z.array(NodeTemplateResponse$inboundSchema),
   }),

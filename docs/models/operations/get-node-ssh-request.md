@@ -1,11 +1,11 @@
-# FetchNodeSshRequest
+# GetNodeSshRequest
 
 ## Example Usage
 
 ```typescript
-import { FetchNodeSshRequest } from "@sfcompute/sdk/models/operations";
+import { GetNodeSshRequest } from "@sfcompute/sdk/models/operations";
 
-let value: FetchNodeSshRequest = {
+let value: GetNodeSshRequest = {
   id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
 };
 ```

@@ -28,18 +28,18 @@ import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Get capacity
+ * Get node SSH info
  *
  * @remarks
- * Retrieve a capacity by ID or name, including its compute schedule and scheduler configuration.
+ * Retrieve SSH connection details for a node.
  */
-export function capacitiesGet(
+export function nodesGetSSHInfoForNode(
   client: SfcCore,
-  request: operations.FetchCapacityRequest,
+  request: operations.GetNodeSshRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.CapacityResponse,
+    models.NodeSshInfo,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -62,12 +62,12 @@ export function capacitiesGet(
 
 async function $do(
   client: SfcCore,
-  request: operations.FetchCapacityRequest,
+  request: operations.GetNodeSshRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.CapacityResponse,
+      models.NodeSshInfo,
       | errors.UnauthorizedError
       | errors.NotFoundError
       | errors.InternalServerError
@@ -85,7 +85,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.FetchCapacityRequest$outboundSchema, value),
+    (value) => z.parse(operations.GetNodeSshRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -101,7 +101,7 @@ async function $do(
     }),
   };
 
-  const path = pathToFunc("/v2/capacities/{id}")(pathParams);
+  const path = pathToFunc("/v2/nodes/{id}/ssh")(pathParams);
 
   const headers = new Headers(compactMap({
     Accept: "application/json",
@@ -114,7 +114,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "fetch_capacity",
+    operationID: "get_node_ssh",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
@@ -157,7 +157,7 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.CapacityResponse,
+    models.NodeSshInfo,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -170,7 +170,7 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.CapacityResponse$inboundSchema),
+    M.json(200, models.NodeSshInfo$inboundSchema),
     M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
     M.jsonErr(404, errors.NotFoundError$inboundSchema),
     M.jsonErr(500, errors.InternalServerError$inboundSchema),

@@ -72,7 +72,6 @@ paths:
             type: "cursor"
         outputs:
           nextCursor: "$.cursor"
-      x-speakeasy-name-override: list
     post:
       tags:
         - "Capacities"
@@ -116,7 +115,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: create
   /v2/capacities/{id}:
     get:
       tags:
@@ -159,7 +157,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: get
     delete:
       tags:
         - "Capacities"
@@ -209,7 +206,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: delete
     patch:
       tags:
         - "Capacities"
@@ -269,7 +265,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: update
   /v2/images:
     get:
       tags:
@@ -340,7 +335,6 @@ paths:
             type: "cursor"
         outputs:
           nextCursor: "$.cursor"
-      x-speakeasy-name-override: list
     post:
       tags:
         - "Images"
@@ -430,7 +424,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: get
     delete:
       tags:
         - "Images"
@@ -713,8 +706,6 @@ paths:
             type: "cursor"
         outputs:
           nextCursor: "$.cursor"
-      x-speakeasy-group: nodeTemplates
-      x-speakeasy-name-override: list
     post:
       tags:
         - "Node Templates"
@@ -758,8 +749,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-group: nodeTemplates
-      x-speakeasy-name-override: create
   /v2/node_templates/{id}:
     get:
       tags:
@@ -802,8 +791,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-group: nodeTemplates
-      x-speakeasy-name-override: get
     delete:
       tags:
         - "Node Templates"
@@ -853,8 +840,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-group: nodeTemplates
-      x-speakeasy-name-override: delete
   /v2/nodes:
     get:
       tags:
@@ -949,7 +934,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: list
   /v2/nodes/{id}:
     get:
       tags:
@@ -988,14 +972,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: get
   /v2/nodes/{id}/logs:
     get:
       tags:
         - "Nodes"
       summary: "Get node logs"
       description: "Retrieve logs for a node."
-      operationId: "fetch_node_logs"
+      operationId: "get_node_logs"
       parameters:
         - name: "id"
           in: "path"
@@ -1078,7 +1061,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: getLogs
+      x-speakeasy-name-override: "getLogsForNode"
   /v2/nodes/{id}/replace:
     post:
       tags:
@@ -1129,14 +1112,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: replace
+      x-speakeasy-name-override: "replace"
   /v2/nodes/{id}/ssh:
     get:
       tags:
         - "Nodes"
       summary: "Get node SSH info"
       description: "Retrieve SSH connection details for a node."
-      operationId: "fetch_node_ssh"
+      operationId: "get_node_ssh"
       parameters:
         - name: "id"
           in: "path"
@@ -1168,7 +1151,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: getSsh
+      x-speakeasy-name-override: "getSSHInfoForNode"
   /v2/orders:
     get:
       tags:
@@ -1270,7 +1253,6 @@ paths:
             type: "cursor"
         outputs:
           nextCursor: "$.cursor"
-      x-speakeasy-name-override: list
     post:
       tags:
         - "Orders"
@@ -1335,14 +1317,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: create
   /v2/orders/{id}:
     get:
       tags:
         - "Orders"
       summary: "Get order"
       description: "Retrieve an order by ID."
-      operationId: "get_order"
+      operationId: "fetch_order"
       parameters:
         - name: "id"
           in: "path"
@@ -1376,7 +1357,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: get
     delete:
       tags:
         - "Orders"
@@ -1418,7 +1398,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: cancel
+      x-speakeasy-name-override: "cancel"
 components:
   schemas:
     AllocationSchedule:
@@ -1456,6 +1436,7 @@ components:
               readOnly: true
             message:
               type: "string"
+              x-speakeasy-error-message: true
             details:
               type: "array"
               items:
@@ -1488,8 +1469,9 @@ components:
         id:
           $ref: "#/components/schemas/CapacityId"
         name:
-          $ref: "#/components/schemas/Name"
-          nullable: true
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/Name"
         zones:
           type: "array"
           items:
@@ -1497,9 +1479,10 @@ components:
           description: "Datacenter locations orders into this capacity can acquire compute from."
           minItems: 1
         node_template:
-          $ref: "#/components/schemas/NodeTemplateId"
-          nullable: true
-          description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/NodeTemplateId"
+              description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
         start_nodes_automatically:
           type: "boolean"
           description: "If enabled, nodes will be provisioned and terminated + deleted automatically based on currently available allocation in this capacity. Requires `node_template` to be set."
@@ -1540,6 +1523,7 @@ components:
               readOnly: true
             message:
               type: "string"
+              x-speakeasy-error-message: true
             details:
               type: "array"
               items:
@@ -1551,9 +1535,10 @@ components:
         - "start_nodes_automatically"
       properties:
         name:
-          $ref: "#/components/schemas/Name"
-          nullable: true
-          description: "Unique name for this capacity."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/Name"
+              description: "Unique name for this capacity."
         zones:
           type: "array"
           items:
@@ -1563,9 +1548,10 @@ components:
             - "richmond"
           minItems: 1
         node_template:
-          $ref: "#/components/schemas/NameOrId_NodeTemplateId"
-          nullable: true
-          description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/NameOrId_NodeTemplateId"
+              description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
         start_nodes_automatically:
           type: "boolean"
           description: "Automatically start nodes when compute is available. Requires `node_template`."
@@ -1675,10 +1661,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     ImageDownloadResponse:
       type: "object"
       required:
@@ -1801,10 +1784,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     ListCapacitiesResponse:
       type: "object"
       required:
@@ -1818,9 +1798,10 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/CapacitiesCursor"
-          nullable: true
-          description: "Pass as `starting_after` or `ending_before` to paginate."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/CapacitiesCursor"
+              description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -1840,8 +1821,9 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/ImagesCursor"
-          nullable: true
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/ImagesCursor"
         has_more:
           type: "boolean"
         data:
@@ -1861,9 +1843,10 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/NodeTemplatesCursor"
-          nullable: true
-          description: "Pass as `starting_after` or `ending_before` to paginate."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/NodeTemplatesCursor"
+              description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -1883,9 +1866,10 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/NodesCursor"
-          nullable: true
-          description: "Pass as `starting_after` or `ending_before` to paginate."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/NodesCursor"
+              description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -2030,13 +2014,15 @@ components:
           items:
             $ref: "#/components/schemas/NodeSshHostKey"
         last_successful_key_update_at:
-          $ref: "#/components/schemas/UnixEpoch"
-          nullable: true
-          description: "Unix timestamp of the last successful host key refresh."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/UnixEpoch"
+              description: "Unix timestamp of the last successful host key refresh."
         last_attempted_key_update_at:
-          $ref: "#/components/schemas/UnixEpoch"
-          nullable: true
-          description: "Unix timestamp of the last attempted host key refresh."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/UnixEpoch"
+              description: "Unix timestamp of the last attempted host key refresh."
     NodeStatus:
       type: "string"
       description: "`pending` on creation while waiting for hardware assignment, `running` once assigned (note: the node may still be booting or loading a custom image), `terminated` when destroyed, `failed` on hardware fault."
@@ -2116,10 +2102,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     NotImplementedError:
       type: "object"
       required:
@@ -2138,10 +2121,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     OrderId:
       type: "string"
       examples:
@@ -2198,10 +2178,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     ReplaceNodeRequest:
       type: "object"
       properties:
@@ -2228,10 +2205,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     Schedule:
       type: "array"
       items:
@@ -2280,10 +2254,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     Side:
       type: "string"
       enum:
@@ -2346,10 +2317,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     UnixEpoch:
       type: "integer"
       format: "int64"
@@ -2373,6 +2341,7 @@ components:
               readOnly: true
             message:
               type: "string"
+              x-speakeasy-error-message: true
             details:
               type: "array"
               items:
@@ -2395,10 +2364,7 @@ components:
               readOnly: true
             message:
               type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ErrorDetail"
+              x-speakeasy-error-message: true
     UploadPartRequest:
       type: "object"
       required:
@@ -2468,9 +2434,10 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/OrdersCursor"
-          nullable: true
-          description: "Pass as `starting_after` or `ending_before` to paginate."
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/OrdersCursor"
+              description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -2532,14 +2499,17 @@ components:
         created_at:
           $ref: "#/components/schemas/UnixEpoch"
         filled_at:
-          $ref: "#/components/schemas/UnixEpoch"
-          nullable: true
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/UnixEpoch"
         filled_price_dollars_per_node_hour:
-          $ref: "#/components/schemas/DollarsPerNodeHour"
-          nullable: true
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/DollarsPerNodeHour"
         cancelled_at:
-          $ref: "#/components/schemas/UnixEpoch"
-          nullable: true
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/UnixEpoch"
     v2.OrderSortBy:
       type: "string"
       enum:

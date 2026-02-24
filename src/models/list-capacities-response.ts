@@ -15,7 +15,7 @@ import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
 export type ListCapacitiesResponse = {
   object: "list";
-  cursor?: string | undefined;
+  cursor?: string | null | undefined;
   hasMore: boolean;
   data: Array<CapacityResponse>;
 };
@@ -27,7 +27,7 @@ export const ListCapacitiesResponse$inboundSchema: z.ZodMiniType<
 > = z.pipe(
   z.object({
     object: z._default(types.literal("list"), "list"),
-    cursor: types.optional(types.string()),
+    cursor: z.optional(z.nullable(types.string())),
     has_more: types.boolean(),
     data: z.array(CapacityResponse$inboundSchema),
   }),
