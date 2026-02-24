@@ -10,6 +10,7 @@ import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as models from "../models/index.js";
 import * as operations from "../models/operations/index.js";
 import { unwrapAsync } from "../types/fp.js";
+import { PageIterator, unwrapResultIterator } from "../types/operations.js";
 
 export class Orders extends ClientSDK {
   /**
@@ -21,8 +22,8 @@ export class Orders extends ClientSDK {
   async list(
     request?: operations.ListOrdersRequest | undefined,
     options?: RequestOptions,
-  ): Promise<models.MarketApiV2ListOrdersResponse> {
-    return unwrapAsync(ordersList(
+  ): Promise<PageIterator<operations.ListOrdersResponse, { cursor: string }>> {
+    return unwrapResultIterator(ordersList(
       this,
       request,
       options,
@@ -36,9 +37,9 @@ export class Orders extends ClientSDK {
    * Place a buy or sell order. Orders fill completely or not at all. All nodes fill in a single zone. Order filling is asynchronous; poll `GET /v2/orders/{id}` to check status.
    */
   async create(
-    request: operations.PostOrderRequest,
+    request: operations.CreateOrderRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiV2OrderResponse> {
+  ): Promise<models.V2OrderResponse> {
     return unwrapAsync(ordersCreate(
       this,
       request,
@@ -55,7 +56,7 @@ export class Orders extends ClientSDK {
   async get(
     request: operations.GetOrderRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiV2OrderResponse> {
+  ): Promise<models.V2OrderResponse> {
     return unwrapAsync(ordersGet(
       this,
       request,

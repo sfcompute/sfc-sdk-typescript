@@ -26,6 +26,7 @@ Developer-friendly & type-safe Typescript SDK specifically catered to leverage *
   * [Authentication](#authentication)
   * [Available Resources and Operations](#available-resources-and-operations)
   * [Standalone functions](#standalone-functions)
+  * [Pagination](#pagination)
   * [Retries](#retries)
   * [Error Handling](#error-handling)
   * [Custom HTTP Client](#custom-http-client)
@@ -39,34 +40,30 @@ Developer-friendly & type-safe Typescript SDK specifically catered to leverage *
 <!-- Start SDK Installation [installation] -->
 ## SDK Installation
 
-> [!TIP]
-> To finish publishing your SDK to npm and others you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
-
-
 The SDK can be installed with either [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [bun](https://bun.sh/) or [yarn](https://classic.yarnpkg.com/en/) package managers.
 
 ### NPM
 
 ```bash
-npm add <UNSET>
+npm add @sfcompute/sdk
 ```
 
 ### PNPM
 
 ```bash
-pnpm add <UNSET>
+pnpm add @sfcompute/sdk
 ```
 
 ### Bun
 
 ```bash
-bun add <UNSET>
+bun add @sfcompute/sdk
 ```
 
 ### Yarn
 
 ```bash
-yarn add <UNSET>
+yarn add @sfcompute/sdk
 ```
 
 > [!NOTE]
@@ -89,7 +86,7 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -98,7 +95,9 @@ async function run() {
     endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -113,17 +112,17 @@ run();
 
 This SDK supports the following security scheme globally:
 
-| Name                  | Type | Scheme      | Environment Variable         |
-| --------------------- | ---- | ----------- | ---------------------------- |
-| `marketApiBearerAuth` | http | HTTP Bearer | `SFC_MARKET_API_BEARER_AUTH` |
+| Name         | Type | Scheme      | Environment Variable |
+| ------------ | ---- | ----------- | -------------------- |
+| `bearerAuth` | http | HTTP Bearer | `SFC_BEARER_AUTH`    |
 
-To authenticate with the API the `marketApiBearerAuth` parameter must be set when initializing the SDK client instance. For example:
+To authenticate with the API the `bearerAuth` parameter must be set when initializing the SDK client instance. For example:
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -132,32 +131,9 @@ async function run() {
     endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
-}
-
-run();
-
-```
-
-### Per-Operation Security Schemes
-
-Some operations in this SDK require the security scheme to be specified at the request level. For example:
-```typescript
-import { Sfc } from "@sfcompute/sdk";
-
-const sfc = new Sfc({
-  serverURL: "https://api.example.com",
-});
-
-async function run() {
-  const result = await sfc.images.list({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
-    startingAfter: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
-    endingBefore: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
-  });
-
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -184,6 +160,7 @@ run();
 * [list](docs/sdks/images/README.md#list) - List images
 * [startUpload](docs/sdks/images/README.md#startupload) - Create image
 * [get](docs/sdks/images/README.md#get) - Get image
+* [delete](docs/sdks/images/README.md#delete) - Delete image
 * [completeUpload](docs/sdks/images/README.md#completeupload) - Complete image upload
 * [download](docs/sdks/images/README.md#download) - Download image
 * [uploadPart](docs/sdks/images/README.md#uploadpart) - Create image upload part URL
@@ -234,6 +211,7 @@ To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
 - [`capacitiesList`](docs/sdks/capacities/README.md#list) - List capacities
 - [`capacitiesUpdate`](docs/sdks/capacities/README.md#update) - Update capacity
 - [`imagesCompleteUpload`](docs/sdks/images/README.md#completeupload) - Complete image upload
+- [`imagesDelete`](docs/sdks/images/README.md#delete) - Delete image
 - [`imagesDownload`](docs/sdks/images/README.md#download) - Download image
 - [`imagesGet`](docs/sdks/images/README.md#get) - Get image
 - [`imagesList`](docs/sdks/images/README.md#list) - List images
@@ -256,6 +234,42 @@ To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
 </details>
 <!-- End Standalone functions [standalone-funcs] -->
 
+<!-- Start Pagination [pagination] -->
+## Pagination
+
+Some of the endpoints in this SDK support pagination. To use pagination, you
+make your SDK calls as usual, but the returned response object will also be an
+async iterable that can be consumed using the [`for await...of`][for-await-of]
+syntax.
+
+[for-await-of]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of
+
+Here's an example of one such pagination call:
+
+```typescript
+import { Sfc } from "@sfcompute/sdk";
+
+const sfc = new Sfc({
+  serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
+});
+
+async function run() {
+  const result = await sfc.capacities.list({
+    startingAfter: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
+    endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
+  });
+
+  for await (const page of result) {
+    console.log(page);
+  }
+}
+
+run();
+
+```
+<!-- End Pagination [pagination] -->
+
 <!-- Start Retries [retries] -->
 ## Retries
 
@@ -267,7 +281,7 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -287,7 +301,9 @@ async function run() {
     },
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -310,7 +326,7 @@ const sfc = new Sfc({
     },
     retryConnectionErrors: false,
   },
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -319,7 +335,9 @@ async function run() {
     endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -348,7 +366,7 @@ import * as errors from "@sfcompute/sdk/models/errors";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -358,7 +376,9 @@ async function run() {
       endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
     });
 
-    console.log(result);
+    for await (const page of result) {
+      console.log(page);
+    }
   } catch (error) {
     // The base class for HTTP error responses
     if (error instanceof errors.SfcError) {
@@ -368,8 +388,8 @@ async function run() {
       console.log(error.headers);
 
       // Depending on the method different errors may be thrown
-      if (error instanceof errors.MarketApiUnauthorizedError) {
-        console.log(error.data$.error); // models.MarketApiUnauthorizedErrorError
+      if (error instanceof errors.UnauthorizedError) {
+        console.log(error.data$.error); // models.UnauthorizedErrorError
       }
     }
   }
@@ -380,10 +400,12 @@ run();
 ```
 
 ### Error Classes
-**Primary error:**
+**Primary errors:**
 * [`SfcError`](./src/models/errors/sfc-error.ts): The base class for HTTP error responses.
+  * [`UnauthorizedError`](./src/models/errors/unauthorized-error.ts): Status code `401`.
+  * [`InternalServerError`](./src/models/errors/internal-server-error.ts): Status code `500`.
 
-<details><summary>Less common errors (19)</summary>
+<details><summary>Less common errors (12)</summary>
 
 <br />
 
@@ -396,19 +418,12 @@ run();
 
 
 **Inherit from [`SfcError`](./src/models/errors/sfc-error.ts)**:
-* [`MarketApiUnauthorizedError`](./src/models/errors/market-api-unauthorized-error.ts): Unauthorized. Status code `401`. Applicable to 13 of 24 methods.*
-* [`MarketApiInternalServerError`](./src/models/errors/market-api-internal-server-error.ts): Internal server error. Status code `500`. Applicable to 13 of 24 methods.*
-* [`VmorchUnauthorizedError`](./src/models/errors/vmorch-unauthorized-error.ts): Unauthorized. Status code `401`. Applicable to 11 of 24 methods.*
-* [`VmorchInternalServerError`](./src/models/errors/vmorch-internal-server-error.ts): Internal server error. Status code `500`. Applicable to 11 of 24 methods.*
-* [`MarketApiUnprocessableEntityError`](./src/models/errors/market-api-unprocessable-entity-error.ts): Status code `422`. Applicable to 10 of 24 methods.*
-* [`VmorchNotFoundError`](./src/models/errors/vmorch-not-found-error.ts): Status code `404`. Applicable to 9 of 24 methods.*
-* [`MarketApiNotFoundError`](./src/models/errors/market-api-not-found-error.ts): Status code `404`. Applicable to 8 of 24 methods.*
-* [`MarketApiForbiddenError`](./src/models/errors/market-api-forbidden-error.ts): Status code `403`. Applicable to 6 of 24 methods.*
-* [`VmorchUnprocessableEntityError`](./src/models/errors/vmorch-unprocessable-entity-error.ts): Validation failed. Status code `422`. Applicable to 5 of 24 methods.*
-* [`VmorchForbiddenError`](./src/models/errors/vmorch-forbidden-error.ts): Status code `403`. Applicable to 4 of 24 methods.*
-* [`VmorchConflictError`](./src/models/errors/vmorch-conflict-error.ts): Status code `409`. Applicable to 2 of 24 methods.*
-* [`VmorchBadRequestError`](./src/models/errors/vmorch-bad-request-error.ts): Validation failed. Status code `400`. Applicable to 1 of 24 methods.*
-* [`MarketApiPaymentRequiredError`](./src/models/errors/market-api-payment-required-error.ts): Insufficient balance. Status code `402`. Applicable to 1 of 24 methods.*
+* [`NotFoundError`](./src/models/errors/not-found-error.ts): Status code `404`. Applicable to 18 of 25 methods.*
+* [`UnprocessableEntityError`](./src/models/errors/unprocessable-entity-error.ts): Status code `422`. Applicable to 12 of 25 methods.*
+* [`ForbiddenError`](./src/models/errors/forbidden-error.ts): Status code `403`. Applicable to 10 of 25 methods.*
+* [`BadRequestError`](./src/models/errors/bad-request-error.ts): Status code `400`. Applicable to 4 of 25 methods.*
+* [`ConflictError`](./src/models/errors/conflict-error.ts): Status code `409`. Applicable to 3 of 25 methods.*
+* [`PaymentRequiredError`](./src/models/errors/payment-required-error.ts): Insufficient balance. Status code `402`. Applicable to 1 of 25 methods.*
 * [`ResponseValidationError`](./src/models/errors/response-validation-error.ts): Type mismatch between the data returned from the server and the structure expected by the SDK. See `error.rawValue` for the raw value and `error.pretty()` for a nicely formatted multi-line string.
 
 </details>

@@ -247,8 +247,7 @@ export function resolveGlobalSecurity(
       {
         fieldName: "Authorization",
         type: "http:bearer",
-        value: security?.marketApiBearerAuth
-          ?? env().SFC_MARKET_API_BEARER_AUTH,
+        value: security?.bearerAuth ?? env().SFC_BEARER_AUTH,
       },
     ],
   );

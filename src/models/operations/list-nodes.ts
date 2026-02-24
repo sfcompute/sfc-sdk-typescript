@@ -6,10 +6,6 @@ import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../../lib/primitives.js";
 import * as models from "../index.js";
 
-export type ListNodesSecurity = {
-  vmorchBearerAuth: string;
-};
-
 export type ListNodesRequest = {
   /**
    * Filter by node ID (repeatable).
@@ -22,7 +18,7 @@ export type ListNodesRequest = {
   /**
    * Filter by node status (repeatable).
    */
-  status?: Array<models.VmorchNodeStatus> | undefined;
+  status?: Array<models.NodeStatus> | undefined;
   /**
    * Include deleted nodes in the response. Currently terminated nodes are auto-deleted. Don't expect this behavior to be stable.
    */
@@ -37,34 +33,6 @@ export type ListNodesRequest = {
    */
   endingBefore?: string | undefined;
 };
-
-/** @internal */
-export type ListNodesSecurity$Outbound = {
-  vmorch_bearer_auth: string;
-};
-
-/** @internal */
-export const ListNodesSecurity$outboundSchema: z.ZodMiniType<
-  ListNodesSecurity$Outbound,
-  ListNodesSecurity
-> = z.pipe(
-  z.object({
-    vmorchBearerAuth: z.string(),
-  }),
-  z.transform((v) => {
-    return remap$(v, {
-      vmorchBearerAuth: "vmorch_bearer_auth",
-    });
-  }),
-);
-
-export function listNodesSecurityToJSON(
-  listNodesSecurity: ListNodesSecurity,
-): string {
-  return JSON.stringify(
-    ListNodesSecurity$outboundSchema.parse(listNodesSecurity),
-  );
-}
 
 /** @internal */
 export type ListNodesRequest$Outbound = {
@@ -85,7 +53,7 @@ export const ListNodesRequest$outboundSchema: z.ZodMiniType<
   z.object({
     id: z.optional(z.array(z.string())),
     capacity: z.optional(z.string()),
-    status: z.optional(z.array(models.VmorchNodeStatus$outboundSchema)),
+    status: z.optional(z.array(models.NodeStatus$outboundSchema)),
     includeDeleted: z._default(z.boolean(), false),
     limit: z._default(z.int(), 50),
     startingAfter: z.optional(z.string()),

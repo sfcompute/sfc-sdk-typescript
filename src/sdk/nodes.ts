@@ -20,13 +20,11 @@ export class Nodes extends ClientSDK {
    * List all nodes.
    */
   async list(
-    security: operations.ListNodesSecurity,
     request?: operations.ListNodesRequest | undefined,
     options?: RequestOptions,
-  ): Promise<models.VmorchListNodesResponse> {
+  ): Promise<models.ListNodesResponse> {
     return unwrapAsync(nodesList(
       this,
-      security,
       request,
       options,
     ));
@@ -39,13 +37,11 @@ export class Nodes extends ClientSDK {
    * Retrieve a node by ID.
    */
   async get(
-    security: operations.GetNodeSecurity,
-    request: operations.GetNodeRequest,
+    request: operations.FetchNodeRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchNodeResponse> {
+  ): Promise<models.NodeResponse> {
     return unwrapAsync(nodesGet(
       this,
-      security,
       request,
       options,
     ));
@@ -58,13 +54,11 @@ export class Nodes extends ClientSDK {
    * Retrieve logs for a node.
    */
   async getLogs(
-    security: operations.GetNodeLogsSecurity,
-    request: operations.GetNodeLogsRequest,
+    request: operations.FetchNodeLogsRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchNodeLogsResponse> {
+  ): Promise<models.NodeLogsResponse> {
     return unwrapAsync(nodesGetLogs(
       this,
-      security,
       request,
       options,
     ));
@@ -77,13 +71,11 @@ export class Nodes extends ClientSDK {
    * Replace a node by destroying it and creating a new one in the same capacity.
    */
   async replace(
-    security: operations.ReplaceNodeSecurity,
     request: operations.ReplaceNodeRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchNodeResponse> {
+  ): Promise<models.NodeResponse> {
     return unwrapAsync(nodesReplace(
       this,
-      security,
       request,
       options,
     ));
@@ -96,13 +88,11 @@ export class Nodes extends ClientSDK {
    * Retrieve SSH connection details for a node.
    */
   async getSsh(
-    security: operations.GetNodeSshSecurity,
-    request: operations.GetNodeSshRequest,
+    request: operations.FetchNodeSshRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchNodeSshInfo> {
+  ): Promise<models.NodeSshInfo> {
     return unwrapAsync(nodesGetSsh(
       this,
-      security,
       request,
       options,
     ));

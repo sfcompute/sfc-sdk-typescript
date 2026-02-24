@@ -24,12 +24,11 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.nodes.list({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: [
       "n",
       "o",
@@ -81,12 +80,11 @@ import { nodesList } from "@sfcompute/sdk/funcs/nodes-list.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await nodesList(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: [
       "n",
       "o",
@@ -135,24 +133,23 @@ run();
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `request`                                                                                                                                                                      | [operations.ListNodesRequest](../../models/operations/list-nodes-request.md)                                                                                                   | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.ListNodesSecurity](../../models/operations/list-nodes-security.md)                                                                                                 | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchListNodesResponse](../../models/vmorch-list-nodes-response.md)\>**
+**Promise\<[models.ListNodesResponse](../../models/list-nodes-response.md)\>**
 
 ### Errors
 
-| Error Type                            | Status Code                           | Content Type                          |
-| ------------------------------------- | ------------------------------------- | ------------------------------------- |
-| errors.VmorchUnauthorizedError        | 401                                   | application/json                      |
-| errors.VmorchNotFoundError            | 404                                   | application/json                      |
-| errors.VmorchUnprocessableEntityError | 422                                   | application/json                      |
-| errors.VmorchInternalServerError      | 500                                   | application/json                      |
-| errors.SfcDefaultError                | 4XX, 5XX                              | \*/\*                                 |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## get
 
@@ -160,18 +157,17 @@ Retrieve a node by ID.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_node" method="get" path="/v2/nodes/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_node" method="get" path="/v2/nodes/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.nodes.get({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -193,12 +189,11 @@ import { nodesGet } from "@sfcompute/sdk/funcs/nodes-get.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await nodesGet(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
@@ -216,24 +211,23 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetNodeRequest](../../models/operations/get-node-request.md)                                                                                                       | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.GetNodeSecurity](../../models/operations/get-node-security.md)                                                                                                     | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.FetchNodeRequest](../../models/operations/fetch-node-request.md)                                                                                                   | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchNodeResponse](../../models/vmorch-node-response.md)\>**
+**Promise\<[models.NodeResponse](../../models/node-response.md)\>**
 
 ### Errors
 
-| Error Type                       | Status Code                      | Content Type                     |
-| -------------------------------- | -------------------------------- | -------------------------------- |
-| errors.VmorchUnauthorizedError   | 401                              | application/json                 |
-| errors.VmorchNotFoundError       | 404                              | application/json                 |
-| errors.VmorchInternalServerError | 500                              | application/json                 |
-| errors.SfcDefaultError           | 4XX, 5XX                         | \*/\*                            |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## getLogs
 
@@ -241,18 +235,17 @@ Retrieve logs for a node.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_node_logs" method="get" path="/v2/nodes/{id}/logs" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_node_logs" method="get" path="/v2/nodes/{id}/logs" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.nodes.getLogs({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
     realtimeTimestampBefore: 1738972800,
     realtimeTimestampAfter: 1738972800,
@@ -276,12 +269,11 @@ import { nodesGetLogs } from "@sfcompute/sdk/funcs/nodes-get-logs.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await nodesGetLogs(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
     realtimeTimestampBefore: 1738972800,
     realtimeTimestampAfter: 1738972800,
@@ -301,25 +293,24 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetNodeLogsRequest](../../models/operations/get-node-logs-request.md)                                                                                              | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.GetNodeLogsSecurity](../../models/operations/get-node-logs-security.md)                                                                                            | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.FetchNodeLogsRequest](../../models/operations/fetch-node-logs-request.md)                                                                                          | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchNodeLogsResponse](../../models/vmorch-node-logs-response.md)\>**
+**Promise\<[models.NodeLogsResponse](../../models/node-logs-response.md)\>**
 
 ### Errors
 
-| Error Type                            | Status Code                           | Content Type                          |
-| ------------------------------------- | ------------------------------------- | ------------------------------------- |
-| errors.VmorchUnauthorizedError        | 401                                   | application/json                      |
-| errors.VmorchNotFoundError            | 404                                   | application/json                      |
-| errors.VmorchUnprocessableEntityError | 422                                   | application/json                      |
-| errors.VmorchInternalServerError      | 500                                   | application/json                      |
-| errors.SfcDefaultError                | 4XX, 5XX                              | \*/\*                                 |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## replace
 
@@ -333,12 +324,11 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.nodes.replace({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
     body: {},
   });
@@ -361,12 +351,11 @@ import { nodesReplace } from "@sfcompute/sdk/funcs/nodes-replace.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await nodesReplace(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
     body: {},
   });
@@ -386,24 +375,23 @@ run();
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `request`                                                                                                                                                                      | [operations.ReplaceNodeRequest](../../models/operations/replace-node-request.md)                                                                                               | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.ReplaceNodeSecurity](../../models/operations/replace-node-security.md)                                                                                             | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchNodeResponse](../../models/vmorch-node-response.md)\>**
+**Promise\<[models.NodeResponse](../../models/node-response.md)\>**
 
 ### Errors
 
-| Error Type                       | Status Code                      | Content Type                     |
-| -------------------------------- | -------------------------------- | -------------------------------- |
-| errors.VmorchUnauthorizedError   | 401                              | application/json                 |
-| errors.VmorchForbiddenError      | 403                              | application/json                 |
-| errors.VmorchNotFoundError       | 404                              | application/json                 |
-| errors.VmorchInternalServerError | 500                              | application/json                 |
-| errors.SfcDefaultError           | 4XX, 5XX                         | \*/\*                            |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.ForbiddenError      | 403                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## getSsh
 
@@ -411,18 +399,17 @@ Retrieve SSH connection details for a node.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_node_ssh" method="get" path="/v2/nodes/{id}/ssh" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_node_ssh" method="get" path="/v2/nodes/{id}/ssh" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.nodes.getSsh({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -444,12 +431,11 @@ import { nodesGetSsh } from "@sfcompute/sdk/funcs/nodes-get-ssh.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await nodesGetSsh(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
@@ -467,21 +453,20 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetNodeSshRequest](../../models/operations/get-node-ssh-request.md)                                                                                                | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.GetNodeSshSecurity](../../models/operations/get-node-ssh-security.md)                                                                                              | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.FetchNodeSshRequest](../../models/operations/fetch-node-ssh-request.md)                                                                                            | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchNodeSshInfo](../../models/vmorch-node-ssh-info.md)\>**
+**Promise\<[models.NodeSshInfo](../../models/node-ssh-info.md)\>**
 
 ### Errors
 
-| Error Type                       | Status Code                      | Content Type                     |
-| -------------------------------- | -------------------------------- | -------------------------------- |
-| errors.VmorchUnauthorizedError   | 401                              | application/json                 |
-| errors.VmorchNotFoundError       | 404                              | application/json                 |
-| errors.VmorchInternalServerError | 500                              | application/json                 |
-| errors.SfcDefaultError           | 4XX, 5XX                         | \*/\*                            |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |

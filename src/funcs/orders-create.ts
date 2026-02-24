@@ -35,17 +35,17 @@ import { Result } from "../types/fp.js";
  */
 export function ordersCreate(
   client: SfcCore,
-  request: operations.PostOrderRequest,
+  request: operations.CreateOrderRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.MarketApiV2OrderResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiPaymentRequiredError
-    | errors.MarketApiForbiddenError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiUnprocessableEntityError
-    | errors.MarketApiInternalServerError
+    models.V2OrderResponse,
+    | errors.UnauthorizedError
+    | errors.PaymentRequiredError
+    | errors.ForbiddenError
+    | errors.NotFoundError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -65,18 +65,18 @@ export function ordersCreate(
 
 async function $do(
   client: SfcCore,
-  request: operations.PostOrderRequest,
+  request: operations.CreateOrderRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.MarketApiV2OrderResponse,
-      | errors.MarketApiUnauthorizedError
-      | errors.MarketApiPaymentRequiredError
-      | errors.MarketApiForbiddenError
-      | errors.MarketApiNotFoundError
-      | errors.MarketApiUnprocessableEntityError
-      | errors.MarketApiInternalServerError
+      models.V2OrderResponse,
+      | errors.UnauthorizedError
+      | errors.PaymentRequiredError
+      | errors.ForbiddenError
+      | errors.NotFoundError
+      | errors.UnprocessableEntityError
+      | errors.InternalServerError
       | SfcError
       | ResponseValidationError
       | ConnectionError
@@ -91,7 +91,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.PostOrderRequest$outboundSchema, value),
+    (value) => z.parse(operations.CreateOrderRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -112,21 +112,19 @@ async function $do(
     ),
   }));
 
-  const secConfig = await extractSecurity(client._options.marketApiBearerAuth);
-  const securityInput = secConfig == null
-    ? {}
-    : { marketApiBearerAuth: secConfig };
+  const secConfig = await extractSecurity(client._options.bearerAuth);
+  const securityInput = secConfig == null ? {} : { bearerAuth: secConfig };
   const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "post_order",
+    operationID: "create_order",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
 
-    securitySource: client._options.marketApiBearerAuth,
+    securitySource: client._options.bearerAuth,
     retryConfig: options?.retries
       || client._options.retryConfig
       || { strategy: "none" },
@@ -164,13 +162,13 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.MarketApiV2OrderResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiPaymentRequiredError
-    | errors.MarketApiForbiddenError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiUnprocessableEntityError
-    | errors.MarketApiInternalServerError
+    models.V2OrderResponse,
+    | errors.UnauthorizedError
+    | errors.PaymentRequiredError
+    | errors.ForbiddenError
+    | errors.NotFoundError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -180,13 +178,13 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(201, models.MarketApiV2OrderResponse$inboundSchema),
-    M.jsonErr(401, errors.MarketApiUnauthorizedError$inboundSchema),
-    M.jsonErr(402, errors.MarketApiPaymentRequiredError$inboundSchema),
-    M.jsonErr(403, errors.MarketApiForbiddenError$inboundSchema),
-    M.jsonErr(404, errors.MarketApiNotFoundError$inboundSchema),
-    M.jsonErr(422, errors.MarketApiUnprocessableEntityError$inboundSchema),
-    M.jsonErr(500, errors.MarketApiInternalServerError$inboundSchema),
+    M.json(201, models.V2OrderResponse$inboundSchema),
+    M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
+    M.jsonErr(402, errors.PaymentRequiredError$inboundSchema),
+    M.jsonErr(403, errors.ForbiddenError$inboundSchema),
+    M.jsonErr(404, errors.NotFoundError$inboundSchema),
+    M.jsonErr(422, errors.UnprocessableEntityError$inboundSchema),
+    M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });

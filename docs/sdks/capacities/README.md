@@ -18,13 +18,13 @@ List all capacities.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="list_capacities_handler" method="get" path="/v2/capacities" -->
+<!-- UsageSnippet language="typescript" operationID="list_capacities" method="get" path="/v2/capacities" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -33,7 +33,9 @@ async function run() {
     endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -51,7 +53,7 @@ import { capacitiesList } from "@sfcompute/sdk/funcs/capacities-list.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -61,7 +63,9 @@ async function run() {
   });
   if (res.ok) {
     const { value: result } = res;
-    console.log(result);
+    for await (const page of result) {
+    console.log(page);
+  }
   } else {
     console.log("capacitiesList failed:", res.error);
   }
@@ -74,23 +78,23 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.ListCapacitiesHandlerRequest](../../models/operations/list-capacities-handler-request.md)                                                                          | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.ListCapacitiesRequest](../../models/operations/list-capacities-request.md)                                                                                         | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiListCapacitiesResponse](../../models/market-api-list-capacities-response.md)\>**
+**Promise\<[operations.ListCapacitiesResponse](../../models/operations/list-capacities-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## create
 
@@ -98,13 +102,13 @@ Create a capacity to hold compute in specified zones.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="create_capacity_handler" method="post" path="/v2/capacities" -->
+<!-- UsageSnippet language="typescript" operationID="create_capacity" method="post" path="/v2/capacities" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -116,8 +120,8 @@ async function run() {
     nodeTemplate: "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F",
     startNodesAutomatically: false,
     scheduler: {
-      desiredQuantity: 618495,
-      managedWindowMinutes: 156920,
+      desiredQuantity: 152218,
+      managedWindowMinutes: 424047,
       minSellPriceDollarsPerNodeHour: "2.500000",
       maxBuyPriceDollarsPerNodeHour: "2.500000",
       enabled: false,
@@ -142,7 +146,7 @@ import { capacitiesCreate } from "@sfcompute/sdk/funcs/capacities-create.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -154,8 +158,8 @@ async function run() {
     nodeTemplate: "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F",
     startNodesAutomatically: false,
     scheduler: {
-      desiredQuantity: 618495,
-      managedWindowMinutes: 156920,
+      desiredQuantity: 152218,
+      managedWindowMinutes: 424047,
       minSellPriceDollarsPerNodeHour: "2.500000",
       maxBuyPriceDollarsPerNodeHour: "2.500000",
       enabled: false,
@@ -176,24 +180,24 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [models.MarketApiCreateCapacityRequest](../../models/market-api-create-capacity-request.md)                                                                                    | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [models.CreateCapacityRequest](../../models/create-capacity-request.md)                                                                                                        | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiCapacityResponse](../../models/market-api-capacity-response.md)\>**
+**Promise\<[models.CapacityResponse](../../models/capacity-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiForbiddenError           | 403                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.ForbiddenError           | 403                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## get
 
@@ -201,13 +205,13 @@ Retrieve a capacity by ID or name, including its compute schedule and scheduler 
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_capacity_handler" method="get" path="/v2/capacities/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_capacity" method="get" path="/v2/capacities/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -233,7 +237,7 @@ import { capacitiesGet } from "@sfcompute/sdk/funcs/capacities-get.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -255,23 +259,23 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetCapacityHandlerRequest](../../models/operations/get-capacity-handler-request.md)                                                                                | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.FetchCapacityRequest](../../models/operations/fetch-capacity-request.md)                                                                                           | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiCapacityResponse](../../models/market-api-capacity-response.md)\>**
+**Promise\<[models.CapacityResponse](../../models/capacity-response.md)\>**
 
 ### Errors
 
-| Error Type                          | Status Code                         | Content Type                        |
-| ----------------------------------- | ----------------------------------- | ----------------------------------- |
-| errors.MarketApiUnauthorizedError   | 401                                 | application/json                    |
-| errors.MarketApiNotFoundError       | 404                                 | application/json                    |
-| errors.MarketApiInternalServerError | 500                                 | application/json                    |
-| errors.SfcDefaultError              | 4XX, 5XX                            | \*/\*                               |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## delete
 
@@ -279,13 +283,13 @@ Delete a capacity. The capacity must be empty and the scheduler must be disabled
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="delete_capacity_handler" method="delete" path="/v2/capacities/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="delete_capacity" method="delete" path="/v2/capacities/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -311,7 +315,7 @@ import { capacitiesDelete } from "@sfcompute/sdk/funcs/capacities-delete.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -333,7 +337,7 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.DeleteCapacityHandlerRequest](../../models/operations/delete-capacity-handler-request.md)                                                                          | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.DeleteCapacityRequest](../../models/operations/delete-capacity-request.md)                                                                                         | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
@@ -344,14 +348,14 @@ run();
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiForbiddenError           | 403                                      | application/json                         |
-| errors.MarketApiNotFoundError            | 404                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.ForbiddenError           | 403                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## update
 
@@ -359,13 +363,13 @@ Update a capacity. Omitted fields are left unchanged.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="patch_capacity_handler" method="patch" path="/v2/capacities/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="update_capacity" method="patch" path="/v2/capacities/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -376,8 +380,8 @@ async function run() {
         "richmond",
       ],
       scheduler: {
-        desiredQuantity: 177158,
-        managedWindowMinutes: 74838,
+        desiredQuantity: 436706,
+        managedWindowMinutes: 661494,
         minSellPriceDollarsPerNodeHour: "2.500000",
         maxBuyPriceDollarsPerNodeHour: "2.500000",
         enabled: true,
@@ -403,7 +407,7 @@ import { capacitiesUpdate } from "@sfcompute/sdk/funcs/capacities-update.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -414,8 +418,8 @@ async function run() {
         "richmond",
       ],
       scheduler: {
-        desiredQuantity: 177158,
-        managedWindowMinutes: 74838,
+        desiredQuantity: 436706,
+        managedWindowMinutes: 661494,
         minSellPriceDollarsPerNodeHour: "2.500000",
         maxBuyPriceDollarsPerNodeHour: "2.500000",
         enabled: true,
@@ -437,22 +441,22 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.PatchCapacityHandlerRequest](../../models/operations/patch-capacity-handler-request.md)                                                                            | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.UpdateCapacityRequest](../../models/operations/update-capacity-request.md)                                                                                         | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiCapacityResponse](../../models/market-api-capacity-response.md)\>**
+**Promise\<[models.CapacityResponse](../../models/capacity-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiForbiddenError           | 403                                      | application/json                         |
-| errors.MarketApiNotFoundError            | 404                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.ForbiddenError           | 403                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |

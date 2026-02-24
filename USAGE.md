@@ -4,7 +4,7 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -13,7 +13,9 @@ async function run() {
     endingBefore: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();

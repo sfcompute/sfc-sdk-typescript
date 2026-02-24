@@ -10,6 +10,7 @@ import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as models from "../models/index.js";
 import * as operations from "../models/operations/index.js";
 import { unwrapAsync } from "../types/fp.js";
+import { PageIterator, unwrapResultIterator } from "../types/operations.js";
 
 export class NodeTemplates extends ClientSDK {
   /**
@@ -19,10 +20,12 @@ export class NodeTemplates extends ClientSDK {
    * List all node templates.
    */
   async list(
-    request?: operations.ListNodeTemplatesHandlerRequest | undefined,
+    request?: operations.ListNodeTemplatesRequest | undefined,
     options?: RequestOptions,
-  ): Promise<models.MarketApiListNodeTemplatesResponse> {
-    return unwrapAsync(nodeTemplatesList(
+  ): Promise<
+    PageIterator<operations.ListNodeTemplatesResponse, { cursor: string }>
+  > {
+    return unwrapResultIterator(nodeTemplatesList(
       this,
       request,
       options,
@@ -36,9 +39,9 @@ export class NodeTemplates extends ClientSDK {
    * Create a reusable node configuration.
    */
   async create(
-    request: models.MarketApiCreateNodeTemplateRequest,
+    request: models.CreateNodeTemplateRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiNodeTemplateResponse> {
+  ): Promise<models.NodeTemplateResponse> {
     return unwrapAsync(nodeTemplatesCreate(
       this,
       request,
@@ -53,9 +56,9 @@ export class NodeTemplates extends ClientSDK {
    * Retrieve a node template by ID or name.
    */
   async get(
-    request: operations.GetNodeTemplateHandlerRequest,
+    request: operations.FetchNodeTemplateRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiNodeTemplateResponse> {
+  ): Promise<models.NodeTemplateResponse> {
     return unwrapAsync(nodeTemplatesGet(
       this,
       request,
@@ -70,7 +73,7 @@ export class NodeTemplates extends ClientSDK {
    * Delete a node template. The template must not be in use by any capacity.
    */
   async delete(
-    request: operations.DeleteNodeTemplateHandlerRequest,
+    request: operations.DeleteNodeTemplateRequest,
     options?: RequestOptions,
   ): Promise<void> {
     return unwrapAsync(nodeTemplatesDelete(

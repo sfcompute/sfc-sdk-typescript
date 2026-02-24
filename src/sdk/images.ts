@@ -3,6 +3,7 @@
  */
 
 import { imagesCompleteUpload } from "../funcs/images-complete-upload.js";
+import { imagesDelete } from "../funcs/images-delete.js";
 import { imagesDownload } from "../funcs/images-download.js";
 import { imagesGet } from "../funcs/images-get.js";
 import { imagesList } from "../funcs/images-list.js";
@@ -12,22 +13,21 @@ import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as models from "../models/index.js";
 import * as operations from "../models/operations/index.js";
 import { unwrapAsync } from "../types/fp.js";
+import { PageIterator, unwrapResultIterator } from "../types/operations.js";
 
 export class Images extends ClientSDK {
   /**
    * List images
    *
    * @remarks
-   * List all machine images.
+   * List all images owned by the authenticated user.
    */
   async list(
-    security: operations.ListImagesV2Security,
-    request?: operations.ListImagesV2Request | undefined,
+    request?: operations.ListImagesRequest | undefined,
     options?: RequestOptions,
-  ): Promise<models.VmorchListImagesResponse> {
-    return unwrapAsync(imagesList(
+  ): Promise<PageIterator<operations.ListImagesResponse, { cursor: string }>> {
+    return unwrapResultIterator(imagesList(
       this,
-      security,
       request,
       options,
     ));
@@ -40,13 +40,11 @@ export class Images extends ClientSDK {
    * Create an image and start a multipart upload.
    */
   async startUpload(
-    security: operations.StartUploadSecurity,
-    request: models.VmorchStartUploadRequest,
+    request: models.StartUploadRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchImageResponse> {
+  ): Promise<models.ImageUploadResponse> {
     return unwrapAsync(imagesStartUpload(
       this,
-      security,
       request,
       options,
     ));
@@ -56,16 +54,31 @@ export class Images extends ClientSDK {
    * Get image
    *
    * @remarks
-   * Retrieve an image by ID.
+   * Retrieve an image by ID. Returns both user-owned and public images.
    */
   async get(
-    security: operations.GetImageSecurity,
-    request: operations.GetImageRequest,
+    request: operations.FetchImageRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchImageResponse> {
+  ): Promise<models.ImageListEntry> {
     return unwrapAsync(imagesGet(
       this,
-      security,
+      request,
+      options,
+    ));
+  }
+
+  /**
+   * Delete image
+   *
+   * @remarks
+   * Delete an image. This is a soft delete.
+   */
+  async delete(
+    request: operations.DeleteImageRequest,
+    options?: RequestOptions,
+  ): Promise<models.DeleteImageResponse> {
+    return unwrapAsync(imagesDelete(
+      this,
       request,
       options,
     ));
@@ -78,13 +91,11 @@ export class Images extends ClientSDK {
    * Complete a multipart image upload after all parts have been uploaded.
    */
   async completeUpload(
-    security: operations.CompleteUploadSecurity,
-    request: operations.CompleteUploadRequest,
+    request: operations.CompleteImageUploadRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchImageResponse> {
+  ): Promise<models.ImageUploadResponse> {
     return unwrapAsync(imagesCompleteUpload(
       this,
-      security,
       request,
       options,
     ));
@@ -94,16 +105,14 @@ export class Images extends ClientSDK {
    * Download image
    *
    * @remarks
-   * Get a presigned URL to download an image.
+   * Get a presigned URL to download an image. Works for both user-owned and public images.
    */
   async download(
-    security: operations.DownloadImageV2Security,
-    request: operations.DownloadImageV2Request,
+    request: operations.DownloadImageRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchImageDownloadResponse> {
+  ): Promise<models.ImageDownloadResponse> {
     return unwrapAsync(imagesDownload(
       this,
-      security,
       request,
       options,
     ));
@@ -116,13 +125,11 @@ export class Images extends ClientSDK {
    * Get a presigned URL to upload a part of a multipart image upload.
    */
   async uploadPart(
-    security: operations.UploadPartSecurity,
-    request: operations.UploadPartRequest,
+    request: operations.CreateImageUploadPartUrlRequest,
     options?: RequestOptions,
-  ): Promise<models.VmorchUploadPartResponse> {
+  ): Promise<models.UploadPartResponse> {
     return unwrapAsync(imagesUploadPart(
       this,
-      security,
       request,
       options,
     ));

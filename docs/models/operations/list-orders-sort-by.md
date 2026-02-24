@@ -5,9 +5,9 @@ Prefix with `-` for descending.
 
 ## Supported Types
 
-### `models.MarketApiV2OrderSortBy`
+### `models.V2OrderSortBy`
 
 ```typescript
-const value: models.MarketApiV2OrderSortBy = "start_at";
+const value: models.V2OrderSortBy = "created_at";
 ```
 

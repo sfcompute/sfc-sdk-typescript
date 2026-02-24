@@ -1,9 +1,9 @@
-speakeasyVersion: 1.723.0
+speakeasyVersion: 1.728.0
 sources:
     market-api:
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:7e5141d1f8255b85cd6be8f672db8648b980c32b8c454820675f855e63c32401
-        sourceBlobDigest: sha256:ae2e2945219ec8445b7eeb208d73638e1f5daa988cae42588a4dff52907abebd
+        sourceRevisionDigest: sha256:759041c9b07cf4b4cf1a3b369882d134aefef2923efa36259c1e4affdfda1825
+        sourceBlobDigest: sha256:873fe32c44d5c9eedc9f38604fe635fabb11235d18c83ac32ef69291e8b13315
         tags:
             - latest
             - 0.1.0
@@ -11,17 +11,17 @@ targets:
     sfc:
         source: market-api
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:7e5141d1f8255b85cd6be8f672db8648b980c32b8c454820675f855e63c32401
-        sourceBlobDigest: sha256:ae2e2945219ec8445b7eeb208d73638e1f5daa988cae42588a4dff52907abebd
+        sourceRevisionDigest: sha256:759041c9b07cf4b4cf1a3b369882d134aefef2923efa36259c1e4affdfda1825
+        sourceBlobDigest: sha256:873fe32c44d5c9eedc9f38604fe635fabb11235d18c83ac32ef69291e8b13315
         codeSamplesNamespace: market-api-typescript-code-samples
-        codeSamplesRevisionDigest: sha256:1c8d5c8c170b62dc5332179d389d5ccdba9628408a45e54800f0845e7868870c
+        codeSamplesRevisionDigest: sha256:1e3872a39d4d297a36b81f49b3b569a0f6b806b14a87a4b1c457295e62ea9461
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
     sources:
         market-api:
             inputs:
-                - location: ../../../../../users/dtao/downloads/openapi specification.json
+                - location: blueprint/current/openapi.json
             overlays:
                 - location: .speakeasy/speakeasy-modifications-overlay.yaml
             output: .speakeasy/out.openapi.yaml
@@ -31,6 +31,9 @@ workflow:
         sfc:
             target: typescript
             source: market-api
+            publish:
+                npm:
+                    token: $npm_token
             codeSamples:
                 registry:
                     location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api-typescript-code-samples

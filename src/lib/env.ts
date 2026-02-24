@@ -6,13 +6,13 @@ import * as z from "zod/v4-mini";
 import { dlv } from "./dlv.js";
 
 export interface Env {
-  SFC_MARKET_API_BEARER_AUTH?: string | undefined;
+  SFC_BEARER_AUTH?: string | undefined;
 
   SFC_DEBUG?: boolean | undefined;
 }
 
 export const envSchema: z.ZodMiniType<Env, unknown> = z.object({
-  SFC_MARKET_API_BEARER_AUTH: z.optional(z.string()),
+  SFC_BEARER_AUTH: z.optional(z.string()),
 
   SFC_DEBUG: z.optional(z.coerce.boolean()),
 });

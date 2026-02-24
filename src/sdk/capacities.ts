@@ -11,6 +11,7 @@ import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as models from "../models/index.js";
 import * as operations from "../models/operations/index.js";
 import { unwrapAsync } from "../types/fp.js";
+import { PageIterator, unwrapResultIterator } from "../types/operations.js";
 
 export class Capacities extends ClientSDK {
   /**
@@ -20,10 +21,12 @@ export class Capacities extends ClientSDK {
    * List all capacities.
    */
   async list(
-    request?: operations.ListCapacitiesHandlerRequest | undefined,
+    request?: operations.ListCapacitiesRequest | undefined,
     options?: RequestOptions,
-  ): Promise<models.MarketApiListCapacitiesResponse> {
-    return unwrapAsync(capacitiesList(
+  ): Promise<
+    PageIterator<operations.ListCapacitiesResponse, { cursor: string }>
+  > {
+    return unwrapResultIterator(capacitiesList(
       this,
       request,
       options,
@@ -37,9 +40,9 @@ export class Capacities extends ClientSDK {
    * Create a capacity to hold compute in specified zones.
    */
   async create(
-    request: models.MarketApiCreateCapacityRequest,
+    request: models.CreateCapacityRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiCapacityResponse> {
+  ): Promise<models.CapacityResponse> {
     return unwrapAsync(capacitiesCreate(
       this,
       request,
@@ -54,9 +57,9 @@ export class Capacities extends ClientSDK {
    * Retrieve a capacity by ID or name, including its compute schedule and scheduler configuration.
    */
   async get(
-    request: operations.GetCapacityHandlerRequest,
+    request: operations.FetchCapacityRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiCapacityResponse> {
+  ): Promise<models.CapacityResponse> {
     return unwrapAsync(capacitiesGet(
       this,
       request,
@@ -71,7 +74,7 @@ export class Capacities extends ClientSDK {
    * Delete a capacity. The capacity must be empty and the scheduler must be disabled or absent.
    */
   async delete(
-    request: operations.DeleteCapacityHandlerRequest,
+    request: operations.DeleteCapacityRequest,
     options?: RequestOptions,
   ): Promise<void> {
     return unwrapAsync(capacitiesDelete(
@@ -88,9 +91,9 @@ export class Capacities extends ClientSDK {
    * Update a capacity. Omitted fields are left unchanged.
    */
   async update(
-    request: operations.PatchCapacityHandlerRequest,
+    request: operations.UpdateCapacityRequest,
     options?: RequestOptions,
-  ): Promise<models.MarketApiCapacityResponse> {
+  ): Promise<models.CapacityResponse> {
     return unwrapAsync(capacitiesUpdate(
       this,
       request,

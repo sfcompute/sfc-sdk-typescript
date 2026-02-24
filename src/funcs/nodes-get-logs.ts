@@ -9,7 +9,7 @@ import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
-import { resolveSecurity } from "../lib/security.js";
+import { extractSecurity, resolveGlobalSecurity } from "../lib/security.js";
 import { pathToFunc } from "../lib/url.js";
 import {
   ConnectionError,
@@ -35,16 +35,15 @@ import { Result } from "../types/fp.js";
  */
 export function nodesGetLogs(
   client: SfcCore,
-  security: operations.GetNodeLogsSecurity,
-  request: operations.GetNodeLogsRequest,
+  request: operations.FetchNodeLogsRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.VmorchNodeLogsResponse,
-    | errors.VmorchUnauthorizedError
-    | errors.VmorchNotFoundError
-    | errors.VmorchUnprocessableEntityError
-    | errors.VmorchInternalServerError
+    models.NodeLogsResponse,
+    | errors.UnauthorizedError
+    | errors.NotFoundError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -57,7 +56,6 @@ export function nodesGetLogs(
 > {
   return new APIPromise($do(
     client,
-    security,
     request,
     options,
   ));
@@ -65,17 +63,16 @@ export function nodesGetLogs(
 
 async function $do(
   client: SfcCore,
-  security: operations.GetNodeLogsSecurity,
-  request: operations.GetNodeLogsRequest,
+  request: operations.FetchNodeLogsRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.VmorchNodeLogsResponse,
-      | errors.VmorchUnauthorizedError
-      | errors.VmorchNotFoundError
-      | errors.VmorchUnprocessableEntityError
-      | errors.VmorchInternalServerError
+      models.NodeLogsResponse,
+      | errors.UnauthorizedError
+      | errors.NotFoundError
+      | errors.UnprocessableEntityError
+      | errors.InternalServerError
       | SfcError
       | ResponseValidationError
       | ConnectionError
@@ -90,7 +87,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.GetNodeLogsRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchNodeLogsRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -121,25 +118,19 @@ async function $do(
     Accept: "application/json",
   }));
 
-  const requestSecurity = resolveSecurity(
-    [
-      {
-        fieldName: "Authorization",
-        type: "http:bearer",
-        value: security?.vmorchBearerAuth,
-      },
-    ],
-  );
+  const secConfig = await extractSecurity(client._options.bearerAuth);
+  const securityInput = secConfig == null ? {} : { bearerAuth: secConfig };
+  const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "get_node_logs",
+    operationID: "fetch_node_logs",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
 
-    securitySource: security,
+    securitySource: client._options.bearerAuth,
     retryConfig: options?.retries
       || client._options.retryConfig
       || { strategy: "none" },
@@ -178,11 +169,11 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.VmorchNodeLogsResponse,
-    | errors.VmorchUnauthorizedError
-    | errors.VmorchNotFoundError
-    | errors.VmorchUnprocessableEntityError
-    | errors.VmorchInternalServerError
+    models.NodeLogsResponse,
+    | errors.UnauthorizedError
+    | errors.NotFoundError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -192,11 +183,11 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.VmorchNodeLogsResponse$inboundSchema),
-    M.jsonErr(401, errors.VmorchUnauthorizedError$inboundSchema),
-    M.jsonErr(404, errors.VmorchNotFoundError$inboundSchema),
-    M.jsonErr(422, errors.VmorchUnprocessableEntityError$inboundSchema),
-    M.jsonErr(500, errors.VmorchInternalServerError$inboundSchema),
+    M.json(200, models.NodeLogsResponse$inboundSchema),
+    M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
+    M.jsonErr(404, errors.NotFoundError$inboundSchema),
+    M.jsonErr(422, errors.UnprocessableEntityError$inboundSchema),
+    M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });

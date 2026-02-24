@@ -15,23 +15,23 @@ export class Sfc extends ClientSDK {
     return (this._capacities ??= new Capacities(this._options));
   }
 
-  private _nodeTemplates?: NodeTemplates;
-  get nodeTemplates(): NodeTemplates {
-    return (this._nodeTemplates ??= new NodeTemplates(this._options));
-  }
-
-  private _orders?: Orders;
-  get orders(): Orders {
-    return (this._orders ??= new Orders(this._options));
-  }
-
   private _images?: Images;
   get images(): Images {
     return (this._images ??= new Images(this._options));
   }
 
+  private _nodeTemplates?: NodeTemplates;
+  get nodeTemplates(): NodeTemplates {
+    return (this._nodeTemplates ??= new NodeTemplates(this._options));
+  }
+
   private _nodes?: Nodes;
   get nodes(): Nodes {
     return (this._nodes ??= new Nodes(this._options));
+  }
+
+  private _orders?: Orders;
+  get orders(): Orders {
+    return (this._orders ??= new Orders(this._options));
   }
 }

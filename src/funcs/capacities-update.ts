@@ -35,16 +35,16 @@ import { Result } from "../types/fp.js";
  */
 export function capacitiesUpdate(
   client: SfcCore,
-  request: operations.PatchCapacityHandlerRequest,
+  request: operations.UpdateCapacityRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.MarketApiCapacityResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiForbiddenError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiUnprocessableEntityError
-    | errors.MarketApiInternalServerError
+    models.CapacityResponse,
+    | errors.UnauthorizedError
+    | errors.ForbiddenError
+    | errors.NotFoundError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -64,17 +64,17 @@ export function capacitiesUpdate(
 
 async function $do(
   client: SfcCore,
-  request: operations.PatchCapacityHandlerRequest,
+  request: operations.UpdateCapacityRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.MarketApiCapacityResponse,
-      | errors.MarketApiUnauthorizedError
-      | errors.MarketApiForbiddenError
-      | errors.MarketApiNotFoundError
-      | errors.MarketApiUnprocessableEntityError
-      | errors.MarketApiInternalServerError
+      models.CapacityResponse,
+      | errors.UnauthorizedError
+      | errors.ForbiddenError
+      | errors.NotFoundError
+      | errors.UnprocessableEntityError
+      | errors.InternalServerError
       | SfcError
       | ResponseValidationError
       | ConnectionError
@@ -89,8 +89,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) =>
-      z.parse(operations.PatchCapacityHandlerRequest$outboundSchema, value),
+    (value) => z.parse(operations.UpdateCapacityRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -113,21 +112,19 @@ async function $do(
     Accept: "application/json",
   }));
 
-  const secConfig = await extractSecurity(client._options.marketApiBearerAuth);
-  const securityInput = secConfig == null
-    ? {}
-    : { marketApiBearerAuth: secConfig };
+  const secConfig = await extractSecurity(client._options.bearerAuth);
+  const securityInput = secConfig == null ? {} : { bearerAuth: secConfig };
   const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "patch_capacity_handler",
+    operationID: "update_capacity",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
 
-    securitySource: client._options.marketApiBearerAuth,
+    securitySource: client._options.bearerAuth,
     retryConfig: options?.retries
       || client._options.retryConfig
       || { strategy: "none" },
@@ -165,12 +162,12 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.MarketApiCapacityResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiForbiddenError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiUnprocessableEntityError
-    | errors.MarketApiInternalServerError
+    models.CapacityResponse,
+    | errors.UnauthorizedError
+    | errors.ForbiddenError
+    | errors.NotFoundError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -180,12 +177,12 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.MarketApiCapacityResponse$inboundSchema),
-    M.jsonErr(401, errors.MarketApiUnauthorizedError$inboundSchema),
-    M.jsonErr(403, errors.MarketApiForbiddenError$inboundSchema),
-    M.jsonErr(404, errors.MarketApiNotFoundError$inboundSchema),
-    M.jsonErr(422, errors.MarketApiUnprocessableEntityError$inboundSchema),
-    M.jsonErr(500, errors.MarketApiInternalServerError$inboundSchema),
+    M.json(200, models.CapacityResponse$inboundSchema),
+    M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
+    M.jsonErr(403, errors.ForbiddenError$inboundSchema),
+    M.jsonErr(404, errors.NotFoundError$inboundSchema),
+    M.jsonErr(422, errors.UnprocessableEntityError$inboundSchema),
+    M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });

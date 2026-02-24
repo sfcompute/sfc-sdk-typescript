@@ -9,33 +9,35 @@ Custom machine images for nodes.
 * [list](#list) - List images
 * [startUpload](#startupload) - Create image
 * [get](#get) - Get image
+* [delete](#delete) - Delete image
 * [completeUpload](#completeupload) - Complete image upload
 * [download](#download) - Download image
 * [uploadPart](#uploadpart) - Create image upload part URL
 
 ## list
 
-List all machine images.
+List all images owned by the authenticated user.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="list_images_v2" method="get" path="/v2/images" -->
+<!-- UsageSnippet language="typescript" operationID="list_images" method="get" path="/v2/images" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.images.list({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     startingAfter: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
     endingBefore: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -53,18 +55,19 @@ import { imagesList } from "@sfcompute/sdk/funcs/images-list.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await imagesList(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     startingAfter: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
     endingBefore: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
   if (res.ok) {
     const { value: result } = res;
-    console.log(result);
+    for await (const page of result) {
+    console.log(page);
+  }
   } else {
     console.log("imagesList failed:", res.error);
   }
@@ -77,24 +80,23 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.ListImagesV2Request](../../models/operations/list-images-v2-request.md)                                                                                            | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.ListImagesV2Security](../../models/operations/list-images-v2-security.md)                                                                                          | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.ListImagesRequest](../../models/operations/list-images-request.md)                                                                                                 | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchListImagesResponse](../../models/vmorch-list-images-response.md)\>**
+**Promise\<[operations.ListImagesResponse](../../models/operations/list-images-response.md)\>**
 
 ### Errors
 
-| Error Type                            | Status Code                           | Content Type                          |
-| ------------------------------------- | ------------------------------------- | ------------------------------------- |
-| errors.VmorchUnauthorizedError        | 401                                   | application/json                      |
-| errors.VmorchUnprocessableEntityError | 422                                   | application/json                      |
-| errors.VmorchInternalServerError      | 500                                   | application/json                      |
-| errors.SfcDefaultError                | 4XX, 5XX                              | \*/\*                                 |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.BadRequestError     | 400                        | application/json           |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## startUpload
 
@@ -102,18 +104,17 @@ Create an image and start a multipart upload.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="start_upload" method="post" path="/v2/images" -->
+<!-- UsageSnippet language="typescript" operationID="create_image" method="post" path="/v2/images" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.images.startUpload({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     name: "my-resource-name",
   });
 
@@ -135,12 +136,11 @@ import { imagesStartUpload } from "@sfcompute/sdk/funcs/images-start-upload.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await imagesStartUpload(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     name: "my-resource-name",
   });
   if (res.ok) {
@@ -158,45 +158,43 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [models.VmorchStartUploadRequest](../../models/vmorch-start-upload-request.md)                                                                                                 | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.StartUploadSecurity](../../models/operations/start-upload-security.md)                                                                                             | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [models.StartUploadRequest](../../models/start-upload-request.md)                                                                                                              | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchImageResponse](../../models/vmorch-image-response.md)\>**
+**Promise\<[models.ImageUploadResponse](../../models/image-upload-response.md)\>**
 
 ### Errors
 
-| Error Type                       | Status Code                      | Content Type                     |
-| -------------------------------- | -------------------------------- | -------------------------------- |
-| errors.VmorchBadRequestError     | 400                              | application/json                 |
-| errors.VmorchUnauthorizedError   | 401                              | application/json                 |
-| errors.VmorchForbiddenError      | 403                              | application/json                 |
-| errors.VmorchConflictError       | 409                              | application/json                 |
-| errors.VmorchInternalServerError | 500                              | application/json                 |
-| errors.SfcDefaultError           | 4XX, 5XX                         | \*/\*                            |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.BadRequestError     | 400                        | application/json           |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.ForbiddenError      | 403                        | application/json           |
+| errors.ConflictError       | 409                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## get
 
-Retrieve an image by ID.
+Retrieve an image by ID. Returns both user-owned and public images.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_image" method="get" path="/v2/images/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_image" method="get" path="/v2/images/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.images.get({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -218,12 +216,11 @@ import { imagesGet } from "@sfcompute/sdk/funcs/images-get.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await imagesGet(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
@@ -241,24 +238,102 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetImageRequest](../../models/operations/get-image-request.md)                                                                                                     | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.GetImageSecurity](../../models/operations/get-image-security.md)                                                                                                   | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.FetchImageRequest](../../models/operations/fetch-image-request.md)                                                                                                 | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchImageResponse](../../models/vmorch-image-response.md)\>**
+**Promise\<[models.ImageListEntry](../../models/image-list-entry.md)\>**
 
 ### Errors
 
-| Error Type                       | Status Code                      | Content Type                     |
-| -------------------------------- | -------------------------------- | -------------------------------- |
-| errors.VmorchUnauthorizedError   | 401                              | application/json                 |
-| errors.VmorchNotFoundError       | 404                              | application/json                 |
-| errors.VmorchInternalServerError | 500                              | application/json                 |
-| errors.SfcDefaultError           | 4XX, 5XX                         | \*/\*                            |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
+
+## delete
+
+Delete an image. This is a soft delete.
+
+### Example Usage
+
+<!-- UsageSnippet language="typescript" operationID="delete_image" method="delete" path="/v2/images/{id}" -->
+```typescript
+import { Sfc } from "@sfcompute/sdk";
+
+const sfc = new Sfc({
+  serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
+});
+
+async function run() {
+  const result = await sfc.images.delete({
+    id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
+  });
+
+  console.log(result);
+}
+
+run();
+```
+
+### Standalone function
+
+The standalone function version of this method:
+
+```typescript
+import { SfcCore } from "@sfcompute/sdk/core.js";
+import { imagesDelete } from "@sfcompute/sdk/funcs/images-delete.js";
+
+// Use `SfcCore` for best tree-shaking performance.
+// You can create one instance of it to use across an application.
+const sfc = new SfcCore({
+  serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
+});
+
+async function run() {
+  const res = await imagesDelete(sfc, {
+    id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
+  });
+  if (res.ok) {
+    const { value: result } = res;
+    console.log(result);
+  } else {
+    console.log("imagesDelete failed:", res.error);
+  }
+}
+
+run();
+```
+
+### Parameters
+
+| Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `request`                                                                                                                                                                      | [operations.DeleteImageRequest](../../models/operations/delete-image-request.md)                                                                                               | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
+| `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
+| `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
+
+### Response
+
+**Promise\<[models.DeleteImageResponse](../../models/delete-image-response.md)\>**
+
+### Errors
+
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.ConflictError       | 409                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## completeUpload
 
@@ -266,18 +341,17 @@ Complete a multipart image upload after all parts have been uploaded.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="complete_upload" method="post" path="/v2/images/{id}/complete" -->
+<!-- UsageSnippet language="typescript" operationID="complete_image_upload" method="post" path="/v2/images/{id}/complete" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.images.completeUpload({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
     body: {
       sha256: "<value>",
@@ -302,12 +376,11 @@ import { imagesCompleteUpload } from "@sfcompute/sdk/funcs/images-complete-uploa
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await imagesCompleteUpload(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
     body: {
       sha256: "<value>",
@@ -328,45 +401,43 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.CompleteUploadRequest](../../models/operations/complete-upload-request.md)                                                                                         | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.CompleteUploadSecurity](../../models/operations/complete-upload-security.md)                                                                                       | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.CompleteImageUploadRequest](../../models/operations/complete-image-upload-request.md)                                                                              | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchImageResponse](../../models/vmorch-image-response.md)\>**
+**Promise\<[models.ImageUploadResponse](../../models/image-upload-response.md)\>**
 
 ### Errors
 
-| Error Type                            | Status Code                           | Content Type                          |
-| ------------------------------------- | ------------------------------------- | ------------------------------------- |
-| errors.VmorchUnauthorizedError        | 401                                   | application/json                      |
-| errors.VmorchForbiddenError           | 403                                   | application/json                      |
-| errors.VmorchNotFoundError            | 404                                   | application/json                      |
-| errors.VmorchUnprocessableEntityError | 422                                   | application/json                      |
-| errors.VmorchInternalServerError      | 500                                   | application/json                      |
-| errors.SfcDefaultError                | 4XX, 5XX                              | \*/\*                                 |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.BadRequestError     | 400                        | application/json           |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.ForbiddenError      | 403                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## download
 
-Get a presigned URL to download an image.
+Get a presigned URL to download an image. Works for both user-owned and public images.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="download_image_v2" method="get" path="/v2/images/{id}/download" -->
+<!-- UsageSnippet language="typescript" operationID="download_image" method="get" path="/v2/images/{id}/download" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.images.download({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -388,12 +459,11 @@ import { imagesDownload } from "@sfcompute/sdk/funcs/images-download.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await imagesDownload(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
@@ -411,25 +481,24 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.DownloadImageV2Request](../../models/operations/download-image-v2-request.md)                                                                                      | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.DownloadImageV2Security](../../models/operations/download-image-v2-security.md)                                                                                    | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.DownloadImageRequest](../../models/operations/download-image-request.md)                                                                                           | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchImageDownloadResponse](../../models/vmorch-image-download-response.md)\>**
+**Promise\<[models.ImageDownloadResponse](../../models/image-download-response.md)\>**
 
 ### Errors
 
-| Error Type                       | Status Code                      | Content Type                     |
-| -------------------------------- | -------------------------------- | -------------------------------- |
-| errors.VmorchUnauthorizedError   | 401                              | application/json                 |
-| errors.VmorchNotFoundError       | 404                              | application/json                 |
-| errors.VmorchConflictError       | 409                              | application/json                 |
-| errors.VmorchInternalServerError | 500                              | application/json                 |
-| errors.SfcDefaultError           | 4XX, 5XX                         | \*/\*                            |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.ConflictError       | 409                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## uploadPart
 
@@ -437,21 +506,20 @@ Get a presigned URL to upload a part of a multipart image upload.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="upload_part" method="post" path="/v2/images/{id}/parts" -->
+<!-- UsageSnippet language="typescript" operationID="create_image_upload_part_url" method="post" path="/v2/images/{id}/parts" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const result = await sfc.images.uploadPart({
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
     body: {
-      partId: 417263,
+      partId: 797058,
     },
   });
 
@@ -473,15 +541,14 @@ import { imagesUploadPart } from "@sfcompute/sdk/funcs/images-upload-part.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
   const res = await imagesUploadPart(sfc, {
-    vmorchBearerAuth: process.env["SFC_VMORCH_BEARER_AUTH"] ?? "",
-  }, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
     body: {
-      partId: 417263,
+      partId: 797058,
     },
   });
   if (res.ok) {
@@ -499,23 +566,22 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.UploadPartRequest](../../models/operations/upload-part-request.md)                                                                                                 | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
-| `security`                                                                                                                                                                     | [operations.UploadPartSecurity](../../models/operations/upload-part-security.md)                                                                                               | :heavy_check_mark:                                                                                                                                                             | The security requirements to use for the request.                                                                                                                              |
+| `request`                                                                                                                                                                      | [operations.CreateImageUploadPartUrlRequest](../../models/operations/create-image-upload-part-url-request.md)                                                                  | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.VmorchUploadPartResponse](../../models/vmorch-upload-part-response.md)\>**
+**Promise\<[models.UploadPartResponse](../../models/upload-part-response.md)\>**
 
 ### Errors
 
-| Error Type                            | Status Code                           | Content Type                          |
-| ------------------------------------- | ------------------------------------- | ------------------------------------- |
-| errors.VmorchUnauthorizedError        | 401                                   | application/json                      |
-| errors.VmorchForbiddenError           | 403                                   | application/json                      |
-| errors.VmorchNotFoundError            | 404                                   | application/json                      |
-| errors.VmorchUnprocessableEntityError | 422                                   | application/json                      |
-| errors.VmorchInternalServerError      | 500                                   | application/json                      |
-| errors.SfcDefaultError                | 4XX, 5XX                              | \*/\*                                 |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.BadRequestError     | 400                        | application/json           |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.ForbiddenError      | 403                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
