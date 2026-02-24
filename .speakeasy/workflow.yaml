@@ -13,6 +13,9 @@ targets:
     sfc:
         target: typescript
         source: market-api
+        publish:
+            npm:
+                token: $npm_token
         codeSamples:
             registry:
                 location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api-typescript-code-samples

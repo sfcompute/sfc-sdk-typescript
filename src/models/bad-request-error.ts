@@ -4,26 +4,34 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
+export const BadRequestErrorType = {
+  InvalidRequestError: "invalid_request_error",
+} as const;
+export type BadRequestErrorType = ClosedEnum<typeof BadRequestErrorType>;
+
 export type BadRequestErrorError = {
-  type: "invalid_request_error";
+  type: BadRequestErrorType;
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
+
+/** @internal */
+export const BadRequestErrorType$inboundSchema: z.ZodMiniEnum<
+  typeof BadRequestErrorType
+> = z.enum(BadRequestErrorType);
 
 /** @internal */
 export const BadRequestErrorError$inboundSchema: z.ZodMiniType<
   BadRequestErrorError,
   unknown
 > = z.object({
-  type: z._default(
-    types.literal("invalid_request_error"),
-    "invalid_request_error",
-  ),
+  type: BadRequestErrorType$inboundSchema,
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

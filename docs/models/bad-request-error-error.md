@@ -6,14 +6,15 @@
 import { BadRequestErrorError } from "@sfcompute/sdk/models";
 
 let value: BadRequestErrorError = {
+  type: "invalid_request_error",
   message: "<value>",
 };
 ```
 
 ## Fields
 
-| Field                                             | Type                                              | Required                                          | Description                                       |
-| ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------- |
-| `type`                                            | *"invalid_request_error"*                         | :heavy_minus_sign:                                | N/A                                               |
-| `message`                                         | *string*                                          | :heavy_check_mark:                                | N/A                                               |
-| `details`                                         | [models.ErrorDetail](../models/error-detail.md)[] | :heavy_minus_sign:                                | N/A                                               |
+| Field                                                             | Type                                                              | Required                                                          | Description                                                       |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `type`                                                            | [models.BadRequestErrorType](../models/bad-request-error-type.md) | :heavy_check_mark:                                                | N/A                                                               |
+| `message`                                                         | *string*                                                          | :heavy_check_mark:                                                | N/A                                                               |
+| `details`                                                         | [models.ErrorDetail](../models/error-detail.md)[]                 | :heavy_minus_sign:                                                | N/A                                                               |

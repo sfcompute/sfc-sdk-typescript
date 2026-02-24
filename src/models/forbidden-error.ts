@@ -4,23 +4,34 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
+export const ForbiddenErrorType = {
+  Forbidden: "forbidden",
+} as const;
+export type ForbiddenErrorType = ClosedEnum<typeof ForbiddenErrorType>;
+
 export type ForbiddenErrorError = {
-  type: "forbidden";
+  type: ForbiddenErrorType;
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
+
+/** @internal */
+export const ForbiddenErrorType$inboundSchema: z.ZodMiniEnum<
+  typeof ForbiddenErrorType
+> = z.enum(ForbiddenErrorType);
 
 /** @internal */
 export const ForbiddenErrorError$inboundSchema: z.ZodMiniType<
   ForbiddenErrorError,
   unknown
 > = z.object({
-  type: z._default(types.literal("forbidden"), "forbidden"),
+  type: ForbiddenErrorType$inboundSchema,
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

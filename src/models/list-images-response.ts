@@ -5,6 +5,7 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
@@ -13,12 +14,24 @@ import {
   ImageListEntry$inboundSchema,
 } from "./image-list-entry.js";
 
+export const ListImagesResponseObject = {
+  List: "list",
+} as const;
+export type ListImagesResponseObject = ClosedEnum<
+  typeof ListImagesResponseObject
+>;
+
 export type ListImagesResponse = {
-  object: "list";
-  cursor?: string | undefined;
+  object: ListImagesResponseObject;
+  cursor?: string | null | undefined;
   hasMore: boolean;
   data: Array<ImageListEntry>;
 };
+
+/** @internal */
+export const ListImagesResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof ListImagesResponseObject
+> = z.enum(ListImagesResponseObject);
 
 /** @internal */
 export const ListImagesResponse$inboundSchema: z.ZodMiniType<
@@ -26,8 +39,8 @@ export const ListImagesResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: z._default(types.literal("list"), "list"),
-    cursor: types.optional(types.string()),
+    object: ListImagesResponseObject$inboundSchema,
+    cursor: z.optional(z.nullable(types.string())),
     has_more: types.boolean(),
     data: z.array(ImageListEntry$inboundSchema),
   }),

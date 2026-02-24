@@ -5,6 +5,7 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import {
@@ -17,17 +18,26 @@ import {
   SchedulerDetails$inboundSchema,
 } from "./scheduler-details.js";
 
+export const CapacityResponseObject = {
+  Capacity: "capacity",
+} as const;
+export type CapacityResponseObject = ClosedEnum<typeof CapacityResponseObject>;
+
 export type CapacityResponse = {
-  object: "capacity";
+  object: CapacityResponseObject;
   id: string;
-  name?: string | undefined;
+  name?: string | null | undefined;
   /**
    * Datacenter locations orders into this capacity can acquire compute from.
    */
   zones: Array<string>;
-  nodeTemplate?: string | undefined;
+  nodeTemplate?: string | null | undefined;
   /**
-   * If enabled, nodes will be provisioned and terminated + deleted automatically based on currently available allocation in this capacity. Requires `node_template` to be set.
+   * If enabled, nodes will be provisioned and terminated + deleted
+   *
+   * @remarks
+   * automatically based on currently available allocation in this capacity.
+   * Requires `node_template` to be set.
    */
   startNodesAutomatically: boolean;
   allocationSchedule: AllocationSchedule;
@@ -36,10 +46,18 @@ export type CapacityResponse = {
    */
   createdAt: number;
   /**
-   * Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability.
+   * Schedulers automatically place buy and sell orders to
+   *
+   * @remarks
+   * attempt to achieve desired compute availability.
    */
   scheduler?: SchedulerDetails | undefined;
 };
+
+/** @internal */
+export const CapacityResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof CapacityResponseObject
+> = z.enum(CapacityResponseObject);
 
 /** @internal */
 export const CapacityResponse$inboundSchema: z.ZodMiniType<
@@ -47,11 +65,11 @@ export const CapacityResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: z._default(types.literal("capacity"), "capacity"),
+    object: CapacityResponseObject$inboundSchema,
     id: types.string(),
-    name: types.optional(types.string()),
+    name: z.optional(z.nullable(types.string())),
     zones: z.array(types.string()),
-    node_template: types.optional(types.string()),
+    node_template: z.optional(z.nullable(types.string())),
     start_nodes_automatically: types.boolean(),
     allocation_schedule: AllocationSchedule$inboundSchema,
     created_at: types.number(),

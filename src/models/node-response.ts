@@ -5,13 +5,19 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 import { NodeStatus, NodeStatus$inboundSchema } from "./node-status.js";
 
+export const NodeResponseObject = {
+  Node: "node",
+} as const;
+export type NodeResponseObject = ClosedEnum<typeof NodeResponseObject>;
+
 export type NodeResponse = {
-  object: "node";
+  object: NodeResponseObject;
   id: string;
   /**
    * `pending` on creation while waiting for hardware assignment, `running` once assigned (note: the node may still be booting or loading a custom image), `terminated` when destroyed, `failed` on hardware fault.
@@ -23,10 +29,15 @@ export type NodeResponse = {
 };
 
 /** @internal */
+export const NodeResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof NodeResponseObject
+> = z.enum(NodeResponseObject);
+
+/** @internal */
 export const NodeResponse$inboundSchema: z.ZodMiniType<NodeResponse, unknown> =
   z.pipe(
     z.object({
-      object: z._default(types.literal("node"), "node"),
+      object: NodeResponseObject$inboundSchema,
       id: types.string(),
       status: NodeStatus$inboundSchema,
       zone: types.string(),

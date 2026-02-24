@@ -4,22 +4,35 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
+export const DeleteImageResponseObject = {
+  Image: "image",
+} as const;
+export type DeleteImageResponseObject = ClosedEnum<
+  typeof DeleteImageResponseObject
+>;
+
 export type DeleteImageResponse = {
-  object: "image";
+  object: DeleteImageResponseObject;
   deleted: boolean;
   name: string;
 };
+
+/** @internal */
+export const DeleteImageResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof DeleteImageResponseObject
+> = z.enum(DeleteImageResponseObject);
 
 /** @internal */
 export const DeleteImageResponse$inboundSchema: z.ZodMiniType<
   DeleteImageResponse,
   unknown
 > = z.object({
-  object: z._default(types.literal("image"), "image"),
+  object: DeleteImageResponseObject$inboundSchema,
   deleted: types.boolean(),
   name: types.string(),
 });

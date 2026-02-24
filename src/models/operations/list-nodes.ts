@@ -20,7 +20,10 @@ export type ListNodesRequest = {
    */
   status?: Array<models.NodeStatus> | undefined;
   /**
-   * Include deleted nodes in the response. Currently terminated nodes are auto-deleted. Don't expect this behavior to be stable.
+   * Include deleted nodes in the response. Currently terminated nodes are
+   *
+   * @remarks
+   * auto-deleted. Don't expect this behavior to be stable.
    */
   includeDeleted?: boolean | undefined;
   limit?: number | undefined;

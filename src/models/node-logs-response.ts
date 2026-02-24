@@ -4,22 +4,32 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
-import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 import { NodeLogChunk, NodeLogChunk$inboundSchema } from "./node-log-chunk.js";
 
+export const NodeLogsResponseObject = {
+  List: "list",
+} as const;
+export type NodeLogsResponseObject = ClosedEnum<typeof NodeLogsResponseObject>;
+
 export type NodeLogsResponse = {
-  object: "list";
+  object: NodeLogsResponseObject;
   data: Array<NodeLogChunk>;
 };
+
+/** @internal */
+export const NodeLogsResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof NodeLogsResponseObject
+> = z.enum(NodeLogsResponseObject);
 
 /** @internal */
 export const NodeLogsResponse$inboundSchema: z.ZodMiniType<
   NodeLogsResponse,
   unknown
 > = z.object({
-  object: z._default(types.literal("list"), "list"),
+  object: NodeLogsResponseObject$inboundSchema,
   data: z.array(NodeLogChunk$inboundSchema),
 });
 

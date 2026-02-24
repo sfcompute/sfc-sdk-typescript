@@ -4,26 +4,34 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
+export const UnauthorizedErrorType = {
+  AuthenticationError: "authentication_error",
+} as const;
+export type UnauthorizedErrorType = ClosedEnum<typeof UnauthorizedErrorType>;
+
 export type UnauthorizedErrorError = {
-  type: "authentication_error";
+  type: UnauthorizedErrorType;
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
+
+/** @internal */
+export const UnauthorizedErrorType$inboundSchema: z.ZodMiniEnum<
+  typeof UnauthorizedErrorType
+> = z.enum(UnauthorizedErrorType);
 
 /** @internal */
 export const UnauthorizedErrorError$inboundSchema: z.ZodMiniType<
   UnauthorizedErrorError,
   unknown
 > = z.object({
-  type: z._default(
-    types.literal("authentication_error"),
-    "authentication_error",
-  ),
+  type: UnauthorizedErrorType$inboundSchema,
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

@@ -5,12 +5,20 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
+export const NodeTemplateResponseObject = {
+  NodeTemplate: "node_template",
+} as const;
+export type NodeTemplateResponseObject = ClosedEnum<
+  typeof NodeTemplateResponseObject
+>;
+
 export type NodeTemplateResponse = {
-  object: "node_template";
+  object: NodeTemplateResponseObject;
   id: string;
   name: string;
   image: string;
@@ -23,10 +31,18 @@ export type NodeTemplateResponse = {
    */
   createdAt: number;
   /**
-   * Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported.
+   * Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html).
+   *
+   * @remarks
+   * Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported.
    */
   cloudInitUserData?: string | undefined;
 };
+
+/** @internal */
+export const NodeTemplateResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof NodeTemplateResponseObject
+> = z.enum(NodeTemplateResponseObject);
 
 /** @internal */
 export const NodeTemplateResponse$inboundSchema: z.ZodMiniType<
@@ -34,7 +50,7 @@ export const NodeTemplateResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: z._default(types.literal("node_template"), "node_template"),
+    object: NodeTemplateResponseObject$inboundSchema,
     id: types.string(),
     name: types.string(),
     image: types.string(),

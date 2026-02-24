@@ -5,38 +5,38 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import {
-  SchedulerDetailsInputUnion,
-  SchedulerDetailsInputUnion$Outbound,
-  SchedulerDetailsInputUnion$outboundSchema,
-} from "./scheduler-details-input-union.js";
+  SchedulerDetails,
+  SchedulerDetails$Outbound,
+  SchedulerDetails$outboundSchema,
+} from "./scheduler-details.js";
 
 export type CreateCapacityRequest = {
-  name?: string | undefined;
+  name?: string | null | undefined;
   /**
    * Datacenter locations orders into this capacity can acquire compute from.
    */
   zones: Array<string>;
-  /**
-   * An ID _or_ name identifying this resource.
-   */
-  nodeTemplate?: string | undefined;
+  nodeTemplate?: string | null | undefined;
   /**
    * Automatically start nodes when compute is available. Requires `node_template`.
    */
   startNodesAutomatically: boolean;
   /**
-   * Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability.
+   * Schedulers automatically place buy and sell orders to
+   *
+   * @remarks
+   * attempt to achieve desired compute availability.
    */
-  scheduler?: SchedulerDetailsInputUnion | undefined;
+  scheduler?: SchedulerDetails | undefined;
 };
 
 /** @internal */
 export type CreateCapacityRequest$Outbound = {
-  name?: string | undefined;
+  name?: string | null | undefined;
   zones: Array<string>;
-  node_template?: string | undefined;
+  node_template?: string | null | undefined;
   start_nodes_automatically: boolean;
-  scheduler?: SchedulerDetailsInputUnion$Outbound | undefined;
+  scheduler?: SchedulerDetails$Outbound | undefined;
 };
 
 /** @internal */
@@ -45,11 +45,11 @@ export const CreateCapacityRequest$outboundSchema: z.ZodMiniType<
   CreateCapacityRequest
 > = z.pipe(
   z.object({
-    name: z.optional(z.string()),
+    name: z.optional(z.nullable(z.string())),
     zones: z.array(z.string()),
-    nodeTemplate: z.optional(z.string()),
+    nodeTemplate: z.optional(z.nullable(z.string())),
     startNodesAutomatically: z.boolean(),
-    scheduler: z.optional(SchedulerDetailsInputUnion$outboundSchema),
+    scheduler: z.optional(SchedulerDetails$outboundSchema),
   }),
   z.transform((v) => {
     return remap$(v, {

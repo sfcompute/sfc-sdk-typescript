@@ -1,6 +1,7 @@
 # SchedulerDetails
 
-Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability.
+Schedulers automatically place buy and sell orders to
+attempt to achieve desired compute availability.
 
 
 ## Supported Types
@@ -14,6 +15,7 @@ const value: models.SchedulerDetailsSpotScaler = {
   minSellPriceDollarsPerNodeHour: "2.500000",
   maxBuyPriceDollarsPerNodeHour: "2.500000",
   enabled: true,
+  type: "spot_scaler",
 };
 ```
 

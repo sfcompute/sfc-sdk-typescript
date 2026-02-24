@@ -23,11 +23,17 @@ export type GetNodeLogsRequest = {
    */
   seqnumAfter?: number | undefined;
   /**
-   * Due to clock synchronization, some earlier log messages may have a realtime timestamp after this value.
+   * Due to clock synchronization, some earlier log messages may have a
+   *
+   * @remarks
+   * realtime timestamp after this value.
    */
   realtimeTimestampBefore?: number | undefined;
   /**
-   * Due to clock synchronization, some later log messages may have a realtime timestamp before this value.
+   * Due to clock synchronization, some later log messages may have a
+   *
+   * @remarks
+   * realtime timestamp before this value.
    */
   realtimeTimestampAfter?: number | undefined;
   sortBy?: GetNodeLogsSortBy | undefined;

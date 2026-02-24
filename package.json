@@ -1,6 +1,6 @@
 {
   "name": "@sfcompute/sdk",
-  "version": "0.5.2",
+  "version": "0.1.0-alpha",
   "author": "Speakeasy",
   "type": "module",
   "tshy": {

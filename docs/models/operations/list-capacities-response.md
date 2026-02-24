@@ -7,6 +7,7 @@ import { ListCapacitiesResponse } from "@sfcompute/sdk/models/operations";
 
 let value: ListCapacitiesResponse = {
   result: {
+    object: "list",
     cursor: "capc_gqXR7s0Kj5mHvE2wNpLc4Q",
     hasMore: true,
     data: [],

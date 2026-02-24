@@ -4,23 +4,34 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
+export const ConflictErrorType = {
+  Conflict: "conflict",
+} as const;
+export type ConflictErrorType = ClosedEnum<typeof ConflictErrorType>;
+
 export type ConflictErrorError = {
-  type: "conflict";
+  type: ConflictErrorType;
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
+
+/** @internal */
+export const ConflictErrorType$inboundSchema: z.ZodMiniEnum<
+  typeof ConflictErrorType
+> = z.enum(ConflictErrorType);
 
 /** @internal */
 export const ConflictErrorError$inboundSchema: z.ZodMiniType<
   ConflictErrorError,
   unknown
 > = z.object({
-  type: z._default(types.literal("conflict"), "conflict"),
+  type: ConflictErrorType$inboundSchema,
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

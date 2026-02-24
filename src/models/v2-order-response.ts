@@ -5,6 +5,7 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
+import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
@@ -14,21 +15,37 @@ import {
   V2OrderStatus$inboundSchema,
 } from "./v2-order-status.js";
 
+export const V2OrderResponseObject = {
+  Order: "order",
+} as const;
+export type V2OrderResponseObject = ClosedEnum<typeof V2OrderResponseObject>;
+
 export type V2OrderResponse = {
-  object: "order";
+  object: V2OrderResponseObject;
   id: string;
   capacity: string;
   side: Side;
   /**
-   * If true, the order stays in the order book until either fills, is explicitly cancelled, or the order end time is reached resulting in automatic cancellation. If false, the order is cancelled immediately if it doesn't fill.
+   * If true, the order stays in the order book until either fills, is
+   *
+   * @remarks
+   * explicitly cancelled, or the order end time is reached resulting in
+   * automatic cancellation. If false, the order is cancelled immediately if
+   * it doesn't fill.
    */
   allowStanding: boolean;
   /**
-   * Datacenter locations this order can fill in (derived from target capacity at order creation by default).
+   * Datacenter locations this order can fill in (derived from target
+   *
+   * @remarks
+   * capacity at order creation by default).
    */
   zones: Array<string>;
   /**
-   * Number of nodes requested to be reserved or released between `start_at` and `end_at`.
+   * Number of nodes requested to be reserved or released between `start_at`
+   *
+   * @remarks
+   * and `end_at`.
    */
   nodeCount: number;
   /**
@@ -47,9 +64,15 @@ export type V2OrderResponse = {
    * `pending` = not resolved/processed yet.
    *
    * @remarks
+   *
    * `filled` = order executed.
+   *
    * `standing` = the order is waiting for a match.
-   * `cancelled` = the order was cancelled either automatically (not a standing order and didn't immediately fill, or current time past `end_at`) or by explicit cancellation.
+   *
+   * `cancelled` = the order was cancelled either automatically (not a standing
+   * order and didn't immediately fill, or current time past `end_at`) or by
+   * explicit cancellation.
+   *
    * `rejected` = validation/system error occurred.
    */
   status: V2OrderStatus;
@@ -57,19 +80,15 @@ export type V2OrderResponse = {
    * Unix timestamp.
    */
   createdAt: number;
-  /**
-   * Unix timestamp.
-   */
-  filledAt?: number | undefined;
-  /**
-   * Price rate in dollars per node-hour.
-   */
-  filledPriceDollarsPerNodeHour?: string | undefined;
-  /**
-   * Unix timestamp.
-   */
-  cancelledAt?: number | undefined;
+  filledAt?: number | null | undefined;
+  filledPriceDollarsPerNodeHour?: string | null | undefined;
+  cancelledAt?: number | null | undefined;
 };
+
+/** @internal */
+export const V2OrderResponseObject$inboundSchema: z.ZodMiniEnum<
+  typeof V2OrderResponseObject
+> = z.enum(V2OrderResponseObject);
 
 /** @internal */
 export const V2OrderResponse$inboundSchema: z.ZodMiniType<
@@ -77,7 +96,7 @@ export const V2OrderResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: z._default(types.literal("order"), "order"),
+    object: V2OrderResponseObject$inboundSchema,
     id: types.string(),
     capacity: types.string(),
     side: Side$inboundSchema,
@@ -89,9 +108,9 @@ export const V2OrderResponse$inboundSchema: z.ZodMiniType<
     limit_price_dollars_per_node_hour: types.string(),
     status: V2OrderStatus$inboundSchema,
     created_at: types.number(),
-    filled_at: types.optional(types.number()),
-    filled_price_dollars_per_node_hour: types.optional(types.string()),
-    cancelled_at: types.optional(types.number()),
+    filled_at: z.optional(z.nullable(types.number())),
+    filled_price_dollars_per_node_hour: z.optional(z.nullable(types.string())),
+    cancelled_at: z.optional(z.nullable(types.number())),
   }),
   z.transform((v) => {
     return remap$(v, {

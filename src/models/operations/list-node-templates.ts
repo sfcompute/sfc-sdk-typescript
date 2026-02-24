@@ -23,7 +23,7 @@ export type ListNodeTemplatesRequest = {
   /**
    * Additional fields to include in the response.
    */
-  include?: Array<string> | undefined;
+  include?: Array<models.NodeTemplateInclude> | undefined;
 };
 
 export type ListNodeTemplatesResponse = {
@@ -49,7 +49,7 @@ export const ListNodeTemplatesRequest$outboundSchema: z.ZodMiniType<
     startingAfter: z.optional(z.string()),
     endingBefore: z.optional(z.string()),
     includeDeleted: z._default(z.boolean(), false),
-    include: z.optional(z.array(z.string())),
+    include: z.optional(z.array(models.NodeTemplateInclude$outboundSchema)),
   }),
   z.transform((v) => {
     return remap$(v, {

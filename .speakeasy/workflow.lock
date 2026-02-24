@@ -2,8 +2,8 @@ speakeasyVersion: 1.725.0
 sources:
     market-api:
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:e190d6323295ee29ebb0305c096902c8134ea5418247b42922f81253ed056c15
-        sourceBlobDigest: sha256:8f68577b56ac6fb54fabf9402f6f5a6799f06a7e8d6c9463b87ad73a688fb271
+        sourceRevisionDigest: sha256:66189625a2a2cf2add39165cb76cbd9659fd73d632e4ebfb4595a9ce855df750
+        sourceBlobDigest: sha256:84fca19e32540f9b86056d752a3c50c9528f9e9f036ea8d7395ce7db9d850990
         tags:
             - latest
             - 0.1.0
@@ -11,10 +11,10 @@ targets:
     sfc:
         source: market-api
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:e190d6323295ee29ebb0305c096902c8134ea5418247b42922f81253ed056c15
-        sourceBlobDigest: sha256:8f68577b56ac6fb54fabf9402f6f5a6799f06a7e8d6c9463b87ad73a688fb271
+        sourceRevisionDigest: sha256:66189625a2a2cf2add39165cb76cbd9659fd73d632e4ebfb4595a9ce855df750
+        sourceBlobDigest: sha256:84fca19e32540f9b86056d752a3c50c9528f9e9f036ea8d7395ce7db9d850990
         codeSamplesNamespace: market-api-typescript-code-samples
-        codeSamplesRevisionDigest: sha256:1e3872a39d4d297a36b81f49b3b569a0f6b806b14a87a4b1c457295e62ea9461
+        codeSamplesRevisionDigest: sha256:68b7bd0c3cc39d58a3fb300b3994a2391e10c82481010e8bc06c68e60f341c3e
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -31,6 +31,9 @@ workflow:
         sfc:
             target: typescript
             source: market-api
+            publish:
+                npm:
+                    token: $npm_token
             codeSamples:
                 registry:
                     location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api-typescript-code-samples
