@@ -2,11 +2,13 @@
 
 ## Overview
 
+Reusable node configuration.
+
 ### Available Operations
 
 * [list](#list) - List node templates
 * [create](#create) - Create node template
-* [get](#get) - Get node template
+* [fetch](#fetch) - Get node template
 * [delete](#delete) - Delete node template
 
 ## list
@@ -176,7 +178,7 @@ run();
 | errors.InternalServerError      | 500                             | application/json                |
 | errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
-## get
+## fetch
 
 Retrieve a node template by ID or name.
 
@@ -192,7 +194,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.nodeTemplates.get({
+  const result = await sfc.nodeTemplates.fetch({
     id: "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -208,7 +210,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { nodeTemplatesGet } from "@sfcompute/sdk/funcs/node-templates-get.js";
+import { nodeTemplatesFetch } from "@sfcompute/sdk/funcs/node-templates-fetch.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -218,14 +220,14 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await nodeTemplatesGet(sfc, {
+  const res = await nodeTemplatesFetch(sfc, {
     id: "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("nodeTemplatesGet failed:", res.error);
+    console.log("nodeTemplatesFetch failed:", res.error);
   }
 }
 

@@ -6,13 +6,11 @@ import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
-import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
 export type PaymentRequiredErrorError = {
   type: "payment_required";
   message: string;
-  details?: Array<ErrorDetail> | undefined;
 };
 
 /** @internal */
@@ -22,7 +20,6 @@ export const PaymentRequiredErrorError$inboundSchema: z.ZodMiniType<
 > = z.object({
   type: z._default(types.literal("payment_required"), "payment_required"),
   message: types.string(),
-  details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });
 
 export function paymentRequiredErrorErrorFromJSON(

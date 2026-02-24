@@ -4,8 +4,6 @@ sources:
     market-api:
         inputs:
             - location: blueprint/current/openapi.json
-        overlays:
-            - location: .speakeasy/speakeasy-modifications-overlay.yaml
         output: .speakeasy/out.openapi.yaml
         registry:
             location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api

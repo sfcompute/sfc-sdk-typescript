@@ -8,7 +8,7 @@ Custom machine images for nodes.
 
 * [list](#list) - List images
 * [startUpload](#startupload) - Create image
-* [get](#get) - Get image
+* [fetch](#fetch) - Get image
 * [delete](#delete) - Delete image
 * [completeUpload](#completeupload) - Complete image upload
 * [download](#download) - Download image
@@ -178,7 +178,7 @@ run();
 | errors.InternalServerError | 500                        | application/json           |
 | errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
-## get
+## fetch
 
 Retrieve an image by ID. Returns both user-owned and public images.
 
@@ -194,7 +194,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.images.get({
+  const result = await sfc.images.fetch({
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -210,7 +210,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { imagesGet } from "@sfcompute/sdk/funcs/images-get.js";
+import { imagesFetch } from "@sfcompute/sdk/funcs/images-fetch.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -220,14 +220,14 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await imagesGet(sfc, {
+  const res = await imagesFetch(sfc, {
     id: "image_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("imagesGet failed:", res.error);
+    console.log("imagesFetch failed:", res.error);
   }
 }
 

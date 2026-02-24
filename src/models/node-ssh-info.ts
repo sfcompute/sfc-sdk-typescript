@@ -17,14 +17,8 @@ export type NodeSshInfo = {
   hostname: string;
   port: number;
   hostKeys: Array<NodeSshHostKey>;
-  /**
-   * Unix timestamp.
-   */
-  lastSuccessfulKeyUpdateAt?: number | undefined;
-  /**
-   * Unix timestamp.
-   */
-  lastAttemptedKeyUpdateAt?: number | undefined;
+  lastSuccessfulKeyUpdateAt?: number | null | undefined;
+  lastAttemptedKeyUpdateAt?: number | null | undefined;
 };
 
 /** @internal */
@@ -34,8 +28,8 @@ export const NodeSshInfo$inboundSchema: z.ZodMiniType<NodeSshInfo, unknown> = z
       hostname: types.string(),
       port: types.number(),
       host_keys: z.array(NodeSshHostKey$inboundSchema),
-      last_successful_key_update_at: types.optional(types.number()),
-      last_attempted_key_update_at: types.optional(types.number()),
+      last_successful_key_update_at: z.optional(z.nullable(types.number())),
+      last_attempted_key_update_at: z.optional(z.nullable(types.number())),
     }),
     z.transform((v) => {
       return remap$(v, {

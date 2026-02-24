@@ -28,18 +28,18 @@ import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Get order
+ * Get image
  *
  * @remarks
- * Retrieve an order by ID.
+ * Retrieve an image by ID. Returns both user-owned and public images.
  */
-export function ordersGet(
+export function imagesFetch(
   client: SfcCore,
-  request: operations.GetOrderRequest,
+  request: operations.FetchImageRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.V2OrderResponse,
+    models.ImageListEntry,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -62,12 +62,12 @@ export function ordersGet(
 
 async function $do(
   client: SfcCore,
-  request: operations.GetOrderRequest,
+  request: operations.FetchImageRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.V2OrderResponse,
+      models.ImageListEntry,
       | errors.UnauthorizedError
       | errors.NotFoundError
       | errors.InternalServerError
@@ -85,7 +85,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.GetOrderRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchImageRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -101,7 +101,7 @@ async function $do(
     }),
   };
 
-  const path = pathToFunc("/v2/orders/{id}")(pathParams);
+  const path = pathToFunc("/v2/images/{id}")(pathParams);
 
   const headers = new Headers(compactMap({
     Accept: "application/json",
@@ -114,7 +114,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "get_order",
+    operationID: "fetch_image",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
@@ -157,7 +157,7 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.V2OrderResponse,
+    models.ImageListEntry,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -170,7 +170,7 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.V2OrderResponse$inboundSchema),
+    M.json(200, models.ImageListEntry$inboundSchema),
     M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
     M.jsonErr(404, errors.NotFoundError$inboundSchema),
     M.jsonErr(500, errors.InternalServerError$inboundSchema),

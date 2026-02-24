@@ -20,12 +20,12 @@ import {
 export type CapacityResponse = {
   object: "capacity";
   id: string;
-  name?: string | undefined;
+  name?: string | null | undefined;
   /**
    * Datacenter locations orders into this capacity can acquire compute from.
    */
   zones: Array<string>;
-  nodeTemplate?: string | undefined;
+  nodeTemplate?: string | null | undefined;
   /**
    * If enabled, nodes will be provisioned and terminated + deleted automatically based on currently available allocation in this capacity. Requires `node_template` to be set.
    */
@@ -49,9 +49,9 @@ export const CapacityResponse$inboundSchema: z.ZodMiniType<
   z.object({
     object: z._default(types.literal("capacity"), "capacity"),
     id: types.string(),
-    name: types.optional(types.string()),
+    name: z.optional(z.nullable(types.string())),
     zones: z.array(types.string()),
-    node_template: types.optional(types.string()),
+    node_template: z.optional(z.nullable(types.string())),
     start_nodes_automatically: types.boolean(),
     allocation_schedule: AllocationSchedule$inboundSchema,
     created_at: types.number(),

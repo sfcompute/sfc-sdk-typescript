@@ -28,18 +28,18 @@ import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Get node SSH info
+ * Get order
  *
  * @remarks
- * Retrieve SSH connection details for a node.
+ * Retrieve an order by ID.
  */
-export function nodesGetSsh(
+export function ordersFetch(
   client: SfcCore,
-  request: operations.FetchNodeSshRequest,
+  request: operations.FetchOrderRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.NodeSshInfo,
+    models.V2OrderResponse,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -62,12 +62,12 @@ export function nodesGetSsh(
 
 async function $do(
   client: SfcCore,
-  request: operations.FetchNodeSshRequest,
+  request: operations.FetchOrderRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.NodeSshInfo,
+      models.V2OrderResponse,
       | errors.UnauthorizedError
       | errors.NotFoundError
       | errors.InternalServerError
@@ -85,7 +85,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.FetchNodeSshRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchOrderRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -101,7 +101,7 @@ async function $do(
     }),
   };
 
-  const path = pathToFunc("/v2/nodes/{id}/ssh")(pathParams);
+  const path = pathToFunc("/v2/orders/{id}")(pathParams);
 
   const headers = new Headers(compactMap({
     Accept: "application/json",
@@ -114,7 +114,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "fetch_node_ssh",
+    operationID: "fetch_order",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
@@ -157,7 +157,7 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.NodeSshInfo,
+    models.V2OrderResponse,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -170,7 +170,7 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.NodeSshInfo$inboundSchema),
+    M.json(200, models.V2OrderResponse$inboundSchema),
     M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
     M.jsonErr(404, errors.NotFoundError$inboundSchema),
     M.jsonErr(500, errors.InternalServerError$inboundSchema),

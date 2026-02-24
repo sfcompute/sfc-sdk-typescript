@@ -1,11 +1,11 @@
-# GetOrderRequest
+# FetchOrderRequest
 
 ## Example Usage
 
 ```typescript
-import { GetOrderRequest } from "@sfcompute/sdk/models/operations";
+import { FetchOrderRequest } from "@sfcompute/sdk/models/operations";
 
-let value: GetOrderRequest = {
+let value: FetchOrderRequest = {
   id: "ordr_k3R-nX9vLm7Qp2Yw5Jd8F",
 };
 ```

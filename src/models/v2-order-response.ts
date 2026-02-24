@@ -57,18 +57,9 @@ export type V2OrderResponse = {
    * Unix timestamp.
    */
   createdAt: number;
-  /**
-   * Unix timestamp.
-   */
-  filledAt?: number | undefined;
-  /**
-   * Price rate in dollars per node-hour.
-   */
-  filledPriceDollarsPerNodeHour?: string | undefined;
-  /**
-   * Unix timestamp.
-   */
-  cancelledAt?: number | undefined;
+  filledAt?: number | null | undefined;
+  filledPriceDollarsPerNodeHour?: string | null | undefined;
+  cancelledAt?: number | null | undefined;
 };
 
 /** @internal */
@@ -89,9 +80,9 @@ export const V2OrderResponse$inboundSchema: z.ZodMiniType<
     limit_price_dollars_per_node_hour: types.string(),
     status: V2OrderStatus$inboundSchema,
     created_at: types.number(),
-    filled_at: types.optional(types.number()),
-    filled_price_dollars_per_node_hour: types.optional(types.string()),
-    cancelled_at: types.optional(types.number()),
+    filled_at: z.optional(z.nullable(types.number())),
+    filled_price_dollars_per_node_hour: z.optional(z.nullable(types.string())),
+    cancelled_at: z.optional(z.nullable(types.number())),
   }),
   z.transform((v) => {
     return remap$(v, {
