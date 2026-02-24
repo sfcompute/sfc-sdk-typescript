@@ -4,29 +4,32 @@
 
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../../lib/primitives.js";
+import { safeParse } from "../../lib/schemas.js";
+import { Result as SafeParseResult } from "../../types/fp.js";
+import { SDKValidationError } from "../errors/sdk-validation-error.js";
 import * as models from "../index.js";
 
 /**
  * Prefix with `-` for descending.
  */
-export type ListOrdersSortBy = models.MarketApiV2OrderSortBy;
+export type ListOrdersSortBy = models.V2OrderSortBy;
 
 export type ListOrdersRequest = {
   /**
    * Filter by capacity.
    */
   capacity?: string | undefined;
-  side?: models.MarketApiSide | undefined;
+  side?: models.Side | undefined;
   /**
    * Filter by status (repeatable).
    */
-  status?: Array<models.MarketApiV2OrderStatus> | undefined;
+  status?: Array<models.V2OrderStatus> | undefined;
   createdAfter?: number | undefined;
   createdBefore?: number | undefined;
   /**
    * Prefix with `-` for descending.
    */
-  sortBy?: models.MarketApiV2OrderSortBy | undefined;
+  sortBy?: models.V2OrderSortBy | undefined;
   limit?: number | undefined;
   /**
    * Set to the response's `cursor` to fetch the next page.
@@ -38,6 +41,10 @@ export type ListOrdersRequest = {
   endingBefore?: string | undefined;
 };
 
+export type ListOrdersResponse = {
+  result: models.V2ListOrdersResponse;
+};
+
 /** @internal */
 export type ListOrdersSortBy$Outbound = string;
 
@@ -45,7 +52,7 @@ export type ListOrdersSortBy$Outbound = string;
 export const ListOrdersSortBy$outboundSchema: z.ZodMiniType<
   ListOrdersSortBy$Outbound,
   ListOrdersSortBy
-> = models.MarketApiV2OrderSortBy$outboundSchema;
+> = models.V2OrderSortBy$outboundSchema;
 
 export function listOrdersSortByToJSON(
   listOrdersSortBy: ListOrdersSortBy,
@@ -75,11 +82,11 @@ export const ListOrdersRequest$outboundSchema: z.ZodMiniType<
 > = z.pipe(
   z.object({
     capacity: z.optional(z.string()),
-    side: z.optional(models.MarketApiSide$outboundSchema),
-    status: z.optional(z.array(models.MarketApiV2OrderStatus$outboundSchema)),
+    side: z.optional(models.Side$outboundSchema),
+    status: z.optional(z.array(models.V2OrderStatus$outboundSchema)),
     createdAfter: z.optional(z.int()),
     createdBefore: z.optional(z.int()),
-    sortBy: z.optional(models.MarketApiV2OrderSortBy$outboundSchema),
+    sortBy: z.optional(models.V2OrderSortBy$outboundSchema),
     limit: z._default(z.int(), 50),
     startingAfter: z.optional(z.string()),
     endingBefore: z.optional(z.string()),
@@ -100,5 +107,30 @@ export function listOrdersRequestToJSON(
 ): string {
   return JSON.stringify(
     ListOrdersRequest$outboundSchema.parse(listOrdersRequest),
+  );
+}
+
+/** @internal */
+export const ListOrdersResponse$inboundSchema: z.ZodMiniType<
+  ListOrdersResponse,
+  unknown
+> = z.pipe(
+  z.object({
+    Result: models.V2ListOrdersResponse$inboundSchema,
+  }),
+  z.transform((v) => {
+    return remap$(v, {
+      "Result": "result",
+    });
+  }),
+);
+
+export function listOrdersResponseFromJSON(
+  jsonString: string,
+): SafeParseResult<ListOrdersResponse, SDKValidationError> {
+  return safeParse(
+    jsonString,
+    (x) => ListOrdersResponse$inboundSchema.parse(JSON.parse(x)),
+    `Failed to parse 'ListOrdersResponse' from JSON`,
   );
 }

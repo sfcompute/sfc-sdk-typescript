@@ -39,10 +39,10 @@ export function ordersGet(
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.MarketApiV2OrderResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiInternalServerError
+    models.V2OrderResponse,
+    | errors.UnauthorizedError
+    | errors.NotFoundError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -67,10 +67,10 @@ async function $do(
 ): Promise<
   [
     Result<
-      models.MarketApiV2OrderResponse,
-      | errors.MarketApiUnauthorizedError
-      | errors.MarketApiNotFoundError
-      | errors.MarketApiInternalServerError
+      models.V2OrderResponse,
+      | errors.UnauthorizedError
+      | errors.NotFoundError
+      | errors.InternalServerError
       | SfcError
       | ResponseValidationError
       | ConnectionError
@@ -107,10 +107,8 @@ async function $do(
     Accept: "application/json",
   }));
 
-  const secConfig = await extractSecurity(client._options.marketApiBearerAuth);
-  const securityInput = secConfig == null
-    ? {}
-    : { marketApiBearerAuth: secConfig };
+  const secConfig = await extractSecurity(client._options.bearerAuth);
+  const securityInput = secConfig == null ? {} : { bearerAuth: secConfig };
   const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
@@ -121,7 +119,7 @@ async function $do(
 
     resolvedSecurity: requestSecurity,
 
-    securitySource: client._options.marketApiBearerAuth,
+    securitySource: client._options.bearerAuth,
     retryConfig: options?.retries
       || client._options.retryConfig
       || { strategy: "none" },
@@ -159,10 +157,10 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.MarketApiV2OrderResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiInternalServerError
+    models.V2OrderResponse,
+    | errors.UnauthorizedError
+    | errors.NotFoundError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -172,10 +170,10 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.MarketApiV2OrderResponse$inboundSchema),
-    M.jsonErr(401, errors.MarketApiUnauthorizedError$inboundSchema),
-    M.jsonErr(404, errors.MarketApiNotFoundError$inboundSchema),
-    M.jsonErr(500, errors.MarketApiInternalServerError$inboundSchema),
+    M.json(200, models.V2OrderResponse$inboundSchema),
+    M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
+    M.jsonErr(404, errors.NotFoundError$inboundSchema),
+    M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });

@@ -1,24 +1,8 @@
 openapi: "3.1.0"
 info:
-  title: "market-api"
+  title: "sfc-api"
   description: ""
   version: "0.1.0"
-tags:
-  - name: "Capacities"
-    description: "A bucket of owned compute balance over time."
-    x-displayName: "Capacities"
-  - name: "Orders"
-    description: "Place orders targeting a capacity to increase your reserved compute balance during some time period."
-    x-displayName: "Orders"
-  - name: "Node Templates"
-    description: "Reusable node configuration."
-    x-displayName: "Node Templates"
-  - name: "Images"
-    description: "Custom machine images for nodes."
-    x-displayName: "Images"
-  - name: "Nodes"
-    description: "Spin up nodes in a capacity to use your available compute."
-    x-displayName: "Nodes"
 paths:
   /v2/capacities:
     get:
@@ -26,7 +10,7 @@ paths:
         - "Capacities"
       summary: "List capacities"
       description: "List all capacities."
-      operationId: "list_capacities_handler"
+      operationId: "list_capacities"
       parameters:
         - name: "limit"
           in: "query"
@@ -42,13 +26,13 @@ paths:
           description: "Set to the response's `cursor` to fetch the next page."
           required: false
           schema:
-            $ref: "#/components/schemas/market-api_CapacitiesCursor"
+            $ref: "#/components/schemas/CapacitiesCursor"
         - name: "ending_before"
           in: "query"
           description: "Set to the response's `cursor` to fetch the previous page."
           required: false
           schema:
-            $ref: "#/components/schemas/market-api_CapacitiesCursor"
+            $ref: "#/components/schemas/CapacitiesCursor"
         - name: "include_deleted"
           in: "query"
           required: false
@@ -61,39 +45,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ListCapacitiesResponse"
+                $ref: "#/components/schemas/ListCapacitiesResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-pagination:
+        type: "cursor"
+        inputs:
+          - name: "starting_after"
+            in: "parameters"
+            type: "cursor"
+        outputs:
+          nextCursor: "$.cursor"
       x-speakeasy-name-override: list
     post:
       tags:
         - "Capacities"
       summary: "Create capacity"
       description: "Create a capacity to hold compute in specified zones."
-      operationId: "create_capacity_handler"
+      operationId: "create_capacity"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/market-api_CreateCapacityRequest"
+              $ref: "#/components/schemas/CreateCapacityRequest"
         required: true
       responses:
         "201":
@@ -101,33 +91,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_CapacityResponse"
+                $ref: "#/components/schemas/CapacityResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "403":
           description: "Forbidden."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ForbiddenError"
+                $ref: "#/components/schemas/ForbiddenError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: create
   /v2/capacities/{id}:
     get:
@@ -135,7 +123,7 @@ paths:
         - "Capacities"
       summary: "Get capacity"
       description: "Retrieve a capacity by ID or name, including its compute schedule and scheduler configuration."
-      operationId: "get_capacity_handler"
+      operationId: "fetch_capacity"
       parameters:
         - name: "id"
           in: "path"
@@ -152,34 +140,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_CapacityResponse"
+                $ref: "#/components/schemas/CapacityResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: "Capacity not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: get
     delete:
       tags:
         - "Capacities"
       summary: "Delete capacity"
       description: "Delete a capacity. The capacity must be empty and the scheduler must be disabled or absent."
-      operationId: "delete_capacity_handler"
+      operationId: "delete_capacity"
       parameters:
         - name: "id"
           in: "path"
@@ -198,40 +184,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "403":
           description: "Feature not enabled."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ForbiddenError"
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: "Capacity not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "422":
           description: "Capacity is not empty or has an enabled scheduler."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: delete
     patch:
       tags:
         - "Capacities"
       summary: "Update capacity"
       description: "Update a capacity. Omitted fields are left unchanged."
-      operationId: "patch_capacity_handler"
+      operationId: "update_capacity"
       parameters:
         - name: "id"
           in: "path"
@@ -246,7 +230,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/market-api_PatchCapacityRequest"
+              $ref: "#/components/schemas/PatchCapacityRequest"
         required: true
       responses:
         "200":
@@ -254,47 +238,412 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_CapacityResponse"
+                $ref: "#/components/schemas/CapacityResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "403":
           description: "Feature not enabled."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ForbiddenError"
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: "Capacity or referenced node template not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: update
+  /v2/images:
+    get:
+      tags:
+        - "Images"
+      summary: "List images"
+      description: "List all images owned by the authenticated user."
+      operationId: "list_images"
+      parameters:
+        - name: "limit"
+          in: "query"
+          description: "Maximum number of results to return (1-200, default 50)."
+          required: false
+          schema:
+            type: "integer"
+            format: "u-int32"
+            default: 50
+            maximum: 200
+            minimum: 1
+        - name: "starting_after"
+          in: "query"
+          description: "Cursor for forward pagination (from a previous response's `cursor` field)."
+          required: false
+          schema:
+            $ref: "#/components/schemas/ImagesCursor"
+        - name: "ending_before"
+          in: "query"
+          description: "Cursor for backward pagination."
+          required: false
+          schema:
+            $ref: "#/components/schemas/ImagesCursor"
+        - name: "include_deleted"
+          in: "query"
+          description: "Include soft-deleted images in the results."
+          required: false
+          schema:
+            type: "boolean"
+            default: false
+      responses:
+        "200":
+          description: "Paginated list of images"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListImagesResponse"
+        "400":
+          description: "Bad request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestError"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-pagination:
+        type: "cursor"
+        inputs:
+          - name: "starting_after"
+            in: "parameters"
+            type: "cursor"
+        outputs:
+          nextCursor: "$.cursor"
+      x-speakeasy-name-override: list
+    post:
+      tags:
+        - "Images"
+      summary: "Create image"
+      description: "Create an image and start a multipart upload."
+      operationId: "create_image"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartUploadRequest"
+        required: true
+      responses:
+        "201":
+          description: "Image created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageUploadResponse"
+        "400":
+          description: "Validation failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestError"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "409":
+          description: "Image already exists"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: "startUpload"
+  /v2/images/{id}:
+    get:
+      tags:
+        - "Images"
+      summary: "Get image"
+      description: "Retrieve an image by ID. Returns both user-owned and public images."
+      operationId: "fetch_image"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Image ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/ImageId"
+      responses:
+        "200":
+          description: "Image details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageListEntry"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "404":
+          description: "Image not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: get
+    delete:
+      tags:
+        - "Images"
+      summary: "Delete image"
+      description: "Delete an image. This is a soft delete."
+      operationId: "delete_image"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Image ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/ImageId"
+      responses:
+        "200":
+          description: "Image deleted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteImageResponse"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "404":
+          description: "Image not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "409":
+          description: "Image is referenced by a node template"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+  /v2/images/{id}/complete:
+    post:
+      tags:
+        - "Images"
+      summary: "Complete image upload"
+      description: "Complete a multipart image upload after all parts have been uploaded."
+      operationId: "complete_image_upload"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Image ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/ImageId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteUploadRequest"
+        required: true
+      responses:
+        "200":
+          description: "Upload completed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageUploadResponse"
+        "400":
+          description: "Validation failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestError"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "404":
+          description: "Image not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: "completeUpload"
+  /v2/images/{id}/download:
+    get:
+      tags:
+        - "Images"
+      summary: "Download image"
+      description: "Get a presigned URL to download an image. Works for both user-owned and public images."
+      operationId: "download_image"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Image ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/ImageId"
+      responses:
+        "200":
+          description: "Download URL generated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageDownloadResponse"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "404":
+          description: "Image not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "409":
+          description: "Image upload not completed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConflictError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: "download"
+  /v2/images/{id}/parts:
+    post:
+      tags:
+        - "Images"
+      summary: "Create image upload part URL"
+      description: "Get a presigned URL to upload a part of a multipart image upload."
+      operationId: "create_image_upload_part_url"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Image ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/ImageId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadPartRequest"
+        required: true
+      responses:
+        "200":
+          description: "Upload URL generated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadPartResponse"
+        "400":
+          description: "Validation failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequestError"
+        "401":
+          description: "Unauthorized request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "404":
+          description: "Image not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: "uploadPart"
   /v2/node_templates:
     get:
       tags:
         - "Node Templates"
       summary: "List node templates"
       description: "List all node templates."
-      operationId: "list_node_templates_handler"
+      operationId: "list_node_templates"
       parameters:
         - name: "limit"
           in: "query"
@@ -310,13 +659,13 @@ paths:
           description: "Set to the response's `cursor` to fetch the next page."
           required: false
           schema:
-            $ref: "#/components/schemas/market-api_NodeTemplatesCursor"
+            $ref: "#/components/schemas/NodeTemplatesCursor"
         - name: "ending_before"
           in: "query"
           description: "Set to the response's `cursor` to fetch the previous page."
           required: false
           schema:
-            $ref: "#/components/schemas/market-api_NodeTemplatesCursor"
+            $ref: "#/components/schemas/NodeTemplatesCursor"
         - name: "include_deleted"
           in: "query"
           required: false
@@ -330,34 +679,40 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/components/schemas/market-api_NodeTemplateInclude"
+              $ref: "#/components/schemas/NodeTemplateInclude"
       responses:
         "200":
           description: "Paginated list of node templates."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ListNodeTemplatesResponse"
+                $ref: "#/components/schemas/ListNodeTemplatesResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-pagination:
+        type: "cursor"
+        inputs:
+          - name: "starting_after"
+            in: "parameters"
+            type: "cursor"
+        outputs:
+          nextCursor: "$.cursor"
       x-speakeasy-group: nodeTemplates
       x-speakeasy-name-override: list
     post:
@@ -365,12 +720,12 @@ paths:
         - "Node Templates"
       summary: "Create node template"
       description: "Create a reusable node configuration."
-      operationId: "create_node_template_handler"
+      operationId: "create_node_template"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/market-api_CreateNodeTemplateRequest"
+              $ref: "#/components/schemas/CreateNodeTemplateRequest"
         required: true
       responses:
         "201":
@@ -378,33 +733,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NodeTemplateResponse"
+                $ref: "#/components/schemas/NodeTemplateResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "403":
           description: "Forbidden."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ForbiddenError"
+                $ref: "#/components/schemas/ForbiddenError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-group: nodeTemplates
       x-speakeasy-name-override: create
   /v2/node_templates/{id}:
@@ -413,7 +766,7 @@ paths:
         - "Node Templates"
       summary: "Get node template"
       description: "Retrieve a node template by ID or name."
-      operationId: "get_node_template_handler"
+      operationId: "fetch_node_template"
       parameters:
         - name: "id"
           in: "path"
@@ -430,27 +783,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NodeTemplateResponse"
+                $ref: "#/components/schemas/NodeTemplateResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: "Node template not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-group: nodeTemplates
       x-speakeasy-name-override: get
     delete:
@@ -458,7 +809,7 @@ paths:
         - "Node Templates"
       summary: "Delete node template"
       description: "Delete a node template. The template must not be in use by any capacity."
-      operationId: "delete_node_template_handler"
+      operationId: "delete_node_template"
       parameters:
         - name: "id"
           in: "path"
@@ -477,600 +828,33 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "403":
           description: "Feature not enabled."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_ForbiddenError"
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: "Node template not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "422":
           description: "Node template is in use."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-group: nodeTemplates
       x-speakeasy-name-override: delete
-  /v2/orders:
-    get:
-      tags:
-        - "Orders"
-      summary: "List orders"
-      description: "List all orders."
-      operationId: "list_orders"
-      parameters:
-        - name: "capacity"
-          in: "query"
-          description: "Filter by capacity."
-          required: false
-          schema:
-            $ref: "#/components/schemas/market-api_NameOrId_CapacityId"
-        - name: "side"
-          in: "query"
-          required: false
-          schema:
-            $ref: "#/components/schemas/market-api_Side"
-        - name: "status"
-          in: "query"
-          description: "Filter by status (repeatable)."
-          required: false
-          schema:
-            type: "array"
-            items:
-              $ref: "#/components/schemas/market-api_v2.OrderStatus"
-          style: "form"
-          explode: true
-        - name: "created_after"
-          in: "query"
-          required: false
-          schema:
-            $ref: "#/components/schemas/market-api_UnixEpoch"
-        - name: "created_before"
-          in: "query"
-          required: false
-          schema:
-            $ref: "#/components/schemas/market-api_UnixEpoch"
-        - name: "sort_by"
-          in: "query"
-          description: "Prefix with `-` for descending."
-          required: false
-          schema:
-            oneOf:
-              - $ref: "#/components/schemas/market-api_v2.OrderSortBy"
-            default: "-created_at"
-        - name: "limit"
-          in: "query"
-          required: false
-          schema:
-            type: "integer"
-            format: "u-int32"
-            default: 50
-            maximum: 200
-            minimum: 1
-        - name: "starting_after"
-          in: "query"
-          description: "Set to the response's `cursor` to fetch the next page."
-          required: false
-          schema:
-            $ref: "#/components/schemas/market-api_OrdersCursor"
-        - name: "ending_before"
-          in: "query"
-          description: "Set to the response's `cursor` to fetch the previous page."
-          required: false
-          schema:
-            $ref: "#/components/schemas/market-api_OrdersCursor"
-      responses:
-        "200":
-          description: "Paginated list of orders."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_v2.ListOrdersResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
-        "422":
-          description: "Validation failed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
-      x-speakeasy-name-override: list
-    post:
-      tags:
-        - "Orders"
-      summary: "Create order"
-      description: "Place a buy or sell order. Orders fill completely or not at all. All nodes fill in a single zone. Order filling is asynchronous; poll `GET /v2/orders/{id}` to check status."
-      operationId: "post_order"
-      parameters:
-        - name: "Idempotency-Key"
-          in: "header"
-          description: "Unique key to ensure idempotent order creation. If provided, duplicate requests with the same key will not place a new order and return the original order."
-          required: false
-          schema:
-            type:
-              - "string"
-              - "null"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/market-api_v2.CreateOrderRequest"
-        required: true
-      responses:
-        "201":
-          description: "Order created."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_v2.OrderResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
-        "402":
-          description: "Insufficient balance."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_PaymentRequiredError"
-        "403":
-          description: "Forbidden."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_ForbiddenError"
-        "404":
-          description: "Not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
-        "422":
-          description: "Validation failed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
-      x-speakeasy-name-override: create
-  /v2/orders/{id}:
-    get:
-      tags:
-        - "Orders"
-      summary: "Get order"
-      description: "Retrieve an order by ID."
-      operationId: "get_order"
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "Order ID"
-          required: true
-          schema:
-            $ref: "#/components/schemas/market-api_OrderId"
-          example: "ordr_xyz789"
-      responses:
-        "200":
-          description: "Order details."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_v2.OrderResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
-        "404":
-          description: "Order not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
-      x-speakeasy-name-override: get
-    delete:
-      tags:
-        - "Orders"
-      summary: "Cancel order"
-      description: "Request cancellation of an order. This is asynchronous — poll `GET /v2/orders/{id}` to confirm the status has changed to cancelled."
-      operationId: "cancel_order"
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "Order ID"
-          required: true
-          schema:
-            $ref: "#/components/schemas/market-api_OrderId"
-          example: "ordr_xyz789"
-      responses:
-        "204":
-          description: "Order cancellation initiated."
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnauthorizedError"
-        "404":
-          description: "Order not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_NotFoundError"
-        "422":
-          description: "Order cannot be cancelled."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_UnprocessableEntityError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/market-api_InternalServerError"
-      security:
-        - market-api_bearer_auth: []
-      x-speakeasy-name-override: cancel
-  /v2/images:
-    get:
-      tags:
-        - "Images"
-      summary: "List images"
-      description: "List all machine images."
-      operationId: "list_images_v2"
-      parameters:
-        - name: "limit"
-          in: "query"
-          required: false
-          schema:
-            type: "integer"
-            format: "u-int32"
-            default: 50
-            maximum: 200
-            minimum: 1
-        - name: "starting_after"
-          in: "query"
-          description: "Set to the response's `cursor` to fetch the next page."
-          required: false
-          schema:
-            $ref: "#/components/schemas/vmorch_ImagesCursor"
-        - name: "ending_before"
-          in: "query"
-          description: "Set to the response's `cursor` to fetch the previous page."
-          required: false
-          schema:
-            $ref: "#/components/schemas/vmorch_ImagesCursor"
-      responses:
-        "200":
-          description: "Paginated list of images."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ListImagesResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
-        "422":
-          description: "Validation failed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnprocessableEntityError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: list
-    post:
-      tags:
-        - "Images"
-      summary: "Create image"
-      description: "Create an image and start a multipart upload."
-      operationId: "start_upload"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/vmorch_StartUploadRequest"
-        required: true
-      responses:
-        "201":
-          description: "Image created."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ImageResponse"
-        "400":
-          description: "Validation failed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_BadRequestError"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
-        "403":
-          description: "Forbidden."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ForbiddenError"
-        "409":
-          description: "Image already exists."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ConflictError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: startUpload
-  /v2/images/{id}:
-    get:
-      tags:
-        - "Images"
-      summary: "Get image"
-      description: "Retrieve an image by ID."
-      operationId: "get_image"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            $ref: "#/components/schemas/vmorch_ImageId"
-      responses:
-        "200":
-          description: "Image details."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ImageResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
-        "404":
-          description: "Image not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: get
-  /v2/images/{id}/complete:
-    post:
-      tags:
-        - "Images"
-      summary: "Complete image upload"
-      description: "Complete a multipart image upload after all parts have been uploaded."
-      operationId: "complete_upload"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            $ref: "#/components/schemas/vmorch_ImageId"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/vmorch_CompleteUploadRequest"
-        required: true
-      responses:
-        "200":
-          description: "Upload completed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ImageResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
-        "403":
-          description: "Forbidden."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ForbiddenError"
-        "404":
-          description: "Image not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
-        "422":
-          description: "Validation failed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnprocessableEntityError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: completeUpload
-  /v2/images/{id}/download:
-    get:
-      tags:
-        - "Images"
-      summary: "Download image"
-      description: "Get a presigned URL to download an image."
-      operationId: "download_image_v2"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            $ref: "#/components/schemas/vmorch_ImageId"
-      responses:
-        "200":
-          description: "Download URL generated."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ImageDownloadResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
-        "404":
-          description: "Image not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
-        "409":
-          description: "Image upload not completed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ConflictError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: download
-  /v2/images/{id}/parts:
-    post:
-      tags:
-        - "Images"
-      summary: "Create image upload part URL"
-      description: "Get a presigned URL to upload a part of a multipart image upload."
-      operationId: "upload_part"
-      parameters:
-        - name: "id"
-          in: "path"
-          required: true
-          schema:
-            $ref: "#/components/schemas/vmorch_ImageId"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/vmorch_UploadPartRequest"
-        required: true
-      responses:
-        "200":
-          description: "Upload URL generated."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UploadPartResponse"
-        "401":
-          description: "Unauthorized."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
-        "403":
-          description: "Forbidden."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_ForbiddenError"
-        "404":
-          description: "Image not found."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
-        "422":
-          description: "Validation failed."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_UnprocessableEntityError"
-        "500":
-          description: "Internal server error."
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: uploadPart
   /v2/nodes:
     get:
       tags:
@@ -1086,7 +870,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/components/schemas/vmorch_NodeId"
+              $ref: "#/components/schemas/NodeId"
           style: "form"
           explode: true
           example: "node_k3R-nX9vLm7Qp2Yw5Jd8F"
@@ -1095,7 +879,7 @@ paths:
           description: "Filter by capacity."
           required: false
           schema:
-            $ref: "#/components/schemas/vmorch_NameOrId_CapacityId"
+            $ref: "#/components/schemas/NameOrId_CapacityId"
         - name: "status"
           in: "query"
           description: "Filter by node status (repeatable)."
@@ -1103,7 +887,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/components/schemas/vmorch_NodeStatus"
+              $ref: "#/components/schemas/NodeStatus"
           style: "form"
           explode: true
         - name: "include_deleted"
@@ -1127,46 +911,44 @@ paths:
           description: "Cursor for forward pagination (from a previous response's `cursor` field)."
           required: false
           schema:
-            $ref: "#/components/schemas/vmorch_NodesCursor"
+            $ref: "#/components/schemas/NodesCursor"
         - name: "ending_before"
           in: "query"
           description: "Cursor for backward pagination."
           required: false
           schema:
-            $ref: "#/components/schemas/vmorch_NodesCursor"
+            $ref: "#/components/schemas/NodesCursor"
       responses:
         "200":
           description: "Paginated list of nodes."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_ListNodesResponse"
+                $ref: "#/components/schemas/ListNodesResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: "Capacity not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: list
   /v2/nodes/{id}:
     get:
@@ -1174,40 +956,38 @@ paths:
         - "Nodes"
       summary: "Get node"
       description: "Retrieve a node by ID."
-      operationId: "get_node"
+      operationId: "fetch_node"
       parameters:
         - name: "id"
           in: "path"
           required: true
           schema:
-            $ref: "#/components/schemas/vmorch_NodeId"
+            $ref: "#/components/schemas/NodeId"
       responses:
         "200":
           description: "Node details."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NodeResponse"
+                $ref: "#/components/schemas/NodeResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: "Node not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: get
   /v2/nodes/{id}/logs:
     get:
@@ -1221,7 +1001,7 @@ paths:
           in: "path"
           required: true
           schema:
-            $ref: "#/components/schemas/vmorch_NodeId"
+            $ref: "#/components/schemas/NodeId"
         - name: "seqnum_before"
           in: "query"
           description: "Return logs with `seqnum` less than or equal to this value."
@@ -1243,13 +1023,13 @@ paths:
           description: "Due to clock synchronization, some earlier log messages may have a realtime timestamp after this value."
           required: false
           schema:
-            $ref: "#/components/schemas/vmorch_UnixEpoch"
+            $ref: "#/components/schemas/UnixEpoch"
         - name: "realtime_timestamp_after"
           in: "query"
           description: "Due to clock synchronization, some later log messages may have a realtime timestamp before this value."
           required: false
           schema:
-            $ref: "#/components/schemas/vmorch_UnixEpoch"
+            $ref: "#/components/schemas/UnixEpoch"
         - name: "sort_by"
           in: "query"
           required: false
@@ -1273,34 +1053,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NodeLogsResponse"
+                $ref: "#/components/schemas/NodeLogsResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: "Node not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "422":
           description: "Validation failed."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnprocessableEntityError"
+                $ref: "#/components/schemas/UnprocessableEntityError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: getLogs
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: "getLogs"
   /v2/nodes/{id}/replace:
     post:
       tags:
@@ -1313,12 +1091,12 @@ paths:
           in: "path"
           required: true
           schema:
-            $ref: "#/components/schemas/vmorch_NodeId"
+            $ref: "#/components/schemas/NodeId"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/vmorch_ReplaceNodeRequest"
+              $ref: "#/components/schemas/ReplaceNodeRequest"
         required: true
       responses:
         "200":
@@ -1326,33 +1104,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NodeResponse"
+                $ref: "#/components/schemas/NodeResponse"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "403":
           description: "Feature not enabled."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_ForbiddenError"
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: "Node not found."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
+                $ref: "#/components/schemas/InternalServerError"
       x-speakeasy-name-override: replace
   /v2/nodes/{id}/ssh:
     get:
@@ -1366,55 +1142,303 @@ paths:
           in: "path"
           required: true
           schema:
-            $ref: "#/components/schemas/vmorch_NodeId"
+            $ref: "#/components/schemas/NodeId"
       responses:
         "200":
           description: "SSH connection details."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NodeSshInfo"
+                $ref: "#/components/schemas/NodeSshInfo"
         "401":
           description: "Unauthorized."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_UnauthorizedError"
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: "SSH details not available."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_NotFoundError"
+                $ref: "#/components/schemas/NotFoundError"
         "500":
           description: "Internal server error."
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/vmorch_InternalServerError"
-      security:
-        - vmorch_bearer_auth: []
-      x-speakeasy-name-override: getSsh
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: "getSsh"
+  /v2/orders:
+    get:
+      tags:
+        - "Orders"
+      summary: "List orders"
+      description: "List all orders."
+      operationId: "list_orders"
+      parameters:
+        - name: "capacity"
+          in: "query"
+          description: "Filter by capacity."
+          required: false
+          schema:
+            $ref: "#/components/schemas/NameOrId_CapacityId"
+        - name: "side"
+          in: "query"
+          required: false
+          schema:
+            $ref: "#/components/schemas/Side"
+        - name: "status"
+          in: "query"
+          description: "Filter by status (repeatable)."
+          required: false
+          schema:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/v2.OrderStatus"
+          style: "form"
+          explode: true
+        - name: "created_after"
+          in: "query"
+          required: false
+          schema:
+            $ref: "#/components/schemas/UnixEpoch"
+        - name: "created_before"
+          in: "query"
+          required: false
+          schema:
+            $ref: "#/components/schemas/UnixEpoch"
+        - name: "sort_by"
+          in: "query"
+          description: "Prefix with `-` for descending."
+          required: false
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/v2.OrderSortBy"
+            default: "-created_at"
+        - name: "limit"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+            format: "u-int32"
+            default: 50
+            maximum: 200
+            minimum: 1
+        - name: "starting_after"
+          in: "query"
+          description: "Set to the response's `cursor` to fetch the next page."
+          required: false
+          schema:
+            $ref: "#/components/schemas/OrdersCursor"
+        - name: "ending_before"
+          in: "query"
+          description: "Set to the response's `cursor` to fetch the previous page."
+          required: false
+          schema:
+            $ref: "#/components/schemas/OrdersCursor"
+      responses:
+        "200":
+          description: "Paginated list of orders."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v2.ListOrdersResponse"
+        "401":
+          description: "Unauthorized."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "422":
+          description: "Validation failed."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessableEntityError"
+        "500":
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-pagination:
+        type: "cursor"
+        inputs:
+          - name: "starting_after"
+            in: "parameters"
+            type: "cursor"
+        outputs:
+          nextCursor: "$.cursor"
+      x-speakeasy-name-override: list
+    post:
+      tags:
+        - "Orders"
+      summary: "Create order"
+      description: "Place a buy or sell order. Orders fill completely or not at all. All nodes fill in a single zone. Order filling is asynchronous; poll `GET /v2/orders/{id}` to check status."
+      operationId: "create_order"
+      parameters:
+        - name: "Idempotency-Key"
+          in: "header"
+          description: "Unique key to ensure idempotent order creation. If provided, duplicate requests with the same key will not place a new order and return the original order."
+          required: false
+          schema:
+            type:
+              - "string"
+              - "null"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v2.CreateOrderRequest"
+        required: true
+      responses:
+        "201":
+          description: "Order created."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v2.OrderResponse"
+        "401":
+          description: "Unauthorized."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "402":
+          description: "Insufficient balance."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentRequiredError"
+        "403":
+          description: "Forbidden."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        "404":
+          description: "Not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "422":
+          description: "Validation failed."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessableEntityError"
+        "500":
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: create
+  /v2/orders/{id}:
+    get:
+      tags:
+        - "Orders"
+      summary: "Get order"
+      description: "Retrieve an order by ID."
+      operationId: "get_order"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Order ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+          example: "ordr_xyz789"
+      responses:
+        "200":
+          description: "Order details."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v2.OrderResponse"
+        "401":
+          description: "Unauthorized."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "404":
+          description: "Order not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "500":
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: get
+    delete:
+      tags:
+        - "Orders"
+      summary: "Cancel order"
+      description: "Request cancellation of an order. This is asynchronous — poll `GET /v2/orders/{id}` to confirm the status has changed to cancelled."
+      operationId: "cancel_order"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Order ID"
+          required: true
+          schema:
+            $ref: "#/components/schemas/OrderId"
+          example: "ordr_xyz789"
+      responses:
+        "204":
+          description: "Order cancellation initiated."
+        "401":
+          description: "Unauthorized."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
+        "404":
+          description: "Order not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "422":
+          description: "Order cannot be cancelled."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessableEntityError"
+        "500":
+          description: "Internal server error."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+      x-speakeasy-name-override: cancel
 components:
   schemas:
-    market-api_AllocationSchedule:
+    AllocationSchedule:
       type: "object"
       required:
         - "total"
         - "by_zone"
       properties:
         total:
-          $ref: "#/components/schemas/market-api_Schedule"
+          $ref: "#/components/schemas/Schedule"
           description: "Combined allocation schedule across all zones. Only includes current and future schedule."
         by_zone:
           type: "object"
           description: "Allocation schedule on a zone-by-zone basis. Only includes current and future schedule."
           additionalProperties:
-            $ref: "#/components/schemas/market-api_Schedule"
+            $ref: "#/components/schemas/Schedule"
           propertyNames:
             type: "string"
             example: "richmond"
-    market-api_BadRequestError:
+    BadRequestError:
       type: "object"
       required:
         - "error"
@@ -1435,18 +1459,18 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_CapacitiesCursor:
+                $ref: "#/components/schemas/ErrorDetail"
+    CapacitiesCursor:
       type: "string"
       examples:
         - "capc_gqXR7s0Kj5mHvE2wNpLc4Q"
       pattern: "^capc_[A-Za-z0-9_-]+$"
-    market-api_CapacityId:
+    CapacityId:
       type: "string"
       examples:
         - "cap_k3R-nX9vLm7Qp2Yw5Jd8F"
       pattern: "cap_[0-9a-zA-Z_-]{1,21}"
-    market-api_CapacityResponse:
+    CapacityResponse:
       type: "object"
       required:
         - "object"
@@ -1462,31 +1486,43 @@ components:
           default: "capacity"
           readOnly: true
         id:
-          $ref: "#/components/schemas/market-api_CapacityId"
+          $ref: "#/components/schemas/CapacityId"
         name:
-          $ref: "#/components/schemas/market-api_Name"
+          $ref: "#/components/schemas/Name"
           nullable: true
         zones:
           type: "array"
           items:
-            $ref: "#/components/schemas/market-api_ZoneName"
+            $ref: "#/components/schemas/ZoneName"
           description: "Datacenter locations orders into this capacity can acquire compute from."
           minItems: 1
         node_template:
-          $ref: "#/components/schemas/market-api_NodeTemplateId"
+          $ref: "#/components/schemas/NodeTemplateId"
           nullable: true
           description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
         start_nodes_automatically:
           type: "boolean"
           description: "If enabled, nodes will be provisioned and terminated + deleted automatically based on currently available allocation in this capacity. Requires `node_template` to be set."
         allocation_schedule:
-          $ref: "#/components/schemas/market-api_AllocationSchedule"
+          $ref: "#/components/schemas/AllocationSchedule"
           description: "Allocation schedule of this capacity. Add to the schedule by placing buy orders into this capacity."
         created_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
         scheduler:
-          $ref: "#/components/schemas/market-api_SchedulerDetails"
-    market-api_ConflictError:
+          $ref: "#/components/schemas/SchedulerDetails"
+    CompleteUploadRequest:
+      type: "object"
+      description: "Complete a multipart image upload."
+      required:
+        - "sha256"
+      properties:
+        sha256:
+          type: "string"
+          description: "Not verified on upload; used during node boot to verify integrity."
+          maxLength: 64
+          minLength: 64
+          pattern: "^[a-f0-9]{64}$"
+    ConflictError:
       type: "object"
       required:
         - "error"
@@ -1507,44 +1543,44 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_CreateCapacityRequest:
+                $ref: "#/components/schemas/ErrorDetail"
+    CreateCapacityRequest:
       type: "object"
       required:
         - "zones"
         - "start_nodes_automatically"
       properties:
         name:
-          $ref: "#/components/schemas/market-api_Name"
+          $ref: "#/components/schemas/Name"
           nullable: true
           description: "Unique name for this capacity."
         zones:
           type: "array"
           items:
-            $ref: "#/components/schemas/market-api_ZoneName"
+            $ref: "#/components/schemas/ZoneName"
           description: "Datacenter locations orders into this capacity can acquire compute from."
           example:
             - "richmond"
           minItems: 1
         node_template:
-          $ref: "#/components/schemas/market-api_NameOrId_NodeTemplateId"
+          $ref: "#/components/schemas/NameOrId_NodeTemplateId"
           nullable: true
           description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
         start_nodes_automatically:
           type: "boolean"
           description: "Automatically start nodes when compute is available. Requires `node_template`."
         scheduler:
-          $ref: "#/components/schemas/market-api_SchedulerDetails"
-    market-api_CreateNodeTemplateRequest:
+          $ref: "#/components/schemas/SchedulerDetails"
+    CreateNodeTemplateRequest:
       type: "object"
       required:
         - "name"
         - "image"
       properties:
         name:
-          $ref: "#/components/schemas/market-api_Name"
+          $ref: "#/components/schemas/Name"
         image:
-          $ref: "#/components/schemas/market-api_ImageId"
+          $ref: "#/components/schemas/ImageId"
           description: "Machine image id to use when starting nodes with this template."
         cloud_init_user_data:
           type: "string"
@@ -1552,13 +1588,43 @@ components:
           description: "Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Maximum 64KB. Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported."
           example: "IyEvYmluL2Jhc2gKZWNobyBoZWxsbyB3b3JsZAo="
           contentEncoding: "base64"
-    market-api_DollarsPerNodeHour:
+    DeleteImageResponse:
+      type: "object"
+      required:
+        - "object"
+        - "deleted"
+        - "name"
+      properties:
+        object:
+          type: "string"
+          const: "image"
+          default: "image"
+          readOnly: true
+        deleted:
+          type: "boolean"
+        name:
+          $ref: "#/components/schemas/Name"
+    DollarsPerNodeHour:
       type: "string"
       description: "Price rate in dollars per node-hour."
       examples:
         - "2.500000"
       pattern: "^-?\\d+\\.\\d+$"
-    market-api_ErrorDetail:
+    ErrorContent:
+      type: "object"
+      required:
+        - "type"
+        - "message"
+      properties:
+        type:
+          $ref: "#/components/schemas/ErrorType"
+        message:
+          type: "string"
+        details:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
       type: "object"
       required:
         - "code"
@@ -1575,7 +1641,7 @@ components:
         message:
           type: "string"
           description: "Human-readable error message"
-    market-api_ErrorType:
+    ErrorType:
       type: "string"
       enum:
         - "api_error"
@@ -1591,7 +1657,7 @@ components:
         - "payment_required"
         - "service_unavailable"
         - "unprocessable_entity"
-    market-api_ForbiddenError:
+    ForbiddenError:
       type: "object"
       required:
         - "error"
@@ -1612,13 +1678,112 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_ImageId:
+                $ref: "#/components/schemas/ErrorDetail"
+    ImageDownloadResponse:
+      type: "object"
+      required:
+        - "url"
+        - "expires_at"
+        - "sha256"
+        - "size"
+      properties:
+        url:
+          type: "string"
+          description: "Presigned download URL."
+        expires_at:
+          $ref: "#/components/schemas/UnixEpoch"
+        sha256:
+          type: "string"
+          description: "For integrity verification."
+          example: "e3b0c44298fc1c149af..."
+          maxLength: 64
+          minLength: 64
+          pattern: "^[a-f0-9]{64}$"
+        size:
+          type: "integer"
+          format: "u-int64"
+          description: "Image size in bytes."
+          minimum: 0
+    ImageId:
       type: "string"
       examples:
         - "image_k3R-nX9vLm7Qp2Yw5Jd8F"
       pattern: "image_[0-9a-zA-Z_-]{1,21}"
-    market-api_InternalServerError:
+    ImageListEntry:
+      type: "object"
+      required:
+        - "object"
+        - "id"
+        - "name"
+        - "upload_status"
+        - "created_at"
+      properties:
+        object:
+          type: "string"
+          const: "image"
+          default: "image"
+          readOnly: true
+        id:
+          $ref: "#/components/schemas/ImageId"
+        name:
+          $ref: "#/components/schemas/Name"
+        upload_status:
+          $ref: "#/components/schemas/ImageUploadStatus"
+        created_at:
+          $ref: "#/components/schemas/UnixEpoch"
+        provider:
+          type:
+            - "string"
+            - "null"
+        sha256:
+          type:
+            - "string"
+            - "null"
+          maxLength: 64
+          minLength: 64
+          pattern: "^[a-f0-9]{64}$"
+    ImageUploadResponse:
+      type: "object"
+      required:
+        - "object"
+        - "id"
+        - "name"
+        - "upload_status"
+        - "created_at"
+      properties:
+        object:
+          type: "string"
+          const: "image"
+          default: "image"
+          readOnly: true
+        id:
+          $ref: "#/components/schemas/ImageId"
+        name:
+          $ref: "#/components/schemas/Name"
+        upload_status:
+          $ref: "#/components/schemas/ImageUploadStatus"
+        sha256:
+          type:
+            - "string"
+            - "null"
+          maxLength: 64
+          minLength: 64
+          pattern: "^[a-f0-9]{64}$"
+        created_at:
+          $ref: "#/components/schemas/UnixEpoch"
+    ImageUploadStatus:
+      type: "string"
+      enum:
+        - "started"
+        - "uploading"
+        - "completed"
+        - "failed"
+    ImagesCursor:
+      type: "string"
+      examples:
+        - "imagec_gqXR7s0Kj5mHvE2wNpLc4Q"
+      pattern: "^imagec_[A-Za-z0-9_-]+$"
+    InternalServerError:
       type: "object"
       required:
         - "error"
@@ -1639,8 +1804,8 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_ListCapacitiesResponse:
+                $ref: "#/components/schemas/ErrorDetail"
+    ListCapacitiesResponse:
       type: "object"
       required:
         - "object"
@@ -1653,7 +1818,7 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/market-api_CapacitiesCursor"
+          $ref: "#/components/schemas/CapacitiesCursor"
           nullable: true
           description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
@@ -1661,8 +1826,8 @@ components:
         data:
           type: "array"
           items:
-            $ref: "#/components/schemas/market-api_CapacityResponse"
-    market-api_ListNodeTemplatesResponse:
+            $ref: "#/components/schemas/CapacityResponse"
+    ListImagesResponse:
       type: "object"
       required:
         - "object"
@@ -1675,7 +1840,28 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/market-api_NodeTemplatesCursor"
+          $ref: "#/components/schemas/ImagesCursor"
+          nullable: true
+        has_more:
+          type: "boolean"
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ImageListEntry"
+    ListNodeTemplatesResponse:
+      type: "object"
+      required:
+        - "object"
+        - "has_more"
+        - "data"
+      properties:
+        object:
+          type: "string"
+          const: "list"
+          default: "list"
+          readOnly: true
+        cursor:
+          $ref: "#/components/schemas/NodeTemplatesCursor"
           nullable: true
           description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
@@ -1683,37 +1869,193 @@ components:
         data:
           type: "array"
           items:
-            $ref: "#/components/schemas/market-api_NodeTemplateResponse"
-    market-api_Name:
+            $ref: "#/components/schemas/NodeTemplateResponse"
+    ListNodesResponse:
+      type: "object"
+      required:
+        - "object"
+        - "has_more"
+        - "data"
+      properties:
+        object:
+          type: "string"
+          const: "list"
+          default: "list"
+          readOnly: true
+        cursor:
+          $ref: "#/components/schemas/NodesCursor"
+          nullable: true
+          description: "Pass as `starting_after` or `ending_before` to paginate."
+        has_more:
+          type: "boolean"
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/NodeResponse"
+    Name:
       type: "string"
       examples:
         - "my-resource-name"
       maxLength: 255
       minLength: 1
       pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,254}"
-    market-api_NameOrId_CapacityId:
+    NameOrId_CapacityId:
       type: "string"
       description: "An ID _or_ name identifying this resource."
       examples:
         - "cap_k3R-nX9vLm7Qp2Yw5Jd8F"
       pattern: "(cap_[0-9a-zA-Z_-]{1,21}) | ([a-zA-Z0-9][a-zA-Z0-9._-]{0,254})"
-    market-api_NameOrId_NodeTemplateId:
+    NameOrId_NodeTemplateId:
       type: "string"
       description: "An ID _or_ name identifying this resource."
       examples:
         - "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F"
       pattern: "(ntmpl_[0-9a-zA-Z_-]{1,21}) | ([a-zA-Z0-9][a-zA-Z0-9._-]{0,254})"
-    market-api_NodeTemplateId:
+    NodeId:
+      type: "string"
+      examples:
+        - "node_k3R-nX9vLm7Qp2Yw5Jd8F"
+      pattern: "node_[0-9a-zA-Z_-]{1,21}"
+    NodeLogChunk:
+      type: "object"
+      required:
+        - "timestamp_realtime"
+        - "timestamp_monotonic_secs"
+        - "timestamp_monotonic_nanos"
+        - "seqnum"
+        - "data"
+      properties:
+        timestamp_realtime:
+          $ref: "#/components/schemas/UnixEpoch"
+          description: "Wall-clock time. Unix timestamp."
+        timestamp_monotonic_secs:
+          type: "integer"
+          format: "int64"
+          description: "Monotonic clock seconds."
+        timestamp_monotonic_nanos:
+          type: "integer"
+          format: "u-int32"
+          description: "Nanosecond component of the monotonic clock."
+          minimum: 0
+        seqnum:
+          type: "integer"
+          format: "u-int64"
+          minimum: 0
+        data:
+          type: "string"
+          format: "byte"
+          description: "Base-64 encoded raw console output."
+          example: "SGVsbG8gV29ybGQK"
+          contentEncoding: "base64"
+    NodeLogsResponse:
+      type: "object"
+      required:
+        - "object"
+        - "data"
+      properties:
+        object:
+          type: "string"
+          const: "list"
+          default: "list"
+          readOnly: true
+        data:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/NodeLogChunk"
+    NodeResponse:
+      type: "object"
+      required:
+        - "object"
+        - "id"
+        - "status"
+        - "zone"
+        - "capacity"
+        - "node_template"
+      properties:
+        object:
+          type: "string"
+          const: "node"
+          default: "node"
+          readOnly: true
+        id:
+          $ref: "#/components/schemas/NodeId"
+        status:
+          $ref: "#/components/schemas/NodeStatus"
+        zone:
+          $ref: "#/components/schemas/ZoneName"
+          description: "Zone this node is located in."
+        capacity:
+          $ref: "#/components/schemas/CapacityId"
+          description: "Capacity this node is utilizing."
+        node_template:
+          $ref: "#/components/schemas/NodeTemplateId"
+          description: "Node template used to launch this node."
+    NodeSshHostKey:
+      type: "object"
+      required:
+        - "key_type"
+        - "key"
+      properties:
+        key_type:
+          type: "string"
+          description: "Key algorithm."
+          examples:
+            - "ssh-ed25519"
+            - "ssh-rsa"
+        key:
+          type: "string"
+          format: "byte"
+          description: "Base64-encoded public key."
+          example: "AAAAC3NzaC1lZDI1NTE5AAAAI..."
+          contentEncoding: "base64"
+    NodeSshInfo:
+      type: "object"
+      required:
+        - "hostname"
+        - "port"
+        - "host_keys"
+      properties:
+        hostname:
+          type: "string"
+          examples:
+            - "24.125.89.203"
+        port:
+          type: "integer"
+          format: "u-int16"
+          examples:
+            - 22
+          minimum: 0
+        host_keys:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/NodeSshHostKey"
+        last_successful_key_update_at:
+          $ref: "#/components/schemas/UnixEpoch"
+          nullable: true
+          description: "Unix timestamp of the last successful host key refresh."
+        last_attempted_key_update_at:
+          $ref: "#/components/schemas/UnixEpoch"
+          nullable: true
+          description: "Unix timestamp of the last attempted host key refresh."
+    NodeStatus:
+      type: "string"
+      description: "`pending` on creation while waiting for hardware assignment, `running` once assigned (note: the node may still be booting or loading a custom image), `terminated` when destroyed, `failed` on hardware fault."
+      enum:
+        - "pending"
+        - "running"
+        - "terminated"
+        - "failed"
+    NodeTemplateId:
       type: "string"
       examples:
         - "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F"
       pattern: "ntmpl_[0-9a-zA-Z_-]{1,21}"
-    market-api_NodeTemplateInclude:
+    NodeTemplateInclude:
       type: "string"
       const: "cloud_init_user_data"
       default: "cloud_init_user_data"
       readOnly: true
-    market-api_NodeTemplateResponse:
+    NodeTemplateResponse:
       type: "object"
       required:
         - "object"
@@ -1729,29 +2071,34 @@ components:
           default: "node_template"
           readOnly: true
         id:
-          $ref: "#/components/schemas/market-api_NodeTemplateId"
+          $ref: "#/components/schemas/NodeTemplateId"
         name:
-          $ref: "#/components/schemas/market-api_Name"
+          $ref: "#/components/schemas/Name"
         image:
-          $ref: "#/components/schemas/market-api_ImageId"
+          $ref: "#/components/schemas/ImageId"
           description: "Machine image to use when starting nodes with this template."
         cloud_init_user_data_used:
           type: "boolean"
           description: "Whether cloud-init user data is configured for this template."
         created_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
         cloud_init_user_data:
           type: "string"
           format: "byte"
           description: "Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported."
           example: "IyEvYmluL2Jhc2gKZWNobyBoZWxsbyB3b3JsZAo="
           contentEncoding: "base64"
-    market-api_NodeTemplatesCursor:
+    NodeTemplatesCursor:
       type: "string"
       examples:
         - "ntmplc_gqXR7s0Kj5mHvE2wNpLc4Q"
       pattern: "^ntmplc_[A-Za-z0-9_-]+$"
-    market-api_NotFoundError:
+    NodesCursor:
+      type: "string"
+      examples:
+        - "nodec_gqXR7s0Kj5mHvE2wNpLc4Q"
+      pattern: "^nodec_[A-Za-z0-9_-]+$"
+    NotFoundError:
       type: "object"
       required:
         - "error"
@@ -1772,8 +2119,8 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_NotImplementedError:
+                $ref: "#/components/schemas/ErrorDetail"
+    NotImplementedError:
       type: "object"
       required:
         - "error"
@@ -1794,18 +2141,18 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_OrderId:
+                $ref: "#/components/schemas/ErrorDetail"
+    OrderId:
       type: "string"
       examples:
         - "ordr_k3R-nX9vLm7Qp2Yw5Jd8F"
       pattern: "ordr_[0-9a-zA-Z_-]{1,21}"
-    market-api_OrdersCursor:
+    OrdersCursor:
       type: "string"
       examples:
         - "ordrc_gqXR7s0Kj5mHvE2wNpLc4Q"
       pattern: "^ordrc_[A-Za-z0-9_-]+$"
-    market-api_PatchCapacityRequest:
+    PatchCapacityRequest:
       type: "object"
       properties:
         name:
@@ -1818,7 +2165,7 @@ components:
             - "array"
             - "null"
           items:
-            $ref: "#/components/schemas/market-api_ZoneName"
+            $ref: "#/components/schemas/ZoneName"
           description: "Datacenter locations orders into this capacity can acquire compute from. Replaces existing zones. Does not affect already scheduled compute."
           minItems: 1
         node_template:
@@ -1832,8 +2179,8 @@ components:
             - "null"
           description: "Automatically provision and terminate nodes based on currently available allocation. Requires `node_template` to be set."
         scheduler:
-          $ref: "#/components/schemas/market-api_SchedulerDetails"
-    market-api_PaymentRequiredError:
+          $ref: "#/components/schemas/SchedulerDetails"
+    PaymentRequiredError:
       type: "object"
       required:
         - "error"
@@ -1854,8 +2201,16 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_RequestTimedOutError:
+                $ref: "#/components/schemas/ErrorDetail"
+    ReplaceNodeRequest:
+      type: "object"
+      properties:
+        node_template:
+          type:
+            - "string"
+            - "null"
+          description: "Node template for the new node. Falls back to capacity default, then original node's template."
+    RequestTimedOutError:
       type: "object"
       required:
         - "error"
@@ -1876,27 +2231,27 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_Schedule:
+                $ref: "#/components/schemas/ErrorDetail"
+    Schedule:
       type: "array"
       items:
-        $ref: "#/components/schemas/market-api_ScheduleEntry"
+        $ref: "#/components/schemas/ScheduleEntry"
       description: "Capacity availability over time."
-    market-api_ScheduleEntry:
+    ScheduleEntry:
       type: "object"
       required:
         - "effective_at"
         - "node_allocation"
       properties:
         effective_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
         node_allocation:
           type: "integer"
           format: "int32"
-    market-api_SchedulerDetails:
+    SchedulerDetails:
       oneOf:
         - allOf:
-            - $ref: "#/components/schemas/market-api_SpotScalerConfig"
+            - $ref: "#/components/schemas/SpotScalerConfig"
             - type: "object"
               required:
                 - "type"
@@ -1907,7 +2262,7 @@ components:
                   default: "spot_scaler"
                   readOnly: true
       description: "Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability."
-    market-api_ServiceUnavailableError:
+    ServiceUnavailableError:
       type: "object"
       required:
         - "error"
@@ -1928,13 +2283,13 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_Side:
+                $ref: "#/components/schemas/ErrorDetail"
+    Side:
       type: "string"
       enum:
         - "sell"
         - "buy"
-    market-api_SpotScalerConfig:
+    SpotScalerConfig:
       type: "object"
       description: "The spot scaler manages all compute in this capacity within its management window, including compute procured from manual orders. If existing reservations exceed the desired quantity the spot scaler will attempt to sell the excess. If existing reservations are below the desired quantity the spot scaler will attempt to buy in order to reach the target."
       required:
@@ -1957,15 +2312,23 @@ components:
           maximum: 1440
           minimum: 60
         min_sell_price_dollars_per_node_hour:
-          $ref: "#/components/schemas/market-api_DollarsPerNodeHour"
+          $ref: "#/components/schemas/DollarsPerNodeHour"
           description: "Minimum price to sell compute for ($/node-hour). Must contain decimal point. Will be rounded to nearest multiple of $0.000060."
         max_buy_price_dollars_per_node_hour:
-          $ref: "#/components/schemas/market-api_DollarsPerNodeHour"
+          $ref: "#/components/schemas/DollarsPerNodeHour"
           description: "Maximum price to buy compute ($/node-hour). Must contain decimal point. Will be rounded to nearest multiple of $0.000060."
         enabled:
           type: "boolean"
           description: "Enable/disable the spot scaler. Disabling cancels all standing orders."
-    market-api_UnauthorizedError:
+    StartUploadRequest:
+      type: "object"
+      description: "Start a multipart image upload. Max image size is 128 GiB."
+      required:
+        - "name"
+      properties:
+        name:
+          $ref: "#/components/schemas/Name"
+    UnauthorizedError:
       type: "object"
       required:
         - "error"
@@ -1986,13 +2349,13 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_UnixEpoch:
+                $ref: "#/components/schemas/ErrorDetail"
+    UnixEpoch:
       type: "integer"
       format: "int64"
       description: "Unix timestamp."
       example: 1738972800
-    market-api_UnprocessableEntityError:
+    UnprocessableEntityError:
       type: "object"
       required:
         - "error"
@@ -2013,8 +2376,8 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_UpgradeRequiredError:
+                $ref: "#/components/schemas/ErrorDetail"
+    UpgradeRequiredError:
       type: "object"
       required:
         - "error"
@@ -2035,11 +2398,32 @@ components:
             details:
               type: "array"
               items:
-                $ref: "#/components/schemas/market-api_ErrorDetail"
-    market-api_ZoneName:
+                $ref: "#/components/schemas/ErrorDetail"
+    UploadPartRequest:
+      type: "object"
+      required:
+        - "part_id"
+      properties:
+        part_id:
+          type: "integer"
+          format: "int32"
+          description: "Caller-assigned part number, starting at 1."
+          minimum: 1
+    UploadPartResponse:
+      type: "object"
+      required:
+        - "url"
+        - "expires_at"
+      properties:
+        url:
+          type: "string"
+          description: "Presigned URL to upload the part."
+        expires_at:
+          $ref: "#/components/schemas/UnixEpoch"
+    ZoneName:
       type: "string"
       example: "richmond"
-    market-api_v2.CreateOrderRequest:
+    v2.CreateOrderRequest:
       type: "object"
       required:
         - "capacity"
@@ -2050,10 +2434,10 @@ components:
         - "limit_price_dollars_per_node_hour"
       properties:
         capacity:
-          $ref: "#/components/schemas/market-api_NameOrId_CapacityId"
+          $ref: "#/components/schemas/NameOrId_CapacityId"
           description: "Target capacity that receives compute when filled."
         side:
-          $ref: "#/components/schemas/market-api_Side"
+          $ref: "#/components/schemas/Side"
         allow_standing:
           type: "boolean"
           description: "If true, the order stays in the order book until either fills, is explicitly cancelled, or the order end time is reached resulting in automatic cancellation. If false, the order is cancelled immediately if it doesn't fill."
@@ -2063,15 +2447,15 @@ components:
           description: "Number of nodes to buy or sell between `start_at` and `end_at`."
           minimum: 1
         start_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
           description: "Must be now or on a future hour boundary."
         end_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
           description: "Must be on an hour boundary."
         limit_price_dollars_per_node_hour:
-          $ref: "#/components/schemas/market-api_DollarsPerNodeHour"
+          $ref: "#/components/schemas/DollarsPerNodeHour"
           description: "Must contain decimal point. Will be rounded to nearest multiple of $0.000060."
-    market-api_v2.ListOrdersResponse:
+    v2.ListOrdersResponse:
       type: "object"
       required:
         - "object"
@@ -2084,7 +2468,7 @@ components:
           default: "list"
           readOnly: true
         cursor:
-          $ref: "#/components/schemas/market-api_OrdersCursor"
+          $ref: "#/components/schemas/OrdersCursor"
           nullable: true
           description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
@@ -2092,8 +2476,8 @@ components:
         data:
           type: "array"
           items:
-            $ref: "#/components/schemas/market-api_v2.OrderResponse"
-    market-api_v2.OrderResponse:
+            $ref: "#/components/schemas/v2.OrderResponse"
+    v2.OrderResponse:
       type: "object"
       required:
         - "object"
@@ -2115,19 +2499,19 @@ components:
           default: "order"
           readOnly: true
         id:
-          $ref: "#/components/schemas/market-api_OrderId"
+          $ref: "#/components/schemas/OrderId"
         capacity:
-          $ref: "#/components/schemas/market-api_CapacityId"
+          $ref: "#/components/schemas/CapacityId"
           description: "Target capacity that receives or loses compute if this order fills (depending on order type)."
         side:
-          $ref: "#/components/schemas/market-api_Side"
+          $ref: "#/components/schemas/Side"
         allow_standing:
           type: "boolean"
           description: "If true, the order stays in the order book until either fills, is explicitly cancelled, or the order end time is reached resulting in automatic cancellation. If false, the order is cancelled immediately if it doesn't fill."
         zones:
           type: "array"
           items:
-            $ref: "#/components/schemas/market-api_ZoneName"
+            $ref: "#/components/schemas/ZoneName"
           description: "Datacenter locations this order can fill in (derived from target capacity at order creation by default)."
           minItems: 1
         node_count:
@@ -2136,34 +2520,34 @@ components:
           description: "Number of nodes requested to be reserved or released between `start_at` and `end_at`."
           minimum: 1
         start_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
           description: "Requested compute period start."
         end_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
           description: "Requested compute period end."
         limit_price_dollars_per_node_hour:
-          $ref: "#/components/schemas/market-api_DollarsPerNodeHour"
+          $ref: "#/components/schemas/DollarsPerNodeHour"
         status:
-          $ref: "#/components/schemas/market-api_v2.OrderStatus"
+          $ref: "#/components/schemas/v2.OrderStatus"
         created_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
         filled_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
           nullable: true
         filled_price_dollars_per_node_hour:
-          $ref: "#/components/schemas/market-api_DollarsPerNodeHour"
+          $ref: "#/components/schemas/DollarsPerNodeHour"
           nullable: true
         cancelled_at:
-          $ref: "#/components/schemas/market-api_UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
           nullable: true
-    market-api_v2.OrderSortBy:
+    v2.OrderSortBy:
       type: "string"
       enum:
         - "created_at"
         - "-created_at"
         - "start_at"
         - "-start_at"
-    market-api_v2.OrderStatus:
+    v2.OrderStatus:
       type: "string"
       description: "`pending` = not resolved/processed yet.\n`filled` = order executed.\n`standing` = the order is waiting for a match.\n`cancelled` = the order was cancelled either automatically (not a standing order and didn't immediately fill, or current time past `end_at`) or by explicit cancellation.\n`rejected` = validation/system error occurred."
       enum:
@@ -2172,648 +2556,33 @@ components:
         - "rejected"
         - "cancelled"
         - "standing"
-    vmorch_BadRequestError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "invalid_request_error"
-              default: "invalid_request_error"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_CapacityId:
-      type: "string"
-      examples:
-        - "cap_k3R-nX9vLm7Qp2Yw5Jd8F"
-      pattern: "cap_[0-9a-zA-Z_-]{1,21}"
-    vmorch_CompleteUploadRequest:
-      type: "object"
-      description: "Complete a multipart image upload."
-      required:
-        - "sha256"
-      properties:
-        sha256:
-          type: "string"
-          description: "Not verified on upload; used during node boot to verify integrity."
-          maxLength: 64
-          minLength: 64
-          pattern: "^[a-f0-9]{64}$"
-    vmorch_ConflictError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "conflict"
-              default: "conflict"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_ErrorDetail:
-      type: "object"
-      required:
-        - "code"
-        - "message"
-      properties:
-        field:
-          type:
-            - "string"
-            - "null"
-          description: "The field that caused the error (for validation errors)"
-        code:
-          type: "string"
-          description: "Specific error code for this detail"
-        message:
-          type: "string"
-          description: "Human-readable error message"
-    vmorch_ErrorType:
-      type: "string"
-      enum:
-        - "api_error"
-        - "invalid_request_error"
-        - "authentication_error"
-        - "idempotency_error"
-        - "conflict"
-        - "not_found"
-        - "request_timed_out"
-        - "forbidden"
-        - "not_implemented"
-        - "upgrade_required"
-        - "payment_required"
-        - "service_unavailable"
-        - "unprocessable_entity"
-    vmorch_ForbiddenError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "forbidden"
-              default: "forbidden"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_ImageDownloadResponse:
-      type: "object"
-      required:
-        - "url"
-        - "expires_at"
-        - "sha256"
-        - "size"
-      properties:
-        url:
-          type: "string"
-          description: "Presigned download URL."
-        expires_at:
-          $ref: "#/components/schemas/vmorch_UnixEpoch"
-        sha256:
-          type: "string"
-          description: "For integrity verification."
-          example: "e3b0c44298fc1c149af..."
-          maxLength: 64
-          minLength: 64
-          pattern: "^[a-f0-9]{64}$"
-        size:
-          type: "integer"
-          format: "u-int64"
-          description: "Image size in bytes."
-          minimum: 0
-    vmorch_ImageId:
-      type: "string"
-      examples:
-        - "image_k3R-nX9vLm7Qp2Yw5Jd8F"
-      pattern: "image_[0-9a-zA-Z_-]{1,21}"
-    vmorch_ImageResponse:
-      type: "object"
-      required:
-        - "object"
-        - "id"
-        - "name"
-        - "upload_status"
-        - "created_at"
-      properties:
-        object:
-          type: "string"
-          const: "image"
-          default: "image"
-          readOnly: true
-        id:
-          $ref: "#/components/schemas/vmorch_ImageId"
-        name:
-          $ref: "#/components/schemas/vmorch_Name"
-        upload_status:
-          $ref: "#/components/schemas/vmorch_ImageUploadStatus"
-        sha256:
-          type:
-            - "string"
-            - "null"
-          description: "Present when `upload_status` is `completed`. Not verified on upload; used during node boot to verify integrity."
-          example: "e3b0c44298fc1c149af..."
-          maxLength: 64
-          minLength: 64
-          pattern: "^[a-f0-9]{64}$"
-        created_at:
-          $ref: "#/components/schemas/vmorch_UnixEpoch"
-    vmorch_ImageUploadStatus:
-      type: "string"
-      description: "Multipart upload status. `started` on creation, `uploading` after first part URL requested, `completed` when finalized, or `failed` on size/checksum/storage error."
-      enum:
-        - "started"
-        - "uploading"
-        - "completed"
-        - "failed"
-    vmorch_ImagesCursor:
-      type: "string"
-      examples:
-        - "imagec_gqXR7s0Kj5mHvE2wNpLc4Q"
-      pattern: "^imagec_[A-Za-z0-9_-]+$"
-    vmorch_InternalServerError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "api_error"
-              default: "api_error"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_ListImagesResponse:
-      type: "object"
-      required:
-        - "object"
-        - "has_more"
-        - "data"
-      properties:
-        object:
-          type: "string"
-          const: "list"
-          default: "list"
-          readOnly: true
-        cursor:
-          $ref: "#/components/schemas/vmorch_ImagesCursor"
-          nullable: true
-          description: "Pass as `starting_after` or `ending_before` to paginate."
-        has_more:
-          type: "boolean"
-        data:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/vmorch_ImageResponse"
-    vmorch_ListNodesResponse:
-      type: "object"
-      required:
-        - "object"
-        - "has_more"
-        - "data"
-      properties:
-        object:
-          type: "string"
-          const: "list"
-          default: "list"
-          readOnly: true
-        cursor:
-          $ref: "#/components/schemas/vmorch_NodesCursor"
-          nullable: true
-          description: "Pass as `starting_after` or `ending_before` to paginate."
-        has_more:
-          type: "boolean"
-        data:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/vmorch_NodeResponse"
-    vmorch_Name:
-      type: "string"
-      examples:
-        - "my-resource-name"
-      maxLength: 255
-      minLength: 1
-      pattern: "[a-zA-Z0-9][a-zA-Z0-9._-]{0,254}"
-    vmorch_NameOrId_CapacityId:
-      type: "string"
-      description: "An ID _or_ name identifying this resource."
-      examples:
-        - "cap_k3R-nX9vLm7Qp2Yw5Jd8F"
-      pattern: "(cap_[0-9a-zA-Z_-]{1,21}) | ([a-zA-Z0-9][a-zA-Z0-9._-]{0,254})"
-    vmorch_NodeId:
-      type: "string"
-      examples:
-        - "node_k3R-nX9vLm7Qp2Yw5Jd8F"
-      pattern: "node_[0-9a-zA-Z_-]{1,21}"
-    vmorch_NodeLogChunk:
-      type: "object"
-      required:
-        - "timestamp_realtime"
-        - "timestamp_monotonic_secs"
-        - "timestamp_monotonic_nanos"
-        - "seqnum"
-        - "data"
-      properties:
-        timestamp_realtime:
-          $ref: "#/components/schemas/vmorch_UnixEpoch"
-          description: "Wall-clock time. Unix timestamp."
-        timestamp_monotonic_secs:
-          type: "integer"
-          format: "int64"
-          description: "Monotonic clock seconds."
-        timestamp_monotonic_nanos:
-          type: "integer"
-          format: "u-int32"
-          description: "Nanosecond component of the monotonic clock."
-          minimum: 0
-        seqnum:
-          type: "integer"
-          format: "u-int64"
-          minimum: 0
-        data:
-          type: "string"
-          format: "byte"
-          description: "Base-64 encoded raw console output."
-          example: "SGVsbG8gV29ybGQK"
-          contentEncoding: "base64"
-    vmorch_NodeLogsResponse:
-      type: "object"
-      required:
-        - "object"
-        - "data"
-      properties:
-        object:
-          type: "string"
-          const: "list"
-          default: "list"
-          readOnly: true
-        data:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/vmorch_NodeLogChunk"
-    vmorch_NodeResponse:
-      type: "object"
-      required:
-        - "object"
-        - "id"
-        - "status"
-        - "zone"
-        - "capacity"
-        - "node_template"
-      properties:
-        object:
-          type: "string"
-          const: "node"
-          default: "node"
-          readOnly: true
-        id:
-          $ref: "#/components/schemas/vmorch_NodeId"
-        status:
-          $ref: "#/components/schemas/vmorch_NodeStatus"
-        zone:
-          $ref: "#/components/schemas/vmorch_ZoneName"
-          description: "Zone this node is located in."
-        capacity:
-          $ref: "#/components/schemas/vmorch_CapacityId"
-          description: "Capacity this node is utilizing."
-        node_template:
-          $ref: "#/components/schemas/vmorch_NodeTemplateId"
-          description: "Node template used to launch this node."
-    vmorch_NodeSshHostKey:
-      type: "object"
-      required:
-        - "key_type"
-        - "key"
-      properties:
-        key_type:
-          type: "string"
-          description: "Key algorithm."
-          examples:
-            - "ssh-ed25519"
-            - "ssh-rsa"
-        key:
-          type: "string"
-          format: "byte"
-          description: "Base64-encoded public key."
-          example: "AAAAC3NzaC1lZDI1NTE5AAAAI..."
-          contentEncoding: "base64"
-    vmorch_NodeSshInfo:
-      type: "object"
-      required:
-        - "hostname"
-        - "port"
-        - "host_keys"
-      properties:
-        hostname:
-          type: "string"
-          examples:
-            - "24.125.89.203"
-        port:
-          type: "integer"
-          format: "u-int16"
-          examples:
-            - 22
-          minimum: 0
-        host_keys:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/vmorch_NodeSshHostKey"
-        last_successful_key_update_at:
-          $ref: "#/components/schemas/vmorch_UnixEpoch"
-          nullable: true
-          description: "Unix timestamp of the last successful host key refresh."
-        last_attempted_key_update_at:
-          $ref: "#/components/schemas/vmorch_UnixEpoch"
-          nullable: true
-          description: "Unix timestamp of the last attempted host key refresh."
-    vmorch_NodeStatus:
-      type: "string"
-      description: "`pending` on creation while waiting for hardware assignment, `running` once assigned (note: the node may still be booting or loading a custom image), `terminated` when destroyed, `failed` on hardware fault."
-      enum:
-        - "pending"
-        - "running"
-        - "terminated"
-        - "failed"
-    vmorch_NodeTemplateId:
-      type: "string"
-      examples:
-        - "ntmpl_k3R-nX9vLm7Qp2Yw5Jd8F"
-      pattern: "ntmpl_[0-9a-zA-Z_-]{1,21}"
-    vmorch_NodesCursor:
-      type: "string"
-      examples:
-        - "nodec_gqXR7s0Kj5mHvE2wNpLc4Q"
-      pattern: "^nodec_[A-Za-z0-9_-]+$"
-    vmorch_NotFoundError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "not_found"
-              default: "not_found"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_NotImplementedError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "not_implemented"
-              default: "not_implemented"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_PaymentRequiredError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "payment_required"
-              default: "payment_required"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_ReplaceNodeRequest:
-      type: "object"
-      properties:
-        node_template:
-          type:
-            - "string"
-            - "null"
-          description: "Node template for the new node. Falls back to capacity default, then original node's template."
-    vmorch_RequestTimedOutError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "request_timed_out"
-              default: "request_timed_out"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_ServiceUnavailableError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "service_unavailable"
-              default: "service_unavailable"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_StartUploadRequest:
-      type: "object"
-      description: "Start a multipart image upload. Max image size is 128 GiB."
-      required:
-        - "name"
-      properties:
-        name:
-          $ref: "#/components/schemas/vmorch_Name"
-    vmorch_UnauthorizedError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "authentication_error"
-              default: "authentication_error"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_UnixEpoch:
-      type: "integer"
-      format: "int64"
-      description: "Unix timestamp."
-      example: 1738972800
-    vmorch_UnprocessableEntityError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "unprocessable_entity"
-              default: "unprocessable_entity"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_UpgradeRequiredError:
-      type: "object"
-      required:
-        - "error"
-      properties:
-        error:
-          type: "object"
-          required:
-            - "type"
-            - "message"
-          properties:
-            type:
-              type: "string"
-              const: "upgrade_required"
-              default: "upgrade_required"
-              readOnly: true
-            message:
-              type: "string"
-            details:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/vmorch_ErrorDetail"
-    vmorch_UploadPartRequest:
-      type: "object"
-      required:
-        - "part_id"
-      properties:
-        part_id:
-          type: "integer"
-          format: "int32"
-          description: "Caller-assigned part number, starting at 1."
-          minimum: 1
-    vmorch_UploadPartResponse:
-      type: "object"
-      required:
-        - "url"
-        - "expires_at"
-      properties:
-        url:
-          type: "string"
-          description: "Presigned URL to upload the part."
-        expires_at:
-          $ref: "#/components/schemas/vmorch_UnixEpoch"
-    vmorch_ZoneName:
-      type: "string"
-      example: "richmond"
   securitySchemes:
-    market-api_bearer_auth:
+    bearer_auth:
       type: "http"
       scheme: "bearer"
       bearerFormat: "JWT"
       description: "Create an API token using `sf tokens create` or at https://sfcompute.com/account/api-keys."
-    vmorch_bearer_auth:
-      type: "http"
-      scheme: "bearer"
-      bearerFormat: "JWT"
-      description: "Create an API token using `sf tokens create` or at https://sfcompute.com/account/api-keys."
+security:
+  - bearer_auth: []
+tags:
+  - name: "Capacities"
+    description: "A bucket of owned compute balance over time."
+  - name: "Orders"
+    description: "Place orders targeting a capacity to increase your reserved compute balance during some time period."
+  - name: "Node Templates"
+    description: "Reusable node configuration."
+  - name: "Images"
+    description: "Custom machine images for nodes."
+  - name: "Nodes"
+    description: "Spin up nodes in a capacity to use your available compute."
+x-speakeasy-name-override:
+  - operationId: "^list_"
+    methodNameOverride: "list"
+  - operationId: "^create_"
+    methodNameOverride: "create"
+  - operationId: "^fetch_"
+    methodNameOverride: "fetch"
+  - operationId: "^update_"
+    methodNameOverride: "update"
+  - operationId: "^delete_"
+    methodNameOverride: "delete"

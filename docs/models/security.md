@@ -10,6 +10,6 @@ let value: Security = {};
 
 ## Fields
 
-| Field                 | Type                  | Required              | Description           |
-| --------------------- | --------------------- | --------------------- | --------------------- |
-| `marketApiBearerAuth` | *string*              | :heavy_minus_sign:    | N/A                   |
+| Field              | Type               | Required           | Description        |
+| ------------------ | ------------------ | ------------------ | ------------------ |
+| `bearerAuth`       | *string*           | :heavy_minus_sign: | N/A                |

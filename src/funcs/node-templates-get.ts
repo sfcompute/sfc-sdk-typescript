@@ -35,14 +35,14 @@ import { Result } from "../types/fp.js";
  */
 export function nodeTemplatesGet(
   client: SfcCore,
-  request: operations.GetNodeTemplateHandlerRequest,
+  request: operations.FetchNodeTemplateRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.MarketApiNodeTemplateResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiInternalServerError
+    models.NodeTemplateResponse,
+    | errors.UnauthorizedError
+    | errors.NotFoundError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -62,15 +62,15 @@ export function nodeTemplatesGet(
 
 async function $do(
   client: SfcCore,
-  request: operations.GetNodeTemplateHandlerRequest,
+  request: operations.FetchNodeTemplateRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.MarketApiNodeTemplateResponse,
-      | errors.MarketApiUnauthorizedError
-      | errors.MarketApiNotFoundError
-      | errors.MarketApiInternalServerError
+      models.NodeTemplateResponse,
+      | errors.UnauthorizedError
+      | errors.NotFoundError
+      | errors.InternalServerError
       | SfcError
       | ResponseValidationError
       | ConnectionError
@@ -86,7 +86,7 @@ async function $do(
   const parsed = safeParse(
     request,
     (value) =>
-      z.parse(operations.GetNodeTemplateHandlerRequest$outboundSchema, value),
+      z.parse(operations.FetchNodeTemplateRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -108,21 +108,19 @@ async function $do(
     Accept: "application/json",
   }));
 
-  const secConfig = await extractSecurity(client._options.marketApiBearerAuth);
-  const securityInput = secConfig == null
-    ? {}
-    : { marketApiBearerAuth: secConfig };
+  const secConfig = await extractSecurity(client._options.bearerAuth);
+  const securityInput = secConfig == null ? {} : { bearerAuth: secConfig };
   const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "get_node_template_handler",
+    operationID: "fetch_node_template",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
 
-    securitySource: client._options.marketApiBearerAuth,
+    securitySource: client._options.bearerAuth,
     retryConfig: options?.retries
       || client._options.retryConfig
       || { strategy: "none" },
@@ -160,10 +158,10 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.MarketApiNodeTemplateResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiNotFoundError
-    | errors.MarketApiInternalServerError
+    models.NodeTemplateResponse,
+    | errors.UnauthorizedError
+    | errors.NotFoundError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -173,10 +171,10 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.MarketApiNodeTemplateResponse$inboundSchema),
-    M.jsonErr(401, errors.MarketApiUnauthorizedError$inboundSchema),
-    M.jsonErr(404, errors.MarketApiNotFoundError$inboundSchema),
-    M.jsonErr(500, errors.MarketApiInternalServerError$inboundSchema),
+    M.json(200, models.NodeTemplateResponse$inboundSchema),
+    M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
+    M.jsonErr(404, errors.NotFoundError$inboundSchema),
+    M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });

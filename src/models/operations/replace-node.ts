@@ -3,50 +3,17 @@
  */
 
 import * as z from "zod/v4-mini";
-import { remap as remap$ } from "../../lib/primitives.js";
 import * as models from "../index.js";
-
-export type ReplaceNodeSecurity = {
-  vmorchBearerAuth: string;
-};
 
 export type ReplaceNodeRequest = {
   id: string;
-  body: models.VmorchReplaceNodeRequest;
+  body: models.ReplaceNodeRequest;
 };
-
-/** @internal */
-export type ReplaceNodeSecurity$Outbound = {
-  vmorch_bearer_auth: string;
-};
-
-/** @internal */
-export const ReplaceNodeSecurity$outboundSchema: z.ZodMiniType<
-  ReplaceNodeSecurity$Outbound,
-  ReplaceNodeSecurity
-> = z.pipe(
-  z.object({
-    vmorchBearerAuth: z.string(),
-  }),
-  z.transform((v) => {
-    return remap$(v, {
-      vmorchBearerAuth: "vmorch_bearer_auth",
-    });
-  }),
-);
-
-export function replaceNodeSecurityToJSON(
-  replaceNodeSecurity: ReplaceNodeSecurity,
-): string {
-  return JSON.stringify(
-    ReplaceNodeSecurity$outboundSchema.parse(replaceNodeSecurity),
-  );
-}
 
 /** @internal */
 export type ReplaceNodeRequest$Outbound = {
   id: string;
-  body: models.VmorchReplaceNodeRequest$Outbound;
+  body: models.ReplaceNodeRequest$Outbound;
 };
 
 /** @internal */
@@ -55,7 +22,7 @@ export const ReplaceNodeRequest$outboundSchema: z.ZodMiniType<
   ReplaceNodeRequest
 > = z.object({
   id: z.string(),
-  body: models.VmorchReplaceNodeRequest$outboundSchema,
+  body: models.ReplaceNodeRequest$outboundSchema,
 });
 
 export function replaceNodeRequestToJSON(

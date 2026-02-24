@@ -6,10 +6,6 @@ import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../../lib/primitives.js";
 import { ClosedEnum } from "../../types/enums.js";
 
-export type GetNodeLogsSecurity = {
-  vmorchBearerAuth: string;
-};
-
 export const GetNodeLogsSortBy = {
   Seqnum: "seqnum",
   MinusSeqnum: "-seqnum",
@@ -37,34 +33,6 @@ export type GetNodeLogsRequest = {
   sortBy?: GetNodeLogsSortBy | undefined;
   limit?: number | undefined;
 };
-
-/** @internal */
-export type GetNodeLogsSecurity$Outbound = {
-  vmorch_bearer_auth: string;
-};
-
-/** @internal */
-export const GetNodeLogsSecurity$outboundSchema: z.ZodMiniType<
-  GetNodeLogsSecurity$Outbound,
-  GetNodeLogsSecurity
-> = z.pipe(
-  z.object({
-    vmorchBearerAuth: z.string(),
-  }),
-  z.transform((v) => {
-    return remap$(v, {
-      vmorchBearerAuth: "vmorch_bearer_auth",
-    });
-  }),
-);
-
-export function getNodeLogsSecurityToJSON(
-  getNodeLogsSecurity: GetNodeLogsSecurity,
-): string {
-  return JSON.stringify(
-    GetNodeLogsSecurity$outboundSchema.parse(getNodeLogsSecurity),
-  );
-}
 
 /** @internal */
 export const GetNodeLogsSortBy$outboundSchema: z.ZodMiniEnum<

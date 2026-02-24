@@ -26,7 +26,7 @@ import { capacitiesList } from "@sfcompute/sdk/funcs/capacities-list.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -36,7 +36,9 @@ async function run() {
   });
   if (res.ok) {
     const { value: result } = res;
-    console.log(result);
+    for await (const page of result) {
+    console.log(page);
+  }
   } else {
     console.log("capacitiesList failed:", res.error);
   }

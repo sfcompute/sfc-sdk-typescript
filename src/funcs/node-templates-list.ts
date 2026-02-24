@@ -4,6 +4,7 @@
 
 import * as z from "zod/v4-mini";
 import { SfcCore } from "../core.js";
+import { dlv } from "../lib/dlv.js";
 import { encodeFormQuery } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
@@ -22,10 +23,15 @@ import * as errors from "../models/errors/index.js";
 import { ResponseValidationError } from "../models/errors/response-validation-error.js";
 import { SDKValidationError } from "../models/errors/sdk-validation-error.js";
 import { SfcError } from "../models/errors/sfc-error.js";
-import * as models from "../models/index.js";
 import * as operations from "../models/operations/index.js";
 import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
+import {
+  createPageIterator,
+  haltIterator,
+  PageIterator,
+  Paginator,
+} from "../types/operations.js";
 
 /**
  * List node templates
@@ -35,22 +41,25 @@ import { Result } from "../types/fp.js";
  */
 export function nodeTemplatesList(
   client: SfcCore,
-  request?: operations.ListNodeTemplatesHandlerRequest | undefined,
+  request?: operations.ListNodeTemplatesRequest | undefined,
   options?: RequestOptions,
 ): APIPromise<
-  Result<
-    models.MarketApiListNodeTemplatesResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiUnprocessableEntityError
-    | errors.MarketApiInternalServerError
-    | SfcError
-    | ResponseValidationError
-    | ConnectionError
-    | RequestAbortedError
-    | RequestTimeoutError
-    | InvalidRequestError
-    | UnexpectedClientError
-    | SDKValidationError
+  PageIterator<
+    Result<
+      operations.ListNodeTemplatesResponse,
+      | errors.UnauthorizedError
+      | errors.UnprocessableEntityError
+      | errors.InternalServerError
+      | SfcError
+      | ResponseValidationError
+      | ConnectionError
+      | RequestAbortedError
+      | RequestTimeoutError
+      | InvalidRequestError
+      | UnexpectedClientError
+      | SDKValidationError
+    >,
+    { cursor: string }
   >
 > {
   return new APIPromise($do(
@@ -62,23 +71,26 @@ export function nodeTemplatesList(
 
 async function $do(
   client: SfcCore,
-  request?: operations.ListNodeTemplatesHandlerRequest | undefined,
+  request?: operations.ListNodeTemplatesRequest | undefined,
   options?: RequestOptions,
 ): Promise<
   [
-    Result<
-      models.MarketApiListNodeTemplatesResponse,
-      | errors.MarketApiUnauthorizedError
-      | errors.MarketApiUnprocessableEntityError
-      | errors.MarketApiInternalServerError
-      | SfcError
-      | ResponseValidationError
-      | ConnectionError
-      | RequestAbortedError
-      | RequestTimeoutError
-      | InvalidRequestError
-      | UnexpectedClientError
-      | SDKValidationError
+    PageIterator<
+      Result<
+        operations.ListNodeTemplatesResponse,
+        | errors.UnauthorizedError
+        | errors.UnprocessableEntityError
+        | errors.InternalServerError
+        | SfcError
+        | ResponseValidationError
+        | ConnectionError
+        | RequestAbortedError
+        | RequestTimeoutError
+        | InvalidRequestError
+        | UnexpectedClientError
+        | SDKValidationError
+      >,
+      { cursor: string }
     >,
     APICall,
   ]
@@ -87,13 +99,13 @@ async function $do(
     request,
     (value) =>
       z.parse(
-        z.optional(operations.ListNodeTemplatesHandlerRequest$outboundSchema),
+        z.optional(operations.ListNodeTemplatesRequest$outboundSchema),
         value,
       ),
     "Input validation failed",
   );
   if (!parsed.ok) {
-    return [parsed, { status: "invalid" }];
+    return [haltIterator(parsed), { status: "invalid" }];
   }
   const payload = parsed.value;
   const body = null;
@@ -112,21 +124,19 @@ async function $do(
     Accept: "application/json",
   }));
 
-  const secConfig = await extractSecurity(client._options.marketApiBearerAuth);
-  const securityInput = secConfig == null
-    ? {}
-    : { marketApiBearerAuth: secConfig };
+  const secConfig = await extractSecurity(client._options.bearerAuth);
+  const securityInput = secConfig == null ? {} : { bearerAuth: secConfig };
   const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "list_node_templates_handler",
+    operationID: "list_node_templates",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
 
-    securitySource: client._options.marketApiBearerAuth,
+    securitySource: client._options.bearerAuth,
     retryConfig: options?.retries
       || client._options.retryConfig
       || { strategy: "none" },
@@ -145,7 +155,7 @@ async function $do(
     timeoutMs: options?.timeoutMs || client._options.timeoutMs || -1,
   }, options);
   if (!requestRes.ok) {
-    return [requestRes, { status: "invalid" }];
+    return [haltIterator(requestRes), { status: "invalid" }];
   }
   const req = requestRes.value;
 
@@ -156,7 +166,7 @@ async function $do(
     retryCodes: context.retryCodes,
   });
   if (!doResult.ok) {
-    return [doResult, { status: "request-error", request: req }];
+    return [haltIterator(doResult), { status: "request-error", request: req }];
   }
   const response = doResult.value;
 
@@ -164,11 +174,11 @@ async function $do(
     HttpMeta: { Response: response, Request: req },
   };
 
-  const [result] = await M.match<
-    models.MarketApiListNodeTemplatesResponse,
-    | errors.MarketApiUnauthorizedError
-    | errors.MarketApiUnprocessableEntityError
-    | errors.MarketApiInternalServerError
+  const [result, raw] = await M.match<
+    operations.ListNodeTemplatesResponse,
+    | errors.UnauthorizedError
+    | errors.UnprocessableEntityError
+    | errors.InternalServerError
     | SfcError
     | ResponseValidationError
     | ConnectionError
@@ -178,16 +188,69 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.MarketApiListNodeTemplatesResponse$inboundSchema),
-    M.jsonErr(401, errors.MarketApiUnauthorizedError$inboundSchema),
-    M.jsonErr(422, errors.MarketApiUnprocessableEntityError$inboundSchema),
-    M.jsonErr(500, errors.MarketApiInternalServerError$inboundSchema),
+    M.json(200, operations.ListNodeTemplatesResponse$inboundSchema, {
+      key: "Result",
+    }),
+    M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
+    M.jsonErr(422, errors.UnprocessableEntityError$inboundSchema),
+    M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),
   )(response, req, { extraFields: responseFields });
   if (!result.ok) {
-    return [result, { status: "complete", request: req, response }];
+    return [haltIterator(result), {
+      status: "complete",
+      request: req,
+      response,
+    }];
   }
 
-  return [result, { status: "complete", request: req, response }];
+  const nextFunc = (
+    responseData: unknown,
+  ): {
+    next: Paginator<
+      Result<
+        operations.ListNodeTemplatesResponse,
+        | errors.UnauthorizedError
+        | errors.UnprocessableEntityError
+        | errors.InternalServerError
+        | SfcError
+        | ResponseValidationError
+        | ConnectionError
+        | RequestAbortedError
+        | RequestTimeoutError
+        | InvalidRequestError
+        | UnexpectedClientError
+        | SDKValidationError
+      >
+    >;
+    "~next"?: { cursor: string };
+  } => {
+    const nextCursor = dlv(responseData, "cursor");
+    if (typeof nextCursor !== "string") {
+      return { next: () => null };
+    }
+    if (nextCursor.trim() === "") {
+      return { next: () => null };
+    }
+
+    const nextVal = () =>
+      nodeTemplatesList(
+        client,
+        {
+          ...request,
+          startingAfter: nextCursor,
+        },
+        options,
+      );
+
+    return { next: nextVal, "~next": { cursor: nextCursor } };
+  };
+
+  const page = { ...result, ...nextFunc(raw) };
+  return [{ ...page, ...createPageIterator(page, (v) => !v.ok) }, {
+    status: "complete",
+    request: req,
+    response,
+  }];
 }

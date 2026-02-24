@@ -3,43 +3,10 @@
  */
 
 import * as z from "zod/v4-mini";
-import { remap as remap$ } from "../../lib/primitives.js";
-
-export type GetNodeSshSecurity = {
-  vmorchBearerAuth: string;
-};
 
 export type GetNodeSshRequest = {
   id: string;
 };
-
-/** @internal */
-export type GetNodeSshSecurity$Outbound = {
-  vmorch_bearer_auth: string;
-};
-
-/** @internal */
-export const GetNodeSshSecurity$outboundSchema: z.ZodMiniType<
-  GetNodeSshSecurity$Outbound,
-  GetNodeSshSecurity
-> = z.pipe(
-  z.object({
-    vmorchBearerAuth: z.string(),
-  }),
-  z.transform((v) => {
-    return remap$(v, {
-      vmorchBearerAuth: "vmorch_bearer_auth",
-    });
-  }),
-);
-
-export function getNodeSshSecurityToJSON(
-  getNodeSshSecurity: GetNodeSshSecurity,
-): string {
-  return JSON.stringify(
-    GetNodeSshSecurity$outboundSchema.parse(getNodeSshSecurity),
-  );
-}
 
 /** @internal */
 export type GetNodeSshRequest$Outbound = {

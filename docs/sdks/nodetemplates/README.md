@@ -15,13 +15,13 @@ List all node templates.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="list_node_templates_handler" method="get" path="/v2/node_templates" -->
+<!-- UsageSnippet language="typescript" operationID="list_node_templates" method="get" path="/v2/node_templates" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -30,7 +30,9 @@ async function run() {
     endingBefore: "ntmplc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -48,7 +50,7 @@ import { nodeTemplatesList } from "@sfcompute/sdk/funcs/node-templates-list.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -58,7 +60,9 @@ async function run() {
   });
   if (res.ok) {
     const { value: result } = res;
-    console.log(result);
+    for await (const page of result) {
+    console.log(page);
+  }
   } else {
     console.log("nodeTemplatesList failed:", res.error);
   }
@@ -71,23 +75,23 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.ListNodeTemplatesHandlerRequest](../../models/operations/list-node-templates-handler-request.md)                                                                   | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.ListNodeTemplatesRequest](../../models/operations/list-node-templates-request.md)                                                                                  | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiListNodeTemplatesResponse](../../models/market-api-list-node-templates-response.md)\>**
+**Promise\<[operations.ListNodeTemplatesResponse](../../models/operations/list-node-templates-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## create
 
@@ -95,13 +99,13 @@ Create a reusable node configuration.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="create_node_template_handler" method="post" path="/v2/node_templates" -->
+<!-- UsageSnippet language="typescript" operationID="create_node_template" method="post" path="/v2/node_templates" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -129,7 +133,7 @@ import { nodeTemplatesCreate } from "@sfcompute/sdk/funcs/node-templates-create.
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -153,24 +157,24 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [models.MarketApiCreateNodeTemplateRequest](../../models/market-api-create-node-template-request.md)                                                                           | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [models.CreateNodeTemplateRequest](../../models/create-node-template-request.md)                                                                                               | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiNodeTemplateResponse](../../models/market-api-node-template-response.md)\>**
+**Promise\<[models.NodeTemplateResponse](../../models/node-template-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiForbiddenError           | 403                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.ForbiddenError           | 403                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## get
 
@@ -178,13 +182,13 @@ Retrieve a node template by ID or name.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="get_node_template_handler" method="get" path="/v2/node_templates/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="fetch_node_template" method="get" path="/v2/node_templates/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -210,7 +214,7 @@ import { nodeTemplatesGet } from "@sfcompute/sdk/funcs/node-templates-get.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -232,23 +236,23 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.GetNodeTemplateHandlerRequest](../../models/operations/get-node-template-handler-request.md)                                                                       | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.FetchNodeTemplateRequest](../../models/operations/fetch-node-template-request.md)                                                                                  | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiNodeTemplateResponse](../../models/market-api-node-template-response.md)\>**
+**Promise\<[models.NodeTemplateResponse](../../models/node-template-response.md)\>**
 
 ### Errors
 
-| Error Type                          | Status Code                         | Content Type                        |
-| ----------------------------------- | ----------------------------------- | ----------------------------------- |
-| errors.MarketApiUnauthorizedError   | 401                                 | application/json                    |
-| errors.MarketApiNotFoundError       | 404                                 | application/json                    |
-| errors.MarketApiInternalServerError | 500                                 | application/json                    |
-| errors.SfcDefaultError              | 4XX, 5XX                            | \*/\*                               |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## delete
 
@@ -256,13 +260,13 @@ Delete a node template. The template must not be in use by any capacity.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="delete_node_template_handler" method="delete" path="/v2/node_templates/{id}" -->
+<!-- UsageSnippet language="typescript" operationID="delete_node_template" method="delete" path="/v2/node_templates/{id}" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -288,7 +292,7 @@ import { nodeTemplatesDelete } from "@sfcompute/sdk/funcs/node-templates-delete.
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -310,7 +314,7 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.DeleteNodeTemplateHandlerRequest](../../models/operations/delete-node-template-handler-request.md)                                                                 | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.DeleteNodeTemplateRequest](../../models/operations/delete-node-template-request.md)                                                                                | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
@@ -321,11 +325,11 @@ run();
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiForbiddenError           | 403                                      | application/json                         |
-| errors.MarketApiNotFoundError            | 404                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.ForbiddenError           | 403                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |

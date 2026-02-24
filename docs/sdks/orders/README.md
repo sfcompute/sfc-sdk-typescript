@@ -23,7 +23,7 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -35,7 +35,9 @@ async function run() {
     endingBefore: "ordrc_gqXR7s0Kj5mHvE2wNpLc4Q",
   });
 
-  console.log(result);
+  for await (const page of result) {
+    console.log(page);
+  }
 }
 
 run();
@@ -53,7 +55,7 @@ import { ordersList } from "@sfcompute/sdk/funcs/orders-list.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -66,7 +68,9 @@ async function run() {
   });
   if (res.ok) {
     const { value: result } = res;
-    console.log(result);
+    for await (const page of result) {
+    console.log(page);
+  }
   } else {
     console.log("ordersList failed:", res.error);
   }
@@ -86,16 +90,16 @@ run();
 
 ### Response
 
-**Promise\<[models.MarketApiV2ListOrdersResponse](../../models/market-api-v2-list-orders-response.md)\>**
+**Promise\<[operations.ListOrdersResponse](../../models/operations/list-orders-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## create
 
@@ -103,13 +107,13 @@ Place a buy or sell order. Orders fill completely or not at all. All nodes fill 
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="post_order" method="post" path="/v2/orders" -->
+<!-- UsageSnippet language="typescript" operationID="create_order" method="post" path="/v2/orders" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -117,7 +121,7 @@ async function run() {
     body: {
       capacity: "cap_k3R-nX9vLm7Qp2Yw5Jd8F",
       side: "sell",
-      nodeCount: 439500,
+      nodeCount: 387888,
       startAt: 1738972800,
       endAt: 1738972800,
       limitPriceDollarsPerNodeHour: "2.500000",
@@ -142,7 +146,7 @@ import { ordersCreate } from "@sfcompute/sdk/funcs/orders-create.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -150,7 +154,7 @@ async function run() {
     body: {
       capacity: "cap_k3R-nX9vLm7Qp2Yw5Jd8F",
       side: "sell",
-      nodeCount: 439500,
+      nodeCount: 387888,
       startAt: 1738972800,
       endAt: 1738972800,
       limitPriceDollarsPerNodeHour: "2.500000",
@@ -171,26 +175,26 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.PostOrderRequest](../../models/operations/post-order-request.md)                                                                                                   | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.CreateOrderRequest](../../models/operations/create-order-request.md)                                                                                               | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
 
 ### Response
 
-**Promise\<[models.MarketApiV2OrderResponse](../../models/market-api-v2-order-response.md)\>**
+**Promise\<[models.V2OrderResponse](../../models/v2-order-response.md)\>**
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiPaymentRequiredError     | 402                                      | application/json                         |
-| errors.MarketApiForbiddenError           | 403                                      | application/json                         |
-| errors.MarketApiNotFoundError            | 404                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.PaymentRequiredError     | 402                             | application/json                |
+| errors.ForbiddenError           | 403                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
 ## get
 
@@ -204,7 +208,7 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -230,7 +234,7 @@ import { ordersGet } from "@sfcompute/sdk/funcs/orders-get.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -259,16 +263,16 @@ run();
 
 ### Response
 
-**Promise\<[models.MarketApiV2OrderResponse](../../models/market-api-v2-order-response.md)\>**
+**Promise\<[models.V2OrderResponse](../../models/v2-order-response.md)\>**
 
 ### Errors
 
-| Error Type                          | Status Code                         | Content Type                        |
-| ----------------------------------- | ----------------------------------- | ----------------------------------- |
-| errors.MarketApiUnauthorizedError   | 401                                 | application/json                    |
-| errors.MarketApiNotFoundError       | 404                                 | application/json                    |
-| errors.MarketApiInternalServerError | 500                                 | application/json                    |
-| errors.SfcDefaultError              | 4XX, 5XX                            | \*/\*                               |
+| Error Type                 | Status Code                | Content Type               |
+| -------------------------- | -------------------------- | -------------------------- |
+| errors.UnauthorizedError   | 401                        | application/json           |
+| errors.NotFoundError       | 404                        | application/json           |
+| errors.InternalServerError | 500                        | application/json           |
+| errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
 ## cancel
 
@@ -282,7 +286,7 @@ import { Sfc } from "@sfcompute/sdk";
 
 const sfc = new Sfc({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -308,7 +312,7 @@ import { ordersCancel } from "@sfcompute/sdk/funcs/orders-cancel.js";
 // You can create one instance of it to use across an application.
 const sfc = new SfcCore({
   serverURL: "https://api.example.com",
-  marketApiBearerAuth: process.env["SFC_MARKET_API_BEARER_AUTH"] ?? "",
+  bearerAuth: process.env["SFC_BEARER_AUTH"] ?? "",
 });
 
 async function run() {
@@ -341,10 +345,10 @@ run();
 
 ### Errors
 
-| Error Type                               | Status Code                              | Content Type                             |
-| ---------------------------------------- | ---------------------------------------- | ---------------------------------------- |
-| errors.MarketApiUnauthorizedError        | 401                                      | application/json                         |
-| errors.MarketApiNotFoundError            | 404                                      | application/json                         |
-| errors.MarketApiUnprocessableEntityError | 422                                      | application/json                         |
-| errors.MarketApiInternalServerError      | 500                                      | application/json                         |
-| errors.SfcDefaultError                   | 4XX, 5XX                                 | \*/\*                                    |
+| Error Type                      | Status Code                     | Content Type                    |
+| ------------------------------- | ------------------------------- | ------------------------------- |
+| errors.UnauthorizedError        | 401                             | application/json                |
+| errors.NotFoundError            | 404                             | application/json                |
+| errors.UnprocessableEntityError | 422                             | application/json                |
+| errors.InternalServerError      | 500                             | application/json                |
+| errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |

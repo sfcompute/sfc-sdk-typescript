@@ -3,7 +3,7 @@ speakeasyVersion: latest
 sources:
     market-api:
         inputs:
-            - location: ../../../../../users/dtao/downloads/openapi specification.json
+            - location: blueprint/current/openapi.json
         overlays:
             - location: .speakeasy/speakeasy-modifications-overlay.yaml
         output: .speakeasy/out.openapi.yaml
