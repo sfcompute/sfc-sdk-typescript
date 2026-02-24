@@ -6,13 +6,11 @@ import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
-import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
 export type UnauthorizedErrorError = {
   type: "authentication_error";
   message: string;
-  details?: Array<ErrorDetail> | undefined;
 };
 
 /** @internal */
@@ -25,7 +23,6 @@ export const UnauthorizedErrorError$inboundSchema: z.ZodMiniType<
     "authentication_error",
   ),
   message: types.string(),
-  details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });
 
 export function unauthorizedErrorErrorFromJSON(

@@ -15,7 +15,7 @@ import {
 
 export type V2ListOrdersResponse = {
   object: "list";
-  cursor?: string | undefined;
+  cursor?: string | null | undefined;
   hasMore: boolean;
   data: Array<V2OrderResponse>;
 };
@@ -27,7 +27,7 @@ export const V2ListOrdersResponse$inboundSchema: z.ZodMiniType<
 > = z.pipe(
   z.object({
     object: z._default(types.literal("list"), "list"),
-    cursor: types.optional(types.string()),
+    cursor: z.optional(z.nullable(types.string())),
     has_more: types.boolean(),
     data: z.array(V2OrderResponse$inboundSchema),
   }),

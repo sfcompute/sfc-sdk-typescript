@@ -7,10 +7,10 @@ Spin up nodes in a capacity to use your available compute.
 ### Available Operations
 
 * [list](#list) - List nodes
-* [get](#get) - Get node
-* [getLogs](#getlogs) - Get node logs
+* [fetch](#fetch) - Get node
+* [getLogsForNode](#getlogsfornode) - Get node logs
 * [replace](#replace) - Replace node
-* [getSsh](#getssh) - Get node SSH info
+* [getSSHInfoForNode](#getsshinfofornode) - Get node SSH info
 
 ## list
 
@@ -151,7 +151,7 @@ run();
 | errors.InternalServerError      | 500                             | application/json                |
 | errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
-## get
+## fetch
 
 Retrieve a node by ID.
 
@@ -167,7 +167,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.nodes.get({
+  const result = await sfc.nodes.fetch({
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -183,7 +183,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { nodesGet } from "@sfcompute/sdk/funcs/nodes-get.js";
+import { nodesFetch } from "@sfcompute/sdk/funcs/nodes-fetch.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -193,14 +193,14 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await nodesGet(sfc, {
+  const res = await nodesFetch(sfc, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("nodesGet failed:", res.error);
+    console.log("nodesFetch failed:", res.error);
   }
 }
 
@@ -229,13 +229,13 @@ run();
 | errors.InternalServerError | 500                        | application/json           |
 | errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
-## getLogs
+## getLogsForNode
 
 Retrieve logs for a node.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="fetch_node_logs" method="get" path="/v2/nodes/{id}/logs" -->
+<!-- UsageSnippet language="typescript" operationID="get_node_logs" method="get" path="/v2/nodes/{id}/logs" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
@@ -245,7 +245,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.nodes.getLogs({
+  const result = await sfc.nodes.getLogsForNode({
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
     realtimeTimestampBefore: 1738972800,
     realtimeTimestampAfter: 1738972800,
@@ -263,7 +263,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { nodesGetLogs } from "@sfcompute/sdk/funcs/nodes-get-logs.js";
+import { nodesGetLogsForNode } from "@sfcompute/sdk/funcs/nodes-get-logs-for-node.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -273,7 +273,7 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await nodesGetLogs(sfc, {
+  const res = await nodesGetLogsForNode(sfc, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
     realtimeTimestampBefore: 1738972800,
     realtimeTimestampAfter: 1738972800,
@@ -282,7 +282,7 @@ async function run() {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("nodesGetLogs failed:", res.error);
+    console.log("nodesGetLogsForNode failed:", res.error);
   }
 }
 
@@ -293,7 +293,7 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.FetchNodeLogsRequest](../../models/operations/fetch-node-logs-request.md)                                                                                          | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.GetNodeLogsRequest](../../models/operations/get-node-logs-request.md)                                                                                              | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |
@@ -393,13 +393,13 @@ run();
 | errors.InternalServerError | 500                        | application/json           |
 | errors.SfcDefaultError     | 4XX, 5XX                   | \*/\*                      |
 
-## getSsh
+## getSSHInfoForNode
 
 Retrieve SSH connection details for a node.
 
 ### Example Usage
 
-<!-- UsageSnippet language="typescript" operationID="fetch_node_ssh" method="get" path="/v2/nodes/{id}/ssh" -->
+<!-- UsageSnippet language="typescript" operationID="get_node_ssh" method="get" path="/v2/nodes/{id}/ssh" -->
 ```typescript
 import { Sfc } from "@sfcompute/sdk";
 
@@ -409,7 +409,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.nodes.getSsh({
+  const result = await sfc.nodes.getSSHInfoForNode({
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -425,7 +425,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { nodesGetSsh } from "@sfcompute/sdk/funcs/nodes-get-ssh.js";
+import { nodesGetSSHInfoForNode } from "@sfcompute/sdk/funcs/nodes-get-ssh-info-for-node.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -435,14 +435,14 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await nodesGetSsh(sfc, {
+  const res = await nodesGetSSHInfoForNode(sfc, {
     id: "node_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("nodesGetSsh failed:", res.error);
+    console.log("nodesGetSSHInfoForNode failed:", res.error);
   }
 }
 
@@ -453,7 +453,7 @@ run();
 
 | Parameter                                                                                                                                                                      | Type                                                                                                                                                                           | Required                                                                                                                                                                       | Description                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `request`                                                                                                                                                                      | [operations.FetchNodeSshRequest](../../models/operations/fetch-node-ssh-request.md)                                                                                            | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
+| `request`                                                                                                                                                                      | [operations.GetNodeSshRequest](../../models/operations/get-node-ssh-request.md)                                                                                                | :heavy_check_mark:                                                                                                                                                             | The request object to use for the request.                                                                                                                                     |
 | `options`                                                                                                                                                                      | RequestOptions                                                                                                                                                                 | :heavy_minus_sign:                                                                                                                                                             | Used to set various options for making HTTP requests.                                                                                                                          |
 | `options.fetchOptions`                                                                                                                                                         | [RequestInit](https://developer.mozilla.org/en-US/docs/Web/API/Request/Request#options)                                                                                        | :heavy_minus_sign:                                                                                                                                                             | Options that are passed to the underlying HTTP request. This can be used to inject extra headers for examples. All `Request` options, except `method` and `body`, are allowed. |
 | `options.retries`                                                                                                                                                              | [RetryConfig](../../lib/utils/retryconfig.md)                                                                                                                                  | :heavy_minus_sign:                                                                                                                                                             | Enables retrying HTTP requests under certain failure conditions.                                                                                                               |

@@ -28,18 +28,18 @@ import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Get image
+ * Get capacity
  *
  * @remarks
- * Retrieve an image by ID. Returns both user-owned and public images.
+ * Retrieve a capacity by ID or name, including its compute schedule and scheduler configuration.
  */
-export function imagesGet(
+export function capacitiesFetch(
   client: SfcCore,
-  request: operations.FetchImageRequest,
+  request: operations.FetchCapacityRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.ImageListEntry,
+    models.CapacityResponse,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -62,12 +62,12 @@ export function imagesGet(
 
 async function $do(
   client: SfcCore,
-  request: operations.FetchImageRequest,
+  request: operations.FetchCapacityRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.ImageListEntry,
+      models.CapacityResponse,
       | errors.UnauthorizedError
       | errors.NotFoundError
       | errors.InternalServerError
@@ -85,7 +85,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.FetchImageRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchCapacityRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -101,7 +101,7 @@ async function $do(
     }),
   };
 
-  const path = pathToFunc("/v2/images/{id}")(pathParams);
+  const path = pathToFunc("/v2/capacities/{id}")(pathParams);
 
   const headers = new Headers(compactMap({
     Accept: "application/json",
@@ -114,7 +114,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "fetch_image",
+    operationID: "fetch_capacity",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
@@ -157,7 +157,7 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.ImageListEntry,
+    models.CapacityResponse,
     | errors.UnauthorizedError
     | errors.NotFoundError
     | errors.InternalServerError
@@ -170,7 +170,7 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.ImageListEntry$inboundSchema),
+    M.json(200, models.CapacityResponse$inboundSchema),
     M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
     M.jsonErr(404, errors.NotFoundError$inboundSchema),
     M.jsonErr(500, errors.InternalServerError$inboundSchema),

@@ -8,7 +8,7 @@ A bucket of owned compute balance over time.
 
 * [list](#list) - List capacities
 * [create](#create) - Create capacity
-* [get](#get) - Get capacity
+* [fetch](#fetch) - Get capacity
 * [delete](#delete) - Delete capacity
 * [update](#update) - Update capacity
 
@@ -199,7 +199,7 @@ run();
 | errors.InternalServerError      | 500                             | application/json                |
 | errors.SfcDefaultError          | 4XX, 5XX                        | \*/\*                           |
 
-## get
+## fetch
 
 Retrieve a capacity by ID or name, including its compute schedule and scheduler configuration.
 
@@ -215,7 +215,7 @@ const sfc = new Sfc({
 });
 
 async function run() {
-  const result = await sfc.capacities.get({
+  const result = await sfc.capacities.fetch({
     id: "cap_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
 
@@ -231,7 +231,7 @@ The standalone function version of this method:
 
 ```typescript
 import { SfcCore } from "@sfcompute/sdk/core.js";
-import { capacitiesGet } from "@sfcompute/sdk/funcs/capacities-get.js";
+import { capacitiesFetch } from "@sfcompute/sdk/funcs/capacities-fetch.js";
 
 // Use `SfcCore` for best tree-shaking performance.
 // You can create one instance of it to use across an application.
@@ -241,14 +241,14 @@ const sfc = new SfcCore({
 });
 
 async function run() {
-  const res = await capacitiesGet(sfc, {
+  const res = await capacitiesFetch(sfc, {
     id: "cap_k3R-nX9vLm7Qp2Yw5Jd8F",
   });
   if (res.ok) {
     const { value: result } = res;
     console.log(result);
   } else {
-    console.log("capacitiesGet failed:", res.error);
+    console.log("capacitiesFetch failed:", res.error);
   }
 }
 

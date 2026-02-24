@@ -151,7 +151,7 @@ run();
 
 * [list](docs/sdks/capacities/README.md#list) - List capacities
 * [create](docs/sdks/capacities/README.md#create) - Create capacity
-* [get](docs/sdks/capacities/README.md#get) - Get capacity
+* [fetch](docs/sdks/capacities/README.md#fetch) - Get capacity
 * [delete](docs/sdks/capacities/README.md#delete) - Delete capacity
 * [update](docs/sdks/capacities/README.md#update) - Update capacity
 
@@ -159,32 +159,32 @@ run();
 
 * [list](docs/sdks/images/README.md#list) - List images
 * [startUpload](docs/sdks/images/README.md#startupload) - Create image
-* [get](docs/sdks/images/README.md#get) - Get image
+* [fetch](docs/sdks/images/README.md#fetch) - Get image
 * [delete](docs/sdks/images/README.md#delete) - Delete image
 * [completeUpload](docs/sdks/images/README.md#completeupload) - Complete image upload
 * [download](docs/sdks/images/README.md#download) - Download image
 * [uploadPart](docs/sdks/images/README.md#uploadpart) - Create image upload part URL
 
-### [Nodes](docs/sdks/nodes/README.md)
-
-* [list](docs/sdks/nodes/README.md#list) - List nodes
-* [get](docs/sdks/nodes/README.md#get) - Get node
-* [getLogs](docs/sdks/nodes/README.md#getlogs) - Get node logs
-* [replace](docs/sdks/nodes/README.md#replace) - Replace node
-* [getSsh](docs/sdks/nodes/README.md#getssh) - Get node SSH info
-
 ### [NodeTemplates](docs/sdks/nodetemplates/README.md)
 
 * [list](docs/sdks/nodetemplates/README.md#list) - List node templates
 * [create](docs/sdks/nodetemplates/README.md#create) - Create node template
-* [get](docs/sdks/nodetemplates/README.md#get) - Get node template
+* [fetch](docs/sdks/nodetemplates/README.md#fetch) - Get node template
 * [delete](docs/sdks/nodetemplates/README.md#delete) - Delete node template
+
+### [Nodes](docs/sdks/nodes/README.md)
+
+* [list](docs/sdks/nodes/README.md#list) - List nodes
+* [fetch](docs/sdks/nodes/README.md#fetch) - Get node
+* [getLogsForNode](docs/sdks/nodes/README.md#getlogsfornode) - Get node logs
+* [replace](docs/sdks/nodes/README.md#replace) - Replace node
+* [getSSHInfoForNode](docs/sdks/nodes/README.md#getsshinfofornode) - Get node SSH info
 
 ### [Orders](docs/sdks/orders/README.md)
 
 * [list](docs/sdks/orders/README.md#list) - List orders
 * [create](docs/sdks/orders/README.md#create) - Create order
-* [get](docs/sdks/orders/README.md#get) - Get order
+* [fetch](docs/sdks/orders/README.md#fetch) - Get order
 * [cancel](docs/sdks/orders/README.md#cancel) - Cancel order
 
 </details>
@@ -207,28 +207,28 @@ To read more about standalone functions, check [FUNCTIONS.md](./FUNCTIONS.md).
 
 - [`capacitiesCreate`](docs/sdks/capacities/README.md#create) - Create capacity
 - [`capacitiesDelete`](docs/sdks/capacities/README.md#delete) - Delete capacity
-- [`capacitiesGet`](docs/sdks/capacities/README.md#get) - Get capacity
+- [`capacitiesFetch`](docs/sdks/capacities/README.md#fetch) - Get capacity
 - [`capacitiesList`](docs/sdks/capacities/README.md#list) - List capacities
 - [`capacitiesUpdate`](docs/sdks/capacities/README.md#update) - Update capacity
 - [`imagesCompleteUpload`](docs/sdks/images/README.md#completeupload) - Complete image upload
 - [`imagesDelete`](docs/sdks/images/README.md#delete) - Delete image
 - [`imagesDownload`](docs/sdks/images/README.md#download) - Download image
-- [`imagesGet`](docs/sdks/images/README.md#get) - Get image
+- [`imagesFetch`](docs/sdks/images/README.md#fetch) - Get image
 - [`imagesList`](docs/sdks/images/README.md#list) - List images
 - [`imagesStartUpload`](docs/sdks/images/README.md#startupload) - Create image
 - [`imagesUploadPart`](docs/sdks/images/README.md#uploadpart) - Create image upload part URL
-- [`nodesGet`](docs/sdks/nodes/README.md#get) - Get node
-- [`nodesGetLogs`](docs/sdks/nodes/README.md#getlogs) - Get node logs
-- [`nodesGetSsh`](docs/sdks/nodes/README.md#getssh) - Get node SSH info
+- [`nodesFetch`](docs/sdks/nodes/README.md#fetch) - Get node
+- [`nodesGetLogsForNode`](docs/sdks/nodes/README.md#getlogsfornode) - Get node logs
+- [`nodesGetSSHInfoForNode`](docs/sdks/nodes/README.md#getsshinfofornode) - Get node SSH info
 - [`nodesList`](docs/sdks/nodes/README.md#list) - List nodes
 - [`nodesReplace`](docs/sdks/nodes/README.md#replace) - Replace node
 - [`nodeTemplatesCreate`](docs/sdks/nodetemplates/README.md#create) - Create node template
 - [`nodeTemplatesDelete`](docs/sdks/nodetemplates/README.md#delete) - Delete node template
-- [`nodeTemplatesGet`](docs/sdks/nodetemplates/README.md#get) - Get node template
+- [`nodeTemplatesFetch`](docs/sdks/nodetemplates/README.md#fetch) - Get node template
 - [`nodeTemplatesList`](docs/sdks/nodetemplates/README.md#list) - List node templates
 - [`ordersCancel`](docs/sdks/orders/README.md#cancel) - Cancel order
 - [`ordersCreate`](docs/sdks/orders/README.md#create) - Create order
-- [`ordersGet`](docs/sdks/orders/README.md#get) - Get order
+- [`ordersFetch`](docs/sdks/orders/README.md#fetch) - Get order
 - [`ordersList`](docs/sdks/orders/README.md#list) - List orders
 
 </details>

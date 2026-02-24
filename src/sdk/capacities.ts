@@ -4,7 +4,7 @@
 
 import { capacitiesCreate } from "../funcs/capacities-create.js";
 import { capacitiesDelete } from "../funcs/capacities-delete.js";
-import { capacitiesGet } from "../funcs/capacities-get.js";
+import { capacitiesFetch } from "../funcs/capacities-fetch.js";
 import { capacitiesList } from "../funcs/capacities-list.js";
 import { capacitiesUpdate } from "../funcs/capacities-update.js";
 import { ClientSDK, RequestOptions } from "../lib/sdks.js";
@@ -56,11 +56,11 @@ export class Capacities extends ClientSDK {
    * @remarks
    * Retrieve a capacity by ID or name, including its compute schedule and scheduler configuration.
    */
-  async get(
+  async fetch(
     request: operations.FetchCapacityRequest,
     options?: RequestOptions,
   ): Promise<models.CapacityResponse> {
-    return unwrapAsync(capacitiesGet(
+    return unwrapAsync(capacitiesFetch(
       this,
       request,
       options,

@@ -4,7 +4,7 @@
 
 import { ordersCancel } from "../funcs/orders-cancel.js";
 import { ordersCreate } from "../funcs/orders-create.js";
-import { ordersGet } from "../funcs/orders-get.js";
+import { ordersFetch } from "../funcs/orders-fetch.js";
 import { ordersList } from "../funcs/orders-list.js";
 import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as models from "../models/index.js";
@@ -53,11 +53,11 @@ export class Orders extends ClientSDK {
    * @remarks
    * Retrieve an order by ID.
    */
-  async get(
-    request: operations.GetOrderRequest,
+  async fetch(
+    request: operations.FetchOrderRequest,
     options?: RequestOptions,
   ): Promise<models.V2OrderResponse> {
-    return unwrapAsync(ordersGet(
+    return unwrapAsync(ordersFetch(
       this,
       request,
       options,

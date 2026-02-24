@@ -2,8 +2,8 @@ speakeasyVersion: 1.728.0
 sources:
     market-api:
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:759041c9b07cf4b4cf1a3b369882d134aefef2923efa36259c1e4affdfda1825
-        sourceBlobDigest: sha256:873fe32c44d5c9eedc9f38604fe635fabb11235d18c83ac32ef69291e8b13315
+        sourceRevisionDigest: sha256:8ad8adbdd083d0fe6212a1687e13111817a79c2b4e773115bccde2f97905c388
+        sourceBlobDigest: sha256:40f876815467f509899c0c9a374bddecfa338a10e723076760637a722871e887
         tags:
             - latest
             - 0.1.0
@@ -11,10 +11,10 @@ targets:
     sfc:
         source: market-api
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:759041c9b07cf4b4cf1a3b369882d134aefef2923efa36259c1e4affdfda1825
-        sourceBlobDigest: sha256:873fe32c44d5c9eedc9f38604fe635fabb11235d18c83ac32ef69291e8b13315
+        sourceRevisionDigest: sha256:8ad8adbdd083d0fe6212a1687e13111817a79c2b4e773115bccde2f97905c388
+        sourceBlobDigest: sha256:40f876815467f509899c0c9a374bddecfa338a10e723076760637a722871e887
         codeSamplesNamespace: market-api-typescript-code-samples
-        codeSamplesRevisionDigest: sha256:1e3872a39d4d297a36b81f49b3b569a0f6b806b14a87a4b1c457295e62ea9461
+        codeSamplesRevisionDigest: sha256:f85de896fd128fa41432f791d94abc3e4854164c2e9075153a7dda19fca03f6a
 workflow:
     workflowVersion: 1.0.0
     speakeasyVersion: latest
@@ -22,8 +22,6 @@ workflow:
         market-api:
             inputs:
                 - location: blueprint/current/openapi.json
-            overlays:
-                - location: .speakeasy/speakeasy-modifications-overlay.yaml
             output: .speakeasy/out.openapi.yaml
             registry:
                 location: registry.speakeasyapi.dev/the-san-francisco-compute-company/v2/market-api

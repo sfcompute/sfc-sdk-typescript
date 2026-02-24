@@ -5,7 +5,7 @@
 import { imagesCompleteUpload } from "../funcs/images-complete-upload.js";
 import { imagesDelete } from "../funcs/images-delete.js";
 import { imagesDownload } from "../funcs/images-download.js";
-import { imagesGet } from "../funcs/images-get.js";
+import { imagesFetch } from "../funcs/images-fetch.js";
 import { imagesList } from "../funcs/images-list.js";
 import { imagesStartUpload } from "../funcs/images-start-upload.js";
 import { imagesUploadPart } from "../funcs/images-upload-part.js";
@@ -56,11 +56,11 @@ export class Images extends ClientSDK {
    * @remarks
    * Retrieve an image by ID. Returns both user-owned and public images.
    */
-  async get(
+  async fetch(
     request: operations.FetchImageRequest,
     options?: RequestOptions,
   ): Promise<models.ImageListEntry> {
-    return unwrapAsync(imagesGet(
+    return unwrapAsync(imagesFetch(
       this,
       request,
       options,

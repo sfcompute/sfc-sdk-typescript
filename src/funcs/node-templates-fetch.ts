@@ -4,7 +4,7 @@
 
 import * as z from "zod/v4-mini";
 import { SfcCore } from "../core.js";
-import { encodeFormQuery, encodeSimple } from "../lib/encodings.js";
+import { encodeSimple } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
@@ -28,21 +28,20 @@ import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Get node logs
+ * Get node template
  *
  * @remarks
- * Retrieve logs for a node.
+ * Retrieve a node template by ID or name.
  */
-export function nodesGetLogs(
+export function nodeTemplatesFetch(
   client: SfcCore,
-  request: operations.FetchNodeLogsRequest,
+  request: operations.FetchNodeTemplateRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    models.NodeLogsResponse,
+    models.NodeTemplateResponse,
     | errors.UnauthorizedError
     | errors.NotFoundError
-    | errors.UnprocessableEntityError
     | errors.InternalServerError
     | SfcError
     | ResponseValidationError
@@ -63,15 +62,14 @@ export function nodesGetLogs(
 
 async function $do(
   client: SfcCore,
-  request: operations.FetchNodeLogsRequest,
+  request: operations.FetchNodeTemplateRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      models.NodeLogsResponse,
+      models.NodeTemplateResponse,
       | errors.UnauthorizedError
       | errors.NotFoundError
-      | errors.UnprocessableEntityError
       | errors.InternalServerError
       | SfcError
       | ResponseValidationError
@@ -87,7 +85,8 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.FetchNodeLogsRequest$outboundSchema, value),
+    (value) =>
+      z.parse(operations.FetchNodeTemplateRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -103,16 +102,7 @@ async function $do(
     }),
   };
 
-  const path = pathToFunc("/v2/nodes/{id}/logs")(pathParams);
-
-  const query = encodeFormQuery({
-    "limit": payload.limit,
-    "realtime_timestamp_after": payload.realtime_timestamp_after,
-    "realtime_timestamp_before": payload.realtime_timestamp_before,
-    "seqnum_after": payload.seqnum_after,
-    "seqnum_before": payload.seqnum_before,
-    "sort_by": payload.sort_by,
-  });
+  const path = pathToFunc("/v2/node_templates/{id}")(pathParams);
 
   const headers = new Headers(compactMap({
     Accept: "application/json",
@@ -125,7 +115,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "fetch_node_logs",
+    operationID: "fetch_node_template",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,
@@ -143,7 +133,6 @@ async function $do(
     baseURL: options?.serverURL,
     path: path,
     headers: headers,
-    query: query,
     body: body,
     userAgent: client._options.userAgent,
     timeoutMs: options?.timeoutMs || client._options.timeoutMs || -1,
@@ -155,7 +144,7 @@ async function $do(
 
   const doResult = await client._do(req, {
     context,
-    errorCodes: ["401", "404", "422", "4XX", "500", "5XX"],
+    errorCodes: ["401", "404", "4XX", "500", "5XX"],
     retryConfig: context.retryConfig,
     retryCodes: context.retryCodes,
   });
@@ -169,10 +158,9 @@ async function $do(
   };
 
   const [result] = await M.match<
-    models.NodeLogsResponse,
+    models.NodeTemplateResponse,
     | errors.UnauthorizedError
     | errors.NotFoundError
-    | errors.UnprocessableEntityError
     | errors.InternalServerError
     | SfcError
     | ResponseValidationError
@@ -183,10 +171,9 @@ async function $do(
     | UnexpectedClientError
     | SDKValidationError
   >(
-    M.json(200, models.NodeLogsResponse$inboundSchema),
+    M.json(200, models.NodeTemplateResponse$inboundSchema),
     M.jsonErr(401, errors.UnauthorizedError$inboundSchema),
     M.jsonErr(404, errors.NotFoundError$inboundSchema),
-    M.jsonErr(422, errors.UnprocessableEntityError$inboundSchema),
     M.jsonErr(500, errors.InternalServerError$inboundSchema),
     M.fail("4XX"),
     M.fail("5XX"),

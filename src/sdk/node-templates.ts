@@ -4,7 +4,7 @@
 
 import { nodeTemplatesCreate } from "../funcs/node-templates-create.js";
 import { nodeTemplatesDelete } from "../funcs/node-templates-delete.js";
-import { nodeTemplatesGet } from "../funcs/node-templates-get.js";
+import { nodeTemplatesFetch } from "../funcs/node-templates-fetch.js";
 import { nodeTemplatesList } from "../funcs/node-templates-list.js";
 import { ClientSDK, RequestOptions } from "../lib/sdks.js";
 import * as models from "../models/index.js";
@@ -55,11 +55,11 @@ export class NodeTemplates extends ClientSDK {
    * @remarks
    * Retrieve a node template by ID or name.
    */
-  async get(
+  async fetch(
     request: operations.FetchNodeTemplateRequest,
     options?: RequestOptions,
   ): Promise<models.NodeTemplateResponse> {
-    return unwrapAsync(nodeTemplatesGet(
+    return unwrapAsync(nodeTemplatesFetch(
       this,
       request,
       options,
