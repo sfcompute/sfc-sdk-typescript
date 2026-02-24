@@ -35,7 +35,7 @@ import { Result } from "../types/fp.js";
  */
 export function ordersGet(
   client: SfcCore,
-  request: operations.GetOrderRequest,
+  request: operations.FetchOrderRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
@@ -62,7 +62,7 @@ export function ordersGet(
 
 async function $do(
   client: SfcCore,
-  request: operations.GetOrderRequest,
+  request: operations.FetchOrderRequest,
   options?: RequestOptions,
 ): Promise<
   [
@@ -85,7 +85,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.GetOrderRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchOrderRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -114,7 +114,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "get_order",
+    operationID: "fetch_order",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,

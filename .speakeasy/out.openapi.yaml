@@ -1129,7 +1129,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: replace
+      x-speakeasy-name-override: "replace"
   /v2/nodes/{id}/ssh:
     get:
       tags:
@@ -1342,7 +1342,7 @@ paths:
         - "Orders"
       summary: "Get order"
       description: "Retrieve an order by ID."
-      operationId: "get_order"
+      operationId: "fetch_order"
       parameters:
         - name: "id"
           in: "path"
@@ -1418,7 +1418,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: cancel
+      x-speakeasy-name-override: "cancel"
 components:
   schemas:
     AllocationSchedule:

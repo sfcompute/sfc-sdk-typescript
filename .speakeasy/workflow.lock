@@ -2,8 +2,8 @@ speakeasyVersion: 1.725.0
 sources:
     market-api:
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:1ffbcbd3d9d4604345fa978af4c041749895f7d81ed0e5976bf76e6b3e3f68ed
-        sourceBlobDigest: sha256:2721eabad4f6b9ebb9f557c240cb2d837e1681a52981a40001136b50871843b1
+        sourceRevisionDigest: sha256:e190d6323295ee29ebb0305c096902c8134ea5418247b42922f81253ed056c15
+        sourceBlobDigest: sha256:8f68577b56ac6fb54fabf9402f6f5a6799f06a7e8d6c9463b87ad73a688fb271
         tags:
             - latest
             - 0.1.0
@@ -11,8 +11,8 @@ targets:
     sfc:
         source: market-api
         sourceNamespace: market-api
-        sourceRevisionDigest: sha256:1ffbcbd3d9d4604345fa978af4c041749895f7d81ed0e5976bf76e6b3e3f68ed
-        sourceBlobDigest: sha256:2721eabad4f6b9ebb9f557c240cb2d837e1681a52981a40001136b50871843b1
+        sourceRevisionDigest: sha256:e190d6323295ee29ebb0305c096902c8134ea5418247b42922f81253ed056c15
+        sourceBlobDigest: sha256:8f68577b56ac6fb54fabf9402f6f5a6799f06a7e8d6c9463b87ad73a688fb271
         codeSamplesNamespace: market-api-typescript-code-samples
         codeSamplesRevisionDigest: sha256:1e3872a39d4d297a36b81f49b3b569a0f6b806b14a87a4b1c457295e62ea9461
 workflow:
