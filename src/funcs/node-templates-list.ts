@@ -238,7 +238,7 @@ async function $do(
       nodeTemplatesList(
         client,
         {
-          ...request,
+          ...request!,
           startingAfter: nextCursor,
         },
         options,

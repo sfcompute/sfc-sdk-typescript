@@ -54,7 +54,7 @@ export class Orders extends ClientSDK {
    * Retrieve an order by ID.
    */
   async get(
-    request: operations.FetchOrderRequest,
+    request: operations.GetOrderRequest,
     options?: RequestOptions,
   ): Promise<models.V2OrderResponse> {
     return unwrapAsync(ordersGet(

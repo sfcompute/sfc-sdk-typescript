@@ -232,7 +232,7 @@ async function $do(
       imagesList(
         client,
         {
-          ...request,
+          ...request!,
           startingAfter: nextCursor,
         },
         options,

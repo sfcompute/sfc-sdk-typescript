@@ -5,7 +5,6 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
@@ -14,13 +13,8 @@ import {
   ImageUploadStatus$inboundSchema,
 } from "./image-upload-status.js";
 
-export const ImageListEntryObject = {
-  Image: "image",
-} as const;
-export type ImageListEntryObject = ClosedEnum<typeof ImageListEntryObject>;
-
 export type ImageListEntry = {
-  object: ImageListEntryObject;
+  object: "image";
   id: string;
   name: string;
   uploadStatus: ImageUploadStatus;
@@ -33,17 +27,12 @@ export type ImageListEntry = {
 };
 
 /** @internal */
-export const ImageListEntryObject$inboundSchema: z.ZodMiniEnum<
-  typeof ImageListEntryObject
-> = z.enum(ImageListEntryObject);
-
-/** @internal */
 export const ImageListEntry$inboundSchema: z.ZodMiniType<
   ImageListEntry,
   unknown
 > = z.pipe(
   z.object({
-    object: ImageListEntryObject$inboundSchema,
+    object: z._default(types.literal("image"), "image"),
     id: types.string(),
     name: types.string(),
     upload_status: ImageUploadStatus$inboundSchema,

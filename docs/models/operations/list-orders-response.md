@@ -7,7 +7,6 @@ import { ListOrdersResponse } from "@sfcompute/sdk/models/operations";
 
 let value: ListOrdersResponse = {
   result: {
-    object: "list",
     cursor: "ordrc_gqXR7s0Kj5mHvE2wNpLc4Q",
     hasMore: true,
     data: [],

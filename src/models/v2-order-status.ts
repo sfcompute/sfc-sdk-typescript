@@ -10,15 +10,9 @@ import { OpenEnum } from "../types/enums.js";
  * `pending` = not resolved/processed yet.
  *
  * @remarks
- *
  * `filled` = order executed.
- *
  * `standing` = the order is waiting for a match.
- *
- * `cancelled` = the order was cancelled either automatically (not a standing
- * order and didn't immediately fill, or current time past `end_at`) or by
- * explicit cancellation.
- *
+ * `cancelled` = the order was cancelled either automatically (not a standing order and didn't immediately fill, or current time past `end_at`) or by explicit cancellation.
  * `rejected` = validation/system error occurred.
  */
 export const V2OrderStatus = {
@@ -32,15 +26,9 @@ export const V2OrderStatus = {
  * `pending` = not resolved/processed yet.
  *
  * @remarks
- *
  * `filled` = order executed.
- *
  * `standing` = the order is waiting for a match.
- *
- * `cancelled` = the order was cancelled either automatically (not a standing
- * order and didn't immediately fill, or current time past `end_at`) or by
- * explicit cancellation.
- *
+ * `cancelled` = the order was cancelled either automatically (not a standing order and didn't immediately fill, or current time past `end_at`) or by explicit cancellation.
  * `rejected` = validation/system error occurred.
  */
 export type V2OrderStatus = OpenEnum<typeof V2OrderStatus>;

@@ -54,7 +54,7 @@ export class Nodes extends ClientSDK {
    * Retrieve logs for a node.
    */
   async getLogs(
-    request: operations.GetNodeLogsRequest,
+    request: operations.FetchNodeLogsRequest,
     options?: RequestOptions,
   ): Promise<models.NodeLogsResponse> {
     return unwrapAsync(nodesGetLogs(
@@ -88,7 +88,7 @@ export class Nodes extends ClientSDK {
    * Retrieve SSH connection details for a node.
    */
   async getSsh(
-    request: operations.GetNodeSshRequest,
+    request: operations.FetchNodeSshRequest,
     options?: RequestOptions,
   ): Promise<models.NodeSshInfo> {
     return unwrapAsync(nodesGetSsh(

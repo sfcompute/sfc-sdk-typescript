@@ -5,30 +5,17 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 import { NodeResponse, NodeResponse$inboundSchema } from "./node-response.js";
 
-export const ListNodesResponseObject = {
-  List: "list",
-} as const;
-export type ListNodesResponseObject = ClosedEnum<
-  typeof ListNodesResponseObject
->;
-
 export type ListNodesResponse = {
-  object: ListNodesResponseObject;
-  cursor?: string | null | undefined;
+  object: "list";
+  cursor?: string | undefined;
   hasMore: boolean;
   data: Array<NodeResponse>;
 };
-
-/** @internal */
-export const ListNodesResponseObject$inboundSchema: z.ZodMiniEnum<
-  typeof ListNodesResponseObject
-> = z.enum(ListNodesResponseObject);
 
 /** @internal */
 export const ListNodesResponse$inboundSchema: z.ZodMiniType<
@@ -36,8 +23,8 @@ export const ListNodesResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: ListNodesResponseObject$inboundSchema,
-    cursor: z.optional(z.nullable(types.string())),
+    object: z._default(types.literal("list"), "list"),
+    cursor: types.optional(types.string()),
     has_more: types.boolean(),
     data: z.array(NodeResponse$inboundSchema),
   }),

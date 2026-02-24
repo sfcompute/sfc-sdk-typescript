@@ -17,7 +17,6 @@ let value: UpdateCapacityRequest = {
       minSellPriceDollarsPerNodeHour: "2.500000",
       maxBuyPriceDollarsPerNodeHour: "2.500000",
       enabled: true,
-      type: "spot_scaler",
     },
   },
 };

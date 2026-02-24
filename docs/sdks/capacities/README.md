@@ -125,7 +125,6 @@ async function run() {
       minSellPriceDollarsPerNodeHour: "2.500000",
       maxBuyPriceDollarsPerNodeHour: "2.500000",
       enabled: false,
-      type: "spot_scaler",
     },
   });
 
@@ -164,7 +163,6 @@ async function run() {
       minSellPriceDollarsPerNodeHour: "2.500000",
       maxBuyPriceDollarsPerNodeHour: "2.500000",
       enabled: false,
-      type: "spot_scaler",
     },
   });
   if (res.ok) {
@@ -387,7 +385,6 @@ async function run() {
         minSellPriceDollarsPerNodeHour: "2.500000",
         maxBuyPriceDollarsPerNodeHour: "2.500000",
         enabled: true,
-        type: "spot_scaler",
       },
     },
   });
@@ -426,7 +423,6 @@ async function run() {
         minSellPriceDollarsPerNodeHour: "2.500000",
         maxBuyPriceDollarsPerNodeHour: "2.500000",
         enabled: true,
-        type: "spot_scaler",
       },
     },
   });

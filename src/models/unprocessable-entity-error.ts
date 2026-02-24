@@ -4,36 +4,26 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
-export const UnprocessableEntityErrorType = {
-  UnprocessableEntity: "unprocessable_entity",
-} as const;
-export type UnprocessableEntityErrorType = ClosedEnum<
-  typeof UnprocessableEntityErrorType
->;
-
 export type UnprocessableEntityErrorError = {
-  type: UnprocessableEntityErrorType;
+  type: "unprocessable_entity";
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
-
-/** @internal */
-export const UnprocessableEntityErrorType$inboundSchema: z.ZodMiniEnum<
-  typeof UnprocessableEntityErrorType
-> = z.enum(UnprocessableEntityErrorType);
 
 /** @internal */
 export const UnprocessableEntityErrorError$inboundSchema: z.ZodMiniType<
   UnprocessableEntityErrorError,
   unknown
 > = z.object({
-  type: UnprocessableEntityErrorType$inboundSchema,
+  type: z._default(
+    types.literal("unprocessable_entity"),
+    "unprocessable_entity",
+  ),
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

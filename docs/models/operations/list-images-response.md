@@ -7,7 +7,6 @@ import { ListImagesResponse } from "@sfcompute/sdk/models/operations";
 
 let value: ListImagesResponse = {
   result: {
-    object: "list",
     cursor: "imagec_gqXR7s0Kj5mHvE2wNpLc4Q",
     hasMore: false,
     data: [],

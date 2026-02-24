@@ -4,36 +4,23 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
-export const InternalServerErrorType = {
-  ApiError: "api_error",
-} as const;
-export type InternalServerErrorType = ClosedEnum<
-  typeof InternalServerErrorType
->;
-
 export type InternalServerErrorError = {
-  type: InternalServerErrorType;
+  type: "api_error";
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
-
-/** @internal */
-export const InternalServerErrorType$inboundSchema: z.ZodMiniEnum<
-  typeof InternalServerErrorType
-> = z.enum(InternalServerErrorType);
 
 /** @internal */
 export const InternalServerErrorError$inboundSchema: z.ZodMiniType<
   InternalServerErrorError,
   unknown
 > = z.object({
-  type: InternalServerErrorType$inboundSchema,
+  type: z._default(types.literal("api_error"), "api_error"),
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

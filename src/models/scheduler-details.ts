@@ -5,24 +5,12 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
-export const SchedulerDetailsType = {
-  SpotScaler: "spot_scaler",
-} as const;
-export type SchedulerDetailsType = ClosedEnum<typeof SchedulerDetailsType>;
-
 /**
- * The spot scaler manages all compute in this capacity within its management window,
- *
- * @remarks
- * including compute procured from manual orders. If existing
- * reservations exceed the desired quantity the spot scaler will attempt to
- * sell the excess. If existing reservations are below the desired quantity the
- * spot scaler will attempt to buy in order to reach the target.
+ * The spot scaler manages all compute in this capacity within its management window, including compute procured from manual orders. If existing reservations exceed the desired quantity the spot scaler will attempt to sell the excess. If existing reservations are below the desired quantity the spot scaler will attempt to buy in order to reach the target.
  */
 export type SchedulerDetailsSpotScaler = {
   /**
@@ -30,14 +18,7 @@ export type SchedulerDetailsSpotScaler = {
    */
   desiredQuantity: number;
   /**
-   * How far ahead (in minutes) the spot scaler buys and sells compute. Higher
-   *
-   * @remarks
-   * values secure compute further in advance but commit to longer windows
-   * that may need to be sold when scaling down, potentially at a loss.
-   * Lower values reduce waste but risk compute being unavailable. Orders
-   * are placed in 1-hour blocks, so the furthest hour is secured up to
-   * `managed_window_minutes - 60` minutes before it begins.
+   * How far ahead (in minutes) the spot scaler buys and sells compute. Higher values secure compute further in advance but commit to longer windows that may need to be sold when scaling down, potentially at a loss. Lower values reduce waste but risk compute being unavailable. Orders are placed in 1-hour blocks, so the furthest hour is secured up to `managed_window_minutes - 60` minutes before it begins.
    */
   managedWindowMinutes: number;
   /**
@@ -52,25 +33,13 @@ export type SchedulerDetailsSpotScaler = {
    * Enable/disable the spot scaler. Disabling cancels all standing orders.
    */
   enabled: boolean;
-  type: SchedulerDetailsType;
+  type: "spot_scaler";
 };
 
 /**
- * Schedulers automatically place buy and sell orders to
- *
- * @remarks
- * attempt to achieve desired compute availability.
+ * Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability.
  */
 export type SchedulerDetails = SchedulerDetailsSpotScaler;
-
-/** @internal */
-export const SchedulerDetailsType$inboundSchema: z.ZodMiniEnum<
-  typeof SchedulerDetailsType
-> = z.enum(SchedulerDetailsType);
-/** @internal */
-export const SchedulerDetailsType$outboundSchema: z.ZodMiniEnum<
-  typeof SchedulerDetailsType
-> = SchedulerDetailsType$inboundSchema;
 
 /** @internal */
 export const SchedulerDetailsSpotScaler$inboundSchema: z.ZodMiniType<
@@ -83,7 +52,7 @@ export const SchedulerDetailsSpotScaler$inboundSchema: z.ZodMiniType<
     min_sell_price_dollars_per_node_hour: types.string(),
     max_buy_price_dollars_per_node_hour: types.string(),
     enabled: types.boolean(),
-    type: SchedulerDetailsType$inboundSchema,
+    type: z._default(types.literal("spot_scaler"), "spot_scaler"),
   }),
   z.transform((v) => {
     return remap$(v, {
@@ -94,46 +63,7 @@ export const SchedulerDetailsSpotScaler$inboundSchema: z.ZodMiniType<
     });
   }),
 );
-/** @internal */
-export type SchedulerDetailsSpotScaler$Outbound = {
-  desired_quantity: number;
-  managed_window_minutes: number;
-  min_sell_price_dollars_per_node_hour: string;
-  max_buy_price_dollars_per_node_hour: string;
-  enabled: boolean;
-  type: string;
-};
 
-/** @internal */
-export const SchedulerDetailsSpotScaler$outboundSchema: z.ZodMiniType<
-  SchedulerDetailsSpotScaler$Outbound,
-  SchedulerDetailsSpotScaler
-> = z.pipe(
-  z.object({
-    desiredQuantity: z.int(),
-    managedWindowMinutes: z.int(),
-    minSellPriceDollarsPerNodeHour: z.string(),
-    maxBuyPriceDollarsPerNodeHour: z.string(),
-    enabled: z.boolean(),
-    type: SchedulerDetailsType$outboundSchema,
-  }),
-  z.transform((v) => {
-    return remap$(v, {
-      desiredQuantity: "desired_quantity",
-      managedWindowMinutes: "managed_window_minutes",
-      minSellPriceDollarsPerNodeHour: "min_sell_price_dollars_per_node_hour",
-      maxBuyPriceDollarsPerNodeHour: "max_buy_price_dollars_per_node_hour",
-    });
-  }),
-);
-
-export function schedulerDetailsSpotScalerToJSON(
-  schedulerDetailsSpotScaler: SchedulerDetailsSpotScaler,
-): string {
-  return JSON.stringify(
-    SchedulerDetailsSpotScaler$outboundSchema.parse(schedulerDetailsSpotScaler),
-  );
-}
 export function schedulerDetailsSpotScalerFromJSON(
   jsonString: string,
 ): SafeParseResult<SchedulerDetailsSpotScaler, SDKValidationError> {
@@ -149,22 +79,7 @@ export const SchedulerDetails$inboundSchema: z.ZodMiniType<
   SchedulerDetails,
   unknown
 > = z.lazy(() => SchedulerDetailsSpotScaler$inboundSchema);
-/** @internal */
-export type SchedulerDetails$Outbound = SchedulerDetailsSpotScaler$Outbound;
 
-/** @internal */
-export const SchedulerDetails$outboundSchema: z.ZodMiniType<
-  SchedulerDetails$Outbound,
-  SchedulerDetails
-> = z.lazy(() => SchedulerDetailsSpotScaler$outboundSchema);
-
-export function schedulerDetailsToJSON(
-  schedulerDetails: SchedulerDetails,
-): string {
-  return JSON.stringify(
-    SchedulerDetails$outboundSchema.parse(schedulerDetails),
-  );
-}
 export function schedulerDetailsFromJSON(
   jsonString: string,
 ): SafeParseResult<SchedulerDetails, SDKValidationError> {

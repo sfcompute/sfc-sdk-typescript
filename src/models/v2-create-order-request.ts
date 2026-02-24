@@ -13,12 +13,7 @@ export type V2CreateOrderRequest = {
   capacity: string;
   side: Side;
   /**
-   * If true, the order stays in the order book until either fills, is
-   *
-   * @remarks
-   * explicitly cancelled, or the order end time is reached resulting in
-   * automatic cancellation. If false, the order is cancelled immediately if
-   * it doesn't fill.
+   * If true, the order stays in the order book until either fills, is explicitly cancelled, or the order end time is reached resulting in automatic cancellation. If false, the order is cancelled immediately if it doesn't fill.
    */
   allowStanding?: boolean | undefined;
   /**

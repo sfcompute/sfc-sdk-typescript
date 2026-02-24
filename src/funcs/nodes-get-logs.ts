@@ -35,7 +35,7 @@ import { Result } from "../types/fp.js";
  */
 export function nodesGetLogs(
   client: SfcCore,
-  request: operations.GetNodeLogsRequest,
+  request: operations.FetchNodeLogsRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
@@ -63,7 +63,7 @@ export function nodesGetLogs(
 
 async function $do(
   client: SfcCore,
-  request: operations.GetNodeLogsRequest,
+  request: operations.FetchNodeLogsRequest,
   options?: RequestOptions,
 ): Promise<
   [
@@ -87,7 +87,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.GetNodeLogsRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchNodeLogsRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -125,7 +125,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "get_node_logs",
+    operationID: "fetch_node_logs",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,

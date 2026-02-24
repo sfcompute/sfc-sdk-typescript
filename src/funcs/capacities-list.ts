@@ -237,7 +237,7 @@ async function $do(
       capacitiesList(
         client,
         {
-          ...request,
+          ...request!,
           startingAfter: nextCursor,
         },
         options,

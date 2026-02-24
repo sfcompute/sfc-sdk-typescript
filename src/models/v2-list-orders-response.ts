@@ -5,7 +5,6 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
@@ -14,24 +13,12 @@ import {
   V2OrderResponse$inboundSchema,
 } from "./v2-order-response.js";
 
-export const V2ListOrdersResponseObject = {
-  List: "list",
-} as const;
-export type V2ListOrdersResponseObject = ClosedEnum<
-  typeof V2ListOrdersResponseObject
->;
-
 export type V2ListOrdersResponse = {
-  object: V2ListOrdersResponseObject;
-  cursor?: string | null | undefined;
+  object: "list";
+  cursor?: string | undefined;
   hasMore: boolean;
   data: Array<V2OrderResponse>;
 };
-
-/** @internal */
-export const V2ListOrdersResponseObject$inboundSchema: z.ZodMiniEnum<
-  typeof V2ListOrdersResponseObject
-> = z.enum(V2ListOrdersResponseObject);
 
 /** @internal */
 export const V2ListOrdersResponse$inboundSchema: z.ZodMiniType<
@@ -39,8 +26,8 @@ export const V2ListOrdersResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: V2ListOrdersResponseObject$inboundSchema,
-    cursor: z.optional(z.nullable(types.string())),
+    object: z._default(types.literal("list"), "list"),
+    cursor: types.optional(types.string()),
     has_more: types.boolean(),
     data: z.array(V2OrderResponse$inboundSchema),
   }),

@@ -1,19 +1,19 @@
-# SchedulerDetails
+# SchedulerDetailsInputUnion
 
 Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability.
 
 
 ## Supported Types
 
-### `models.SchedulerDetailsSpotScaler`
+### `models.SchedulerDetailsSpotScalerInput`
 
 ```typescript
-const value: models.SchedulerDetailsSpotScaler = {
-  desiredQuantity: 898488,
-  managedWindowMinutes: 121777,
+const value: models.SchedulerDetailsSpotScalerInput = {
+  desiredQuantity: 993016,
+  managedWindowMinutes: 193882,
   minSellPriceDollarsPerNodeHour: "2.500000",
   maxBuyPriceDollarsPerNodeHour: "2.500000",
-  enabled: true,
+  enabled: false,
 };
 ```
 

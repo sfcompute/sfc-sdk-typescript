@@ -9,10 +9,7 @@ export type CreateNodeTemplateRequest = {
   name: string;
   image: string;
   /**
-   * Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Maximum 64KB.
-   *
-   * @remarks
-   * Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported.
+   * Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Maximum 64KB. Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported.
    */
   cloudInitUserData?: string | undefined;
 };

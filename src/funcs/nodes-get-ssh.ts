@@ -35,7 +35,7 @@ import { Result } from "../types/fp.js";
  */
 export function nodesGetSsh(
   client: SfcCore,
-  request: operations.GetNodeSshRequest,
+  request: operations.FetchNodeSshRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
@@ -62,7 +62,7 @@ export function nodesGetSsh(
 
 async function $do(
   client: SfcCore,
-  request: operations.GetNodeSshRequest,
+  request: operations.FetchNodeSshRequest,
   options?: RequestOptions,
 ): Promise<
   [
@@ -85,7 +85,7 @@ async function $do(
 > {
   const parsed = safeParse(
     request,
-    (value) => z.parse(operations.GetNodeSshRequest$outboundSchema, value),
+    (value) => z.parse(operations.FetchNodeSshRequest$outboundSchema, value),
     "Input validation failed",
   );
   if (!parsed.ok) {
@@ -114,7 +114,7 @@ async function $do(
   const context = {
     options: client._options,
     baseURL: options?.serverURL ?? client._baseURL ?? "",
-    operationID: "get_node_ssh",
+    operationID: "fetch_node_ssh",
     oAuth2Scopes: null,
 
     resolvedSecurity: requestSecurity,

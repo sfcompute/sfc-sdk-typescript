@@ -6,13 +6,13 @@ import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../../lib/primitives.js";
 import { ClosedEnum } from "../../types/enums.js";
 
-export const GetNodeLogsSortBy = {
+export const FetchNodeLogsSortBy = {
   Seqnum: "seqnum",
   MinusSeqnum: "-seqnum",
 } as const;
-export type GetNodeLogsSortBy = ClosedEnum<typeof GetNodeLogsSortBy>;
+export type FetchNodeLogsSortBy = ClosedEnum<typeof FetchNodeLogsSortBy>;
 
-export type GetNodeLogsRequest = {
+export type FetchNodeLogsRequest = {
   id: string;
   /**
    * Return logs with `seqnum` less than or equal to this value.
@@ -23,30 +23,24 @@ export type GetNodeLogsRequest = {
    */
   seqnumAfter?: number | undefined;
   /**
-   * Due to clock synchronization, some earlier log messages may have a
-   *
-   * @remarks
-   * realtime timestamp after this value.
+   * Due to clock synchronization, some earlier log messages may have a realtime timestamp after this value.
    */
   realtimeTimestampBefore?: number | undefined;
   /**
-   * Due to clock synchronization, some later log messages may have a
-   *
-   * @remarks
-   * realtime timestamp before this value.
+   * Due to clock synchronization, some later log messages may have a realtime timestamp before this value.
    */
   realtimeTimestampAfter?: number | undefined;
-  sortBy?: GetNodeLogsSortBy | undefined;
+  sortBy?: FetchNodeLogsSortBy | undefined;
   limit?: number | undefined;
 };
 
 /** @internal */
-export const GetNodeLogsSortBy$outboundSchema: z.ZodMiniEnum<
-  typeof GetNodeLogsSortBy
-> = z.enum(GetNodeLogsSortBy);
+export const FetchNodeLogsSortBy$outboundSchema: z.ZodMiniEnum<
+  typeof FetchNodeLogsSortBy
+> = z.enum(FetchNodeLogsSortBy);
 
 /** @internal */
-export type GetNodeLogsRequest$Outbound = {
+export type FetchNodeLogsRequest$Outbound = {
   id: string;
   seqnum_before?: number | undefined;
   seqnum_after?: number | undefined;
@@ -57,9 +51,9 @@ export type GetNodeLogsRequest$Outbound = {
 };
 
 /** @internal */
-export const GetNodeLogsRequest$outboundSchema: z.ZodMiniType<
-  GetNodeLogsRequest$Outbound,
-  GetNodeLogsRequest
+export const FetchNodeLogsRequest$outboundSchema: z.ZodMiniType<
+  FetchNodeLogsRequest$Outbound,
+  FetchNodeLogsRequest
 > = z.pipe(
   z.object({
     id: z.string(),
@@ -67,7 +61,7 @@ export const GetNodeLogsRequest$outboundSchema: z.ZodMiniType<
     seqnumAfter: z.optional(z.int()),
     realtimeTimestampBefore: z.optional(z.int()),
     realtimeTimestampAfter: z.optional(z.int()),
-    sortBy: z.optional(GetNodeLogsSortBy$outboundSchema),
+    sortBy: z.optional(FetchNodeLogsSortBy$outboundSchema),
     limit: z._default(z.int(), 100),
   }),
   z.transform((v) => {
@@ -81,10 +75,10 @@ export const GetNodeLogsRequest$outboundSchema: z.ZodMiniType<
   }),
 );
 
-export function getNodeLogsRequestToJSON(
-  getNodeLogsRequest: GetNodeLogsRequest,
+export function fetchNodeLogsRequestToJSON(
+  fetchNodeLogsRequest: FetchNodeLogsRequest,
 ): string {
   return JSON.stringify(
-    GetNodeLogsRequest$outboundSchema.parse(getNodeLogsRequest),
+    FetchNodeLogsRequest$outboundSchema.parse(fetchNodeLogsRequest),
   );
 }

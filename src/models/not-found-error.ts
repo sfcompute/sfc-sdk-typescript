@@ -4,34 +4,23 @@
 
 import * as z from "zod/v4-mini";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import { ErrorDetail, ErrorDetail$inboundSchema } from "./error-detail.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
-export const NotFoundErrorType = {
-  NotFound: "not_found",
-} as const;
-export type NotFoundErrorType = ClosedEnum<typeof NotFoundErrorType>;
-
 export type NotFoundErrorError = {
-  type: NotFoundErrorType;
+  type: "not_found";
   message: string;
   details?: Array<ErrorDetail> | undefined;
 };
-
-/** @internal */
-export const NotFoundErrorType$inboundSchema: z.ZodMiniEnum<
-  typeof NotFoundErrorType
-> = z.enum(NotFoundErrorType);
 
 /** @internal */
 export const NotFoundErrorError$inboundSchema: z.ZodMiniType<
   NotFoundErrorError,
   unknown
 > = z.object({
-  type: NotFoundErrorType$inboundSchema,
+  type: z._default(types.literal("not_found"), "not_found"),
   message: types.string(),
   details: types.optional(z.array(ErrorDetail$inboundSchema)),
 });

@@ -5,10 +5,10 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import {
-  SchedulerDetails,
-  SchedulerDetails$Outbound,
-  SchedulerDetails$outboundSchema,
-} from "./scheduler-details.js";
+  SchedulerDetailsInputUnion,
+  SchedulerDetailsInputUnion$Outbound,
+  SchedulerDetailsInputUnion$outboundSchema,
+} from "./scheduler-details-input-union.js";
 
 export type PatchCapacityRequest = {
   /**
@@ -16,33 +16,21 @@ export type PatchCapacityRequest = {
    */
   name?: string | null | undefined;
   /**
-   * Datacenter locations orders into this capacity can acquire compute from.
-   *
-   * @remarks
-   * Replaces existing zones. Does not affect already scheduled compute.
+   * Datacenter locations orders into this capacity can acquire compute from. Replaces existing zones. Does not affect already scheduled compute.
    */
   zones?: Array<string> | null | undefined;
   /**
-   * Template applied when nodes are automatically provisioned within the
-   *
-   * @remarks
-   * capacity. The template is not applied to pre-existing nodes.
+   * Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes.
    */
   nodeTemplate?: string | null | undefined;
   /**
-   * Automatically provision and terminate nodes based on currently available
-   *
-   * @remarks
-   * allocation. Requires `node_template` to be set.
+   * Automatically provision and terminate nodes based on currently available allocation. Requires `node_template` to be set.
    */
   startNodesAutomatically?: boolean | null | undefined;
   /**
-   * Schedulers automatically place buy and sell orders to
-   *
-   * @remarks
-   * attempt to achieve desired compute availability.
+   * Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability.
    */
-  scheduler?: SchedulerDetails | undefined;
+  scheduler?: SchedulerDetailsInputUnion | undefined;
 };
 
 /** @internal */
@@ -51,7 +39,7 @@ export type PatchCapacityRequest$Outbound = {
   zones?: Array<string> | null | undefined;
   node_template?: string | null | undefined;
   start_nodes_automatically?: boolean | null | undefined;
-  scheduler?: SchedulerDetails$Outbound | undefined;
+  scheduler?: SchedulerDetailsInputUnion$Outbound | undefined;
 };
 
 /** @internal */
@@ -64,7 +52,7 @@ export const PatchCapacityRequest$outboundSchema: z.ZodMiniType<
     zones: z.optional(z.nullable(z.array(z.string()))),
     nodeTemplate: z.optional(z.nullable(z.string())),
     startNodesAutomatically: z.optional(z.nullable(z.boolean())),
-    scheduler: z.optional(SchedulerDetails$outboundSchema),
+    scheduler: z.optional(SchedulerDetailsInputUnion$outboundSchema),
   }),
   z.transform((v) => {
     return remap$(v, {

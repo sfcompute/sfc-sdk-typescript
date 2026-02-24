@@ -892,7 +892,7 @@ paths:
           explode: true
         - name: "include_deleted"
           in: "query"
-          description: "Include deleted nodes in the response. Currently terminated nodes are\nauto-deleted. Don't expect this behavior to be stable."
+          description: "Include deleted nodes in the response. Currently terminated nodes are auto-deleted. Don't expect this behavior to be stable."
           required: false
           schema:
             type: "boolean"
@@ -995,7 +995,7 @@ paths:
         - "Nodes"
       summary: "Get node logs"
       description: "Retrieve logs for a node."
-      operationId: "get_node_logs"
+      operationId: "fetch_node_logs"
       parameters:
         - name: "id"
           in: "path"
@@ -1020,13 +1020,13 @@ paths:
             minimum: 0
         - name: "realtime_timestamp_before"
           in: "query"
-          description: "Due to clock synchronization, some earlier log messages may have a\nrealtime timestamp after this value."
+          description: "Due to clock synchronization, some earlier log messages may have a realtime timestamp after this value."
           required: false
           schema:
             $ref: "#/components/schemas/UnixEpoch"
         - name: "realtime_timestamp_after"
           in: "query"
-          description: "Due to clock synchronization, some later log messages may have a\nrealtime timestamp before this value."
+          description: "Due to clock synchronization, some later log messages may have a realtime timestamp before this value."
           required: false
           schema:
             $ref: "#/components/schemas/UnixEpoch"
@@ -1078,7 +1078,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: "getLogs"
+      x-speakeasy-name-override: getLogs
   /v2/nodes/{id}/replace:
     post:
       tags:
@@ -1129,14 +1129,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: "replace"
+      x-speakeasy-name-override: replace
   /v2/nodes/{id}/ssh:
     get:
       tags:
         - "Nodes"
       summary: "Get node SSH info"
       description: "Retrieve SSH connection details for a node."
-      operationId: "get_node_ssh"
+      operationId: "fetch_node_ssh"
       parameters:
         - name: "id"
           in: "path"
@@ -1168,7 +1168,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: "getSsh"
+      x-speakeasy-name-override: getSsh
   /v2/orders:
     get:
       tags:
@@ -1342,7 +1342,7 @@ paths:
         - "Orders"
       summary: "Get order"
       description: "Retrieve an order by ID."
-      operationId: "fetch_order"
+      operationId: "get_order"
       parameters:
         - name: "id"
           in: "path"
@@ -1418,7 +1418,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InternalServerError"
-      x-speakeasy-name-override: "cancel"
+      x-speakeasy-name-override: cancel
 components:
   schemas:
     AllocationSchedule:
@@ -1451,8 +1451,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "invalid_request_error"
+              const: "invalid_request_error"
+              default: "invalid_request_error"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -1481,15 +1482,14 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "capacity"
-          example: "capacity"
+          const: "capacity"
+          default: "capacity"
+          readOnly: true
         id:
           $ref: "#/components/schemas/CapacityId"
         name:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/Name"
+          $ref: "#/components/schemas/Name"
+          nullable: true
         zones:
           type: "array"
           items:
@@ -1497,16 +1497,15 @@ components:
           description: "Datacenter locations orders into this capacity can acquire compute from."
           minItems: 1
         node_template:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/NodeTemplateId"
-              description: "Template applied when nodes are automatically provisioned within the\ncapacity. The template is not applied to pre-existing nodes. Must\nsupport all specified zones, or nodes may fail to start."
+          $ref: "#/components/schemas/NodeTemplateId"
+          nullable: true
+          description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
         start_nodes_automatically:
           type: "boolean"
-          description: "If enabled, nodes will be provisioned and terminated + deleted\nautomatically based on currently available allocation in this capacity.\nRequires `node_template` to be set."
+          description: "If enabled, nodes will be provisioned and terminated + deleted automatically based on currently available allocation in this capacity. Requires `node_template` to be set."
         allocation_schedule:
           $ref: "#/components/schemas/AllocationSchedule"
-          description: "Allocation schedule of this capacity. Add to the schedule by placing buy\norders into this capacity."
+          description: "Allocation schedule of this capacity. Add to the schedule by placing buy orders into this capacity."
         created_at:
           $ref: "#/components/schemas/UnixEpoch"
         scheduler:
@@ -1536,8 +1535,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "conflict"
+              const: "conflict"
+              default: "conflict"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -1551,10 +1551,9 @@ components:
         - "start_nodes_automatically"
       properties:
         name:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/Name"
-              description: "Unique name for this capacity."
+          $ref: "#/components/schemas/Name"
+          nullable: true
+          description: "Unique name for this capacity."
         zones:
           type: "array"
           items:
@@ -1564,10 +1563,9 @@ components:
             - "richmond"
           minItems: 1
         node_template:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/NameOrId_NodeTemplateId"
-              description: "Template applied when nodes are automatically provisioned within the\ncapacity. The template is not applied to pre-existing nodes. Must\nsupport all specified zones, or nodes may fail to start."
+          $ref: "#/components/schemas/NameOrId_NodeTemplateId"
+          nullable: true
+          description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes. Must support all specified zones, or nodes may fail to start."
         start_nodes_automatically:
           type: "boolean"
           description: "Automatically start nodes when compute is available. Requires `node_template`."
@@ -1587,7 +1585,7 @@ components:
         cloud_init_user_data:
           type: "string"
           format: "byte"
-          description: "Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Maximum 64KB.\nCurrently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported."
+          description: "Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Maximum 64KB. Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported."
           example: "IyEvYmluL2Jhc2gKZWNobyBoZWxsbyB3b3JsZAo="
           contentEncoding: "base64"
     DeleteImageResponse:
@@ -1599,9 +1597,9 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "image"
-          example: "image"
+          const: "image"
+          default: "image"
+          readOnly: true
         deleted:
           type: "boolean"
         name:
@@ -1672,8 +1670,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "forbidden"
+              const: "forbidden"
+              default: "forbidden"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -1721,9 +1720,9 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "image"
-          example: "image"
+          const: "image"
+          default: "image"
+          readOnly: true
         id:
           $ref: "#/components/schemas/ImageId"
         name:
@@ -1754,9 +1753,9 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "image"
-          example: "image"
+          const: "image"
+          default: "image"
+          readOnly: true
         id:
           $ref: "#/components/schemas/ImageId"
         name:
@@ -1797,8 +1796,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "api_error"
+              const: "api_error"
+              default: "api_error"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -1814,14 +1814,13 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "list"
-          example: "list"
+          const: "list"
+          default: "list"
+          readOnly: true
         cursor:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/CapacitiesCursor"
-              description: "Pass as `starting_after` or `ending_before` to paginate."
+          $ref: "#/components/schemas/CapacitiesCursor"
+          nullable: true
+          description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -1837,13 +1836,12 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "list"
-          example: "list"
+          const: "list"
+          default: "list"
+          readOnly: true
         cursor:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/ImagesCursor"
+          $ref: "#/components/schemas/ImagesCursor"
+          nullable: true
         has_more:
           type: "boolean"
         data:
@@ -1859,14 +1857,13 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "list"
-          example: "list"
+          const: "list"
+          default: "list"
+          readOnly: true
         cursor:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/NodeTemplatesCursor"
-              description: "Pass as `starting_after` or `ending_before` to paginate."
+          $ref: "#/components/schemas/NodeTemplatesCursor"
+          nullable: true
+          description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -1882,14 +1879,13 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "list"
-          example: "list"
+          const: "list"
+          default: "list"
+          readOnly: true
         cursor:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/NodesCursor"
-              description: "Pass as `starting_after` or `ending_before` to paginate."
+          $ref: "#/components/schemas/NodesCursor"
+          nullable: true
+          description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -1959,9 +1955,9 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "list"
-          example: "list"
+          const: "list"
+          default: "list"
+          readOnly: true
         data:
           type: "array"
           items:
@@ -1978,9 +1974,9 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "node"
-          example: "node"
+          const: "node"
+          default: "node"
+          readOnly: true
         id:
           $ref: "#/components/schemas/NodeId"
         status:
@@ -2034,15 +2030,13 @@ components:
           items:
             $ref: "#/components/schemas/NodeSshHostKey"
         last_successful_key_update_at:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/UnixEpoch"
-              description: "Unix timestamp of the last successful host key refresh."
+          $ref: "#/components/schemas/UnixEpoch"
+          nullable: true
+          description: "Unix timestamp of the last successful host key refresh."
         last_attempted_key_update_at:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/UnixEpoch"
-              description: "Unix timestamp of the last attempted host key refresh."
+          $ref: "#/components/schemas/UnixEpoch"
+          nullable: true
+          description: "Unix timestamp of the last attempted host key refresh."
     NodeStatus:
       type: "string"
       description: "`pending` on creation while waiting for hardware assignment, `running` once assigned (note: the node may still be booting or loading a custom image), `terminated` when destroyed, `failed` on hardware fault."
@@ -2058,8 +2052,9 @@ components:
       pattern: "ntmpl_[0-9a-zA-Z_-]{1,21}"
     NodeTemplateInclude:
       type: "string"
-      enum:
-        - "cloud_init_user_data"
+      const: "cloud_init_user_data"
+      default: "cloud_init_user_data"
+      readOnly: true
     NodeTemplateResponse:
       type: "object"
       required:
@@ -2072,9 +2067,9 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "node_template"
-          example: "node_template"
+          const: "node_template"
+          default: "node_template"
+          readOnly: true
         id:
           $ref: "#/components/schemas/NodeTemplateId"
         name:
@@ -2090,7 +2085,7 @@ components:
         cloud_init_user_data:
           type: "string"
           format: "byte"
-          description: "Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html).\nCurrently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported."
+          description: "Base64-encoded [cloud-init user data](https://cloudinit.readthedocs.io/en/latest/explanation/format/index.html). Currently only the [User-Data Script](https://cloudinit.readthedocs.io/en/latest/explanation/format/user-data-script.html#user-data-script) format is supported."
           example: "IyEvYmluL2Jhc2gKZWNobyBoZWxsbyB3b3JsZAo="
           contentEncoding: "base64"
     NodeTemplatesCursor:
@@ -2116,8 +2111,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "not_found"
+              const: "not_found"
+              default: "not_found"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2137,8 +2133,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "not_implemented"
+              const: "not_implemented"
+              default: "not_implemented"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2169,18 +2166,18 @@ components:
             - "null"
           items:
             $ref: "#/components/schemas/ZoneName"
-          description: "Datacenter locations orders into this capacity can acquire compute from.\nReplaces existing zones. Does not affect already scheduled compute."
+          description: "Datacenter locations orders into this capacity can acquire compute from. Replaces existing zones. Does not affect already scheduled compute."
           minItems: 1
         node_template:
           type:
             - "string"
             - "null"
-          description: "Template applied when nodes are automatically provisioned within the\ncapacity. The template is not applied to pre-existing nodes."
+          description: "Template applied when nodes are automatically provisioned within the capacity. The template is not applied to pre-existing nodes."
         start_nodes_automatically:
           type:
             - "boolean"
             - "null"
-          description: "Automatically provision and terminate nodes based on currently available\nallocation. Requires `node_template` to be set."
+          description: "Automatically provision and terminate nodes based on currently available allocation. Requires `node_template` to be set."
         scheduler:
           $ref: "#/components/schemas/SchedulerDetails"
     PaymentRequiredError:
@@ -2196,8 +2193,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "payment_required"
+              const: "payment_required"
+              default: "payment_required"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2225,8 +2223,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "request_timed_out"
+              const: "request_timed_out"
+              default: "request_timed_out"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2259,9 +2258,10 @@ components:
               properties:
                 type:
                   type: "string"
-                  enum:
-                    - "spot_scaler"
-      description: "Schedulers automatically place buy and sell orders to\nattempt to achieve desired compute availability."
+                  const: "spot_scaler"
+                  default: "spot_scaler"
+                  readOnly: true
+      description: "Schedulers automatically place buy and sell orders to attempt to achieve desired compute availability."
     ServiceUnavailableError:
       type: "object"
       required:
@@ -2275,8 +2275,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "service_unavailable"
+              const: "service_unavailable"
+              default: "service_unavailable"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2290,7 +2291,7 @@ components:
         - "buy"
     SpotScalerConfig:
       type: "object"
-      description: "The spot scaler manages all compute in this capacity within its management window,\nincluding compute procured from manual orders. If existing\nreservations exceed the desired quantity the spot scaler will attempt to\nsell the excess. If existing reservations are below the desired quantity the\nspot scaler will attempt to buy in order to reach the target."
+      description: "The spot scaler manages all compute in this capacity within its management window, including compute procured from manual orders. If existing reservations exceed the desired quantity the spot scaler will attempt to sell the excess. If existing reservations are below the desired quantity the spot scaler will attempt to buy in order to reach the target."
       required:
         - "desired_quantity"
         - "managed_window_minutes"
@@ -2307,15 +2308,15 @@ components:
         managed_window_minutes:
           type: "integer"
           format: "u-int64"
-          description: "How far ahead (in minutes) the spot scaler buys and sells compute. Higher\nvalues secure compute further in advance but commit to longer windows\nthat may need to be sold when scaling down, potentially at a loss.\nLower values reduce waste but risk compute being unavailable. Orders\nare placed in 1-hour blocks, so the furthest hour is secured up to\n`managed_window_minutes - 60` minutes before it begins."
+          description: "How far ahead (in minutes) the spot scaler buys and sells compute. Higher values secure compute further in advance but commit to longer windows that may need to be sold when scaling down, potentially at a loss. Lower values reduce waste but risk compute being unavailable. Orders are placed in 1-hour blocks, so the furthest hour is secured up to `managed_window_minutes - 60` minutes before it begins."
           maximum: 1440
           minimum: 60
         min_sell_price_dollars_per_node_hour:
           $ref: "#/components/schemas/DollarsPerNodeHour"
-          description: "Minimum price to sell compute for ($/node-hour). Must contain decimal\npoint. Will be rounded to nearest multiple of $0.000060."
+          description: "Minimum price to sell compute for ($/node-hour). Must contain decimal point. Will be rounded to nearest multiple of $0.000060."
         max_buy_price_dollars_per_node_hour:
           $ref: "#/components/schemas/DollarsPerNodeHour"
-          description: "Maximum price to buy compute ($/node-hour). Must contain decimal point.\nWill be rounded to nearest multiple of $0.000060."
+          description: "Maximum price to buy compute ($/node-hour). Must contain decimal point. Will be rounded to nearest multiple of $0.000060."
         enabled:
           type: "boolean"
           description: "Enable/disable the spot scaler. Disabling cancels all standing orders."
@@ -2340,8 +2341,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "authentication_error"
+              const: "authentication_error"
+              default: "authentication_error"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2366,8 +2368,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "unprocessable_entity"
+              const: "unprocessable_entity"
+              default: "unprocessable_entity"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2387,8 +2390,9 @@ components:
           properties:
             type:
               type: "string"
-              enum:
-                - "upgrade_required"
+              const: "upgrade_required"
+              default: "upgrade_required"
+              readOnly: true
             message:
               type: "string"
             details:
@@ -2436,7 +2440,7 @@ components:
           $ref: "#/components/schemas/Side"
         allow_standing:
           type: "boolean"
-          description: "If true, the order stays in the order book until either fills, is\nexplicitly cancelled, or the order end time is reached resulting in\nautomatic cancellation. If false, the order is cancelled immediately if\nit doesn't fill."
+          description: "If true, the order stays in the order book until either fills, is explicitly cancelled, or the order end time is reached resulting in automatic cancellation. If false, the order is cancelled immediately if it doesn't fill."
         node_count:
           type: "integer"
           format: "int32"
@@ -2460,14 +2464,13 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "list"
-          example: "list"
+          const: "list"
+          default: "list"
+          readOnly: true
         cursor:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/OrdersCursor"
-              description: "Pass as `starting_after` or `ending_before` to paginate."
+          $ref: "#/components/schemas/OrdersCursor"
+          nullable: true
+          description: "Pass as `starting_after` or `ending_before` to paginate."
         has_more:
           type: "boolean"
         data:
@@ -2492,29 +2495,29 @@ components:
       properties:
         object:
           type: "string"
-          enum:
-            - "order"
-          example: "order"
+          const: "order"
+          default: "order"
+          readOnly: true
         id:
           $ref: "#/components/schemas/OrderId"
         capacity:
           $ref: "#/components/schemas/CapacityId"
-          description: "Target capacity that receives or loses compute if this order fills\n(depending on order type)."
+          description: "Target capacity that receives or loses compute if this order fills (depending on order type)."
         side:
           $ref: "#/components/schemas/Side"
         allow_standing:
           type: "boolean"
-          description: "If true, the order stays in the order book until either fills, is\nexplicitly cancelled, or the order end time is reached resulting in\nautomatic cancellation. If false, the order is cancelled immediately if\nit doesn't fill."
+          description: "If true, the order stays in the order book until either fills, is explicitly cancelled, or the order end time is reached resulting in automatic cancellation. If false, the order is cancelled immediately if it doesn't fill."
         zones:
           type: "array"
           items:
             $ref: "#/components/schemas/ZoneName"
-          description: "Datacenter locations this order can fill in (derived from target\ncapacity at order creation by default)."
+          description: "Datacenter locations this order can fill in (derived from target capacity at order creation by default)."
           minItems: 1
         node_count:
           type: "integer"
           format: "int32"
-          description: "Number of nodes requested to be reserved or released between `start_at`\nand `end_at`."
+          description: "Number of nodes requested to be reserved or released between `start_at` and `end_at`."
           minimum: 1
         start_at:
           $ref: "#/components/schemas/UnixEpoch"
@@ -2529,17 +2532,14 @@ components:
         created_at:
           $ref: "#/components/schemas/UnixEpoch"
         filled_at:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
+          nullable: true
         filled_price_dollars_per_node_hour:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/DollarsPerNodeHour"
+          $ref: "#/components/schemas/DollarsPerNodeHour"
+          nullable: true
         cancelled_at:
-          oneOf:
-            - type: "null"
-            - $ref: "#/components/schemas/UnixEpoch"
+          $ref: "#/components/schemas/UnixEpoch"
+          nullable: true
     v2.OrderSortBy:
       type: "string"
       enum:
@@ -2549,7 +2549,7 @@ components:
         - "-start_at"
     v2.OrderStatus:
       type: "string"
-      description: "`pending` = not resolved/processed yet.\n\n`filled` = order executed.\n\n`standing` = the order is waiting for a match.\n\n`cancelled` = the order was cancelled either automatically (not a standing\norder and didn't immediately fill, or current time past `end_at`) or by\nexplicit cancellation.\n\n`rejected` = validation/system error occurred."
+      description: "`pending` = not resolved/processed yet.\n`filled` = order executed.\n`standing` = the order is waiting for a match.\n`cancelled` = the order was cancelled either automatically (not a standing order and didn't immediately fill, or current time past `end_at`) or by explicit cancellation.\n`rejected` = validation/system error occurred."
       enum:
         - "pending"
         - "filled"

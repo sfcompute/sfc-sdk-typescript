@@ -237,7 +237,7 @@ async function $do(
       ordersList(
         client,
         {
-          ...request,
+          ...request!,
           startingAfter: nextCursor,
         },
         options,

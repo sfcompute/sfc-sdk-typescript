@@ -7,7 +7,6 @@ import { ListNodeTemplatesResponse } from "@sfcompute/sdk/models/operations";
 
 let value: ListNodeTemplatesResponse = {
   result: {
-    object: "list",
     cursor: "ntmplc_gqXR7s0Kj5mHvE2wNpLc4Q",
     hasMore: false,
     data: [],

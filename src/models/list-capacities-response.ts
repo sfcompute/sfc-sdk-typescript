@@ -5,7 +5,6 @@
 import * as z from "zod/v4-mini";
 import { remap as remap$ } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
-import { ClosedEnum } from "../types/enums.js";
 import { Result as SafeParseResult } from "../types/fp.js";
 import * as types from "../types/primitives.js";
 import {
@@ -14,24 +13,12 @@ import {
 } from "./capacity-response.js";
 import { SDKValidationError } from "./errors/sdk-validation-error.js";
 
-export const ListCapacitiesResponseObject = {
-  List: "list",
-} as const;
-export type ListCapacitiesResponseObject = ClosedEnum<
-  typeof ListCapacitiesResponseObject
->;
-
 export type ListCapacitiesResponse = {
-  object: ListCapacitiesResponseObject;
-  cursor?: string | null | undefined;
+  object: "list";
+  cursor?: string | undefined;
   hasMore: boolean;
   data: Array<CapacityResponse>;
 };
-
-/** @internal */
-export const ListCapacitiesResponseObject$inboundSchema: z.ZodMiniEnum<
-  typeof ListCapacitiesResponseObject
-> = z.enum(ListCapacitiesResponseObject);
 
 /** @internal */
 export const ListCapacitiesResponse$inboundSchema: z.ZodMiniType<
@@ -39,8 +26,8 @@ export const ListCapacitiesResponse$inboundSchema: z.ZodMiniType<
   unknown
 > = z.pipe(
   z.object({
-    object: ListCapacitiesResponseObject$inboundSchema,
-    cursor: z.optional(z.nullable(types.string())),
+    object: z._default(types.literal("list"), "list"),
+    cursor: types.optional(types.string()),
     has_more: types.boolean(),
     data: z.array(CapacityResponse$inboundSchema),
   }),
